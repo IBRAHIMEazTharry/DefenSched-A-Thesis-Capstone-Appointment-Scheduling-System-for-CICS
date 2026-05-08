@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="DefenSched – Thesis/Capstone Appointment Scheduling System">
+    <title>DefenSched | System Dashboard</title>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="pre-auth">
+
+    <!-- Login / Role Selection Screen -->
+    <div id="login-screen" class="auth-container">
+        <div class="auth-card glass-card">
+            <div class="auth-header">
+                <div class="logo-circle">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <h1>DefenSched</h1>
+                <p>Thesis & Capstone Appointment System</p>
+            </div>
+            
+            <div class="role-selection">
+                <h3>Select Your Role</h3>
+                <div class="role-cards">
+                    <div class="role-card" data-role="admin">
+                        <i class="fas fa-user-shield"></i>
+                        <span>Admin</span>
+                    </div>
+                    <div class="role-card" data-role="faculty">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                        <span>Faculty</span>
+                    </div>
+                    <div class="role-card" data-role="student">
+                        <i class="fas fa-user-graduate"></i>
+                        <span>Student</span>
+                    </div>
+                </div>
+            </div>
+
+            <form id="login-form" class="hidden">
+                <div class="input-group">
+                    <label for="email">Email Address</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="email" placeholder="Enter your email" required>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="password" placeholder="••••••••" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary">SIGN IN</button>
+                <button type="button" id="back-to-roles" class="btn-text">← Back to role selection</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main System Layout (Hidden by default) -->
+    <div id="main-layout" class="hidden">
+        <!-- Sidebar -->
+        <aside class="sidebar glass-sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-calendar-check"></i>
+                <span>DefenSched</span>
+            </div>
+            <nav class="sidebar-nav">
+                <ul id="nav-links">
+                    <!-- Dynamic nav links based on role -->
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <img src="https://ui-avatars.com/api/?name=User&background=0D1B3E&color=fff" alt="Avatar" id="user-avatar">
+                    <div class="user-details">
+                        <span id="user-name">User Name</span>
+                        <small id="user-role-label">Role</small>
+                    </div>
+                </div>
+                <button id="logout-btn" title="Logout"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="content-area">
+            <!-- Top Navbar -->
+            <header class="top-navbar glass-navbar">
+                <div class="header-left">
+                    <button id="mobile-toggle"><i class="fas fa-bars"></i></button>
+                    <h2 id="current-panel-title">Dashboard</h2>
+                </div>
+                <div class="header-right">
+                    <div class="notif-bell" id="notif-toggle">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge">3</span>
+                        <div class="notif-dropdown glass-card hidden" id="notif-dropdown">
+                            <div class="notif-header">
+                                <span>Notifications</span>
+                                <a href="#">Mark all as read</a>
+                            </div>
+                            <div class="notif-list">
+                                <div class="notif-item">
+                                    <div class="notif-icon info"><i class="fas fa-calendar"></i></div>
+                                    <div class="notif-text">
+                                        <p>Your defense schedule is confirmed.</p>
+                                        <small>2 hours ago</small>
+                                    </div>
+                                </div>
+                                <div class="notif-item">
+                                    <div class="notif-icon success"><i class="fas fa-file-upload"></i></div>
+                                    <div class="notif-text">
+                                        <p>Manuscript submitted successfully.</p>
+                                        <small>5 hours ago</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="notif-footer">
+                                <a href="#" id="view-all-notifs">View All Notifications</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="date-display">
+                        <i class="fas fa-clock"></i>
+                        <span id="current-time">09:30 AM</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Panels -->
+            <div id="panels-container">
+                
+                <!-- Panel 1: Central Dashboard (Shared) -->
+                <section id="panel-dashboard" class="panel active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon blue"><i class="fas fa-calendar-alt"></i></div>
+                            <div class="stat-info">
+                                <h3>12</h3>
+                                <p>Total Appointments</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon purple"><i class="fas fa-shield-halved"></i></div>
+                            <div class="stat-info">
+                                <h3>4</h3>
+                                <p>Upcoming Defenses</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon orange"><i class="fas fa-clock"></i></div>
+                            <div class="stat-info">
+                                <h3>2</h3>
+                                <p>Pending Approvals</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+                            <div class="stat-info">
+                                <h3>85%</h3>
+                                <p>Completion Rate</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-grid">
+                        <div class="card calendar-widget">
+                            <div class="card-header">
+                                <h3>Schedule Calendar</h3>
+                                <div class="cal-controls">
+                                    <button><i class="fas fa-chevron-left"></i></button>
+                                    <span>April 2026</span>
+                                    <button><i class="fas fa-chevron-right"></i></button>
+                                </div>
+                            </div>
+                            <div class="calendar-grid" id="dashboard-calendar">
+                                <!-- Calendar generated by JS -->
+                            </div>
+                        </div>
+                        <div class="card activity-widget">
+                            <div class="card-header">
+                                <h3>Real-Time Updates</h3>
+                            </div>
+                            <div class="activity-list">
+                                <div class="activity-item">
+                                    <div class="dot active"></div>
+                                    <p><strong>Room 302</strong> is now booked for tomorrow.</p>
+                                    <small>Just now</small>
+                                </div>
+                                <div class="activity-item">
+                                    <div class="dot"></div>
+                                    <p><strong>Dr. Reyes</strong> updated availability.</p>
+                                    <small>15 mins ago</small>
+                                </div>
+                                <div class="activity-item">
+                                    <div class="dot"></div>
+                                    <p>New manuscript uploaded by <strong>Group Alpha</strong>.</p>
+                                    <small>1 hour ago</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Panel 2: Appointment Scheduling -->
+                <section id="panel-scheduling" class="panel">
+                    <div class="split-view">
+                        <div class="card form-card">
+                            <h3>Book Appointment</h3>
+                            <form id="booking-form">
+                                <div class="input-group">
+                                    <label>Research Group Name</label>
+                                    <input type="text" placeholder="e.g. Group Alpha" required>
+                                </div>
+                                <div class="input-group">
+                                    <label>Select Adviser</label>
+                                    <select required>
+                                        <option value="">Choose Adviser</option>
+                                        <option>Dr. Jose Rizal</option>
+                                        <option>Prof. Maria Clara</option>
+                                    </select>
+                                </div>
+                                <div class="grid-inputs">
+                                    <div class="input-group">
+                                        <label>Date</label>
+                                        <input type="date" required>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Time</label>
+                                        <input type="time" required>
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                    <label>Venue</label>
+                                    <select required>
+                                        <option value="">Select Venue</option>
+                                        <option>Multimedia Room</option>
+                                        <option>Conference Hall</option>
+                                        <option>Virtual (Zoom)</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="conflict-alert hidden" id="conflict-warning">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <span>Conflict Detected: Room is already booked at this time.</span>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <div class="card validation-sidebar">
+                            <h3>Quadruple-Check Validation</h3>
+                            <div class="validation-list">
+                                <div class="val-item" id="val-adviser">
+                                    <i class="fas fa-circle-check"></i>
+                                    <span>Adviser Availability</span>
+                                </div>
+                                <div class="val-item" id="val-panel">
+                                    <i class="fas fa-circle-check"></i>
+                                    <span>Panel Availability</span>
+                                </div>
+                                <div class="val-item" id="val-venue">
+                                    <i class="fas fa-circle-check"></i>
+                                    <span>Venue Availability</span>
+                                </div>
+                                <div class="val-item" id="val-rules">
+                                    <i class="fas fa-circle-check"></i>
+                                    <span>Schedule Rules Approval</span>
+                                </div>
+                            </div>
+                            <button class="btn-primary" id="confirm-booking" disabled>Confirm Appointment</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Panel 5: Manuscript Submission -->
+                <section id="panel-manuscript" class="panel">
+                    <div class="card">
+                        <h3>Manuscript Submission</h3>
+                        <div class="upload-zone" id="drop-zone">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Drag and drop your manuscript here</p>
+                            <span>Supported formats: PDF, DOCX (Max 10MB)</span>
+                            <input type="file" id="file-input" hidden>
+                            <button class="btn-outline" onclick="document.getElementById('file-input').click()">Browse Files</button>
+                        </div>
+                        <div class="file-status-list">
+                            <div class="file-item">
+                                <div class="file-info">
+                                    <i class="fas fa-file-pdf"></i>
+                                    <div>
+                                        <p>Final_Draft_v1.pdf</p>
+                                        <small>8.4 MB</small>
+                                    </div>
+                                </div>
+                                <span class="badge success">Uploaded</span>
+                            </div>
+                        </div>
+                        <div class="submission-footer">
+                            <p><i class="fas fa-info-circle"></i> Once submitted, the appointment will be locked for editing.</p>
+                            <div class="send-status">
+                                <span>Auto-sending to Panelists...</span>
+                                <div class="progress-bar"><div class="progress" style="width: 100%"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Panel 6: Faculty Management -->
+                <section id="panel-faculty" class="panel">
+                    <div class="faculty-controls">
+                        <div class="card">
+                            <h3>Set Your Availability</h3>
+                            <div class="availability-toggle">
+                                <span>Mode:</span>
+                                <div class="toggle-switch">
+                                    <button class="active">Adviser</button>
+                                    <button>Panelist</button>
+                                </div>
+                            </div>
+                            <div class="time-grid">
+                                <!-- Time slots generated by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Panel 8: Honoraria Computation -->
+                <section id="panel-honoraria" class="panel">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h3>₱ 12,500</h3>
+                            <p>Total Panel Honoraria</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>₱ 8,000</h3>
+                            <p>Total Adviser Honoraria</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Summary Report</h3>
+                            <button class="btn-outline"><i class="fas fa-print"></i> Print</button>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Faculty Name</th>
+                                    <th>Role</th>
+                                    <th>Sessions</th>
+                                    <th>Rate</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Dr. Jose Rizal</td>
+                                    <td>Panelist</td>
+                                    <td>5</td>
+                                    <td>₱ 1,500</td>
+                                    <td>₱ 7,500</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- More panels will be toggled here -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals, Toasts, etc. -->
+    <div id="toast-container"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
