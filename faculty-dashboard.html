@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DefenSched — Faculty Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f8fc;
+    --surface: #ffffff;
+    --surface2: #f0f2f8;
+    --border: #e4e8f0;
+    --border2: #d0d6e8;
+    --accent: #2563eb;
+    --accent-light: #eff4ff;
+    --accent2: #1d4ed8;
+    --text: #111827;
+    --text2: #4b5563;
+    --text3: #9ca3af;
+    --success: #059669;
+    --success-bg: #ecfdf5;
+    --warning: #d97706;
+    --warning-bg: #fffbeb;
+    --danger: #dc2626;
+    --danger-bg: #fef2f2;
+    --purple: #7c3aed;
+    --purple-bg: #f5f3ff;
+    --teal: #0d9488;
+    --teal-bg: #f0fdfa;
+    --font: 'Sora', sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+    --radius: 10px;
+    --radius-lg: 14px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; display: flex; font-size: 14px; }
+
+  .sidebar {
+    width: 230px; min-height: 100vh; background: var(--surface);
+    border-right: 1px solid var(--border); display: flex; flex-direction: column;
+    position: fixed; top: 0; left: 0; bottom: 0;
+  }
+  .logo { padding: 22px 20px 18px; border-bottom: 1px solid var(--border); }
+  .logo-name { font-size: 15px; font-weight: 600; color: var(--text); }
+  .logo-badge { font-size: 10px; font-weight: 600; background: var(--teal-bg); color: var(--teal); border-radius: 99px; padding: 2px 8px; margin-left: 6px; }
+  .logo-sub { font-size: 11px; color: var(--text3); margin-top: 3px; }
+
+  .nav { flex: 1; padding: 10px 10px; }
+  .nav-section { font-size: 10px; font-weight: 600; color: var(--text3); letter-spacing: 0.1em; text-transform: uppercase; padding: 10px 10px 4px; }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px; padding: 9px 10px;
+    border-radius: var(--radius); cursor: pointer; color: var(--text2);
+    font-size: 13px; transition: all 0.15s; margin-bottom: 2px;
+  }
+  .nav-item:hover { background: var(--surface2); color: var(--text); }
+  .nav-item.active { background: var(--accent-light); color: var(--accent); font-weight: 500; }
+  .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+  .nav-badge { margin-left: auto; font-size: 10px; font-family: var(--mono); background: var(--danger); color: #fff; border-radius: 99px; padding: 1px 6px; }
+  .nav-badge-warn { margin-left: auto; font-size: 10px; font-family: var(--mono); background: var(--warning); color: #fff; border-radius: 99px; padding: 1px 6px; }
+
+  .sidebar-user { padding: 14px 16px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  .avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, #0d9488, #2563eb); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: #fff; flex-shrink: 0; }
+  .user-name { font-size: 13px; font-weight: 500; }
+  .user-role { font-size: 11px; color: var(--text3); }
+
+  .main { margin-left: 230px; flex: 1; padding: 28px 32px; }
+  .page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 24px; }
+  .page-title { font-size: 20px; font-weight: 600; letter-spacing: -0.4px; }
+  .page-sub { font-size: 13px; color: var(--text2); margin-top: 3px; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: var(--radius); font-size: 13px; font-weight: 500; cursor: pointer; border: none; font-family: var(--font); transition: all 0.15s; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: var(--accent2); }
+  .btn-outline { background: var(--surface); color: var(--text2); border: 1px solid var(--border2); }
+  .btn-outline:hover { background: var(--surface2); }
+  .btn-danger-soft { background: var(--danger-bg); color: var(--danger); border: 1px solid #fecaca; font-size: 12px; padding: 5px 12px; }
+
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 22px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px 18px; }
+  .stat-label { font-size: 11px; color: var(--text3); font-weight: 500; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px; }
+  .stat-value { font-size: 26px; font-weight: 600; color: var(--text); font-family: var(--mono); letter-spacing: -1px; }
+  .stat-sub { font-size: 11px; color: var(--text3); margin-top: 4px; }
+  .stat-sub span { font-weight: 500; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px 20px; }
+  .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .card-title { font-size: 13px; font-weight: 600; }
+  .card-action { font-size: 12px; color: var(--accent); cursor: pointer; }
+
+  .advisee-card { border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-bottom: 10px; transition: border-color 0.15s; }
+  .advisee-card:hover { border-color: var(--border2); }
+  .advisee-card:last-child { margin-bottom: 0; }
+  .advisee-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .advisee-name { font-size: 13px; font-weight: 600; color: var(--text); }
+  .advisee-meta { font-size: 11px; color: var(--text3); margin-top: 1px; }
+  .advisee-progress { margin-top: 10px; }
+  .advisee-bar { height: 4px; background: var(--surface2); border-radius: 99px; margin-top: 4px; overflow: hidden; }
+  .advisee-fill { height: 100%; border-radius: 99px; }
+
+  .tag { display: inline-flex; align-items: center; font-size: 11px; font-weight: 500; padding: 3px 8px; border-radius: 99px; }
+  .tag-confirmed { background: var(--success-bg); color: var(--success); }
+  .tag-pending { background: var(--warning-bg); color: var(--warning); }
+  .tag-final { background: var(--accent-light); color: var(--accent); }
+  .tag-title { background: var(--purple-bg); color: var(--purple); }
+  .tag-advisory { background: var(--teal-bg); color: var(--teal); }
+
+  .panel-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .panel-item:last-child { border-bottom: none; }
+  .panel-date { font-family: var(--mono); font-size: 11px; color: var(--text3); min-width: 52px; }
+  .panel-info { flex: 1; }
+  .panel-name { font-size: 13px; font-weight: 500; color: var(--text); }
+  .panel-meta { font-size: 11px; color: var(--text3); margin-top: 1px; }
+
+  .avail-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .avail-day { text-align: center; }
+  .avail-label { font-size: 10px; color: var(--text3); font-weight: 500; margin-bottom: 4px; text-transform: uppercase; }
+  .avail-slot { font-size: 10px; padding: 4px 2px; border-radius: 6px; margin-bottom: 3px; text-align: center; font-family: var(--mono); }
+  .avail-open { background: var(--success-bg); color: var(--success); }
+  .avail-busy { background: var(--danger-bg); color: var(--danger); }
+  .avail-advisory { background: var(--teal-bg); color: var(--teal); }
+
+  .manuscript-item { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--border); }
+  .manuscript-item:last-child { border-bottom: none; }
+  .file-icon { width: 32px; height: 32px; background: var(--accent-light); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .file-icon svg { width: 16px; height: 16px; color: var(--accent); stroke: var(--accent); }
+  .file-name { font-size: 13px; font-weight: 500; color: var(--text); }
+  .file-meta { font-size: 11px; color: var(--text3); margin-top: 1px; }
+  .file-new { font-size: 10px; background: var(--danger); color: #fff; border-radius: 99px; padding: 1px 6px; font-weight: 600; margin-left: 6px; }
+
+  .notif-item { display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .notif-item:last-child { border-bottom: none; }
+  .notif-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); margin-top: 5px; flex-shrink: 0; }
+  .notif-text { font-size: 12px; color: var(--text2); line-height: 1.5; }
+  .notif-text strong { color: var(--text); font-weight: 500; }
+  .notif-time { font-size: 11px; color: var(--text3); margin-top: 2px; font-family: var(--mono); }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="logo">
+    <div><span class="logo-name">DefenSched</span><span class="logo-badge">Faculty</span></div>
+    <div class="logo-sub">CICS · MSU Main Campus</div>
+  </div>
+  <nav class="nav">
+    <div class="nav-section">Main</div>
+    <div class="nav-item active">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" stroke-width="1.8"/><rect x="14" y="3" width="7" height="7" rx="1" stroke-width="1.8"/><rect x="3" y="14" width="7" height="7" rx="1" stroke-width="1.8"/><rect x="14" y="14" width="7" height="7" rx="1" stroke-width="1.8"/></svg>
+      Overview
+    </div>
+    <div class="nav-item">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" stroke-width="1.8" stroke-linecap="round"/></svg>
+      Defense schedule board
+    </div>
+    <div class="nav-section">My roles</div>
+    <div class="nav-item">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8z" stroke-width="1.8" stroke-linecap="round"/></svg>
+      My advisees
+    </div>
+    <div class="nav-item">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" stroke-width="1.8"/><path d="M16 2v4M8 2v4M3 10h18" stroke-width="1.8"/></svg>
+      My panel schedule
+      <span class="nav-badge-warn">3</span>
+    </div>
+    <div class="nav-item">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="1.8"/><polyline points="12 6 12 12 16 14" stroke-width="1.8"/></svg>
+      Availability settings
+    </div>
+    <div class="nav-section">Documents</div>
+    <div class="nav-item">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke-width="1.8"/><polyline points="14 2 14 8 20 8" stroke-width="1.8"/></svg>
+      Manuscript inbox
+      <span class="nav-badge">2</span>
+    </div>
+    <div class="nav-item">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8zM6 1v3M10 1v3M14 1v3" stroke-width="1.8" stroke-linecap="round"/></svg>
+      Notifications
+      <span class="nav-badge">4</span>
+    </div>
+  </nav>
+  <div class="sidebar-user">
+    <div class="avatar">RS</div>
+    <div>
+      <div class="user-name">Dr. R. Santos</div>
+      <div class="user-role">Faculty · Adviser & Panelist</div>
+    </div>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Welcome back, Dr. Santos</div>
+      <div class="page-sub">AY 2025–2026 · Second Semester · You have 3 defenses this week as panelist</div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-outline">
+        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="1.8"/><polyline points="12 6 12 12 16 14" stroke-width="1.8"/></svg>
+        Update availability
+      </button>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Groups advising</div>
+      <div class="stat-value">3</div>
+      <div class="stat-sub">This semester</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Panel assignments</div>
+      <div class="stat-value">5</div>
+      <div class="stat-sub"><span style="color:var(--warning)">3 upcoming</span> this week</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Manuscripts to review</div>
+      <div class="stat-value">2</div>
+      <div class="stat-sub"><span style="color:var(--danger)">New</span> submissions</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Honoraria (est.)</div>
+      <div class="stat-value" style="font-size:20px;">₱8,500</div>
+      <div class="stat-sub">This semester</div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:14px;">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">My advisees</span>
+        <span class="card-action">View all →</span>
+      </div>
+      <div class="advisee-card">
+        <div class="advisee-head">
+          <div><div class="advisee-name">Group 04 — TechVision</div><div class="advisee-meta">4 members · IT Research Track</div></div>
+          <span class="tag tag-final">Final defense</span>
+        </div>
+        <div style="font-size:11px;color:var(--text3);">Last submission: <span style="color:var(--text2);font-weight:500;">May 10 — Chapter 5 draft</span></div>
+        <div class="advisee-progress">
+          <div style="display:flex;justify-content:space-between;font-size:11px;"><span style="color:var(--text3);">Progress</span><span style="color:var(--text2);font-weight:500;">90%</span></div>
+          <div class="advisee-bar"><div class="advisee-fill" style="width:90%;background:var(--success);"></div></div>
+        </div>
+      </div>
+      <div class="advisee-card">
+        <div class="advisee-head">
+          <div><div class="advisee-name">Group 11 — AquaNet</div><div class="advisee-meta">3 members · IS Research Track</div></div>
+          <span class="tag tag-final">Final defense</span>
+        </div>
+        <div style="font-size:11px;color:var(--text3);">Last submission: <span style="color:var(--text2);font-weight:500;">May 8 — Full manuscript</span></div>
+        <div class="advisee-progress">
+          <div style="display:flex;justify-content:space-between;font-size:11px;"><span style="color:var(--text3);">Progress</span><span style="color:var(--text2);font-weight:500;">75%</span></div>
+          <div class="advisee-bar"><div class="advisee-fill" style="width:75%;background:var(--accent);"></div></div>
+        </div>
+      </div>
+      <div class="advisee-card">
+        <div class="advisee-head">
+          <div><div class="advisee-name">Group 22 — SafeRoute</div><div class="advisee-meta">4 members · IT Research Track</div></div>
+          <span class="tag tag-title">Title defense</span>
+        </div>
+        <div style="font-size:11px;color:var(--text3);">Last submission: <span style="color:var(--text2);font-weight:500;">May 5 — Proposal draft</span></div>
+        <div class="advisee-progress">
+          <div style="display:flex;justify-content:space-between;font-size:11px;"><span style="color:var(--text3);">Progress</span><span style="color:var(--text2);font-weight:500;">30%</span></div>
+          <div class="advisee-bar"><div class="advisee-fill" style="width:30%;background:var(--warning);"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">My panel schedule</span>
+          <span class="card-action">View all →</span>
+        </div>
+        <div class="panel-item">
+          <div class="panel-date">May 13<br>8:00 AM</div>
+          <div class="panel-info">
+            <div class="panel-name">Group 04 — TechVision</div>
+            <div class="panel-meta">Room 301 · Final defense</div>
+          </div>
+          <span class="tag tag-confirmed">Confirmed</span>
+        </div>
+        <div class="panel-item">
+          <div class="panel-date">May 14<br>1:00 PM</div>
+          <div class="panel-info">
+            <div class="panel-name">Group 07 — MediTrack</div>
+            <div class="panel-meta">AVR · Title defense</div>
+          </div>
+          <span class="tag tag-confirmed">Confirmed</span>
+        </div>
+        <div class="panel-item">
+          <div class="panel-date">May 15<br>9:00 AM</div>
+          <div class="panel-info">
+            <div class="panel-name">Group 19 — EduSync</div>
+            <div class="panel-meta">Online · Final defense</div>
+          </div>
+          <span class="tag tag-pending">Pending</span>
+        </div>
+        <div style="margin-top:12px;">
+          <button class="btn btn-danger-soft" style="width:100%;justify-content:center;">Request withdrawal from a session</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-title">Manuscript inbox</span><span class="card-action">View all →</span></div>
+        <div class="manuscript-item">
+          <div class="file-icon"><svg fill="none" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke-width="1.8"/><polyline points="14 2 14 8 20 8" stroke-width="1.8"/></svg></div>
+          <div class="panel-info">
+            <div class="file-name">AquaNet_FinalManuscript.pdf <span class="file-new">NEW</span></div>
+            <div class="file-meta">Group 11 · May 10 · v3</div>
+          </div>
+        </div>
+        <div class="manuscript-item">
+          <div class="file-icon"><svg fill="none" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke-width="1.8"/><polyline points="14 2 14 8 20 8" stroke-width="1.8"/></svg></div>
+          <div class="panel-info">
+            <div class="file-name">EduSync_Chapter3.pdf <span class="file-new">NEW</span></div>
+            <div class="file-meta">Group 19 · May 9 · v1</div>
+          </div>
+        </div>
+        <div class="manuscript-item">
+          <div class="file-icon" style="background:var(--surface2);"><svg fill="none" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke-width="1.8"/><polyline points="14 2 14 8 20 8" stroke-width="1.8"/></svg></div>
+          <div class="panel-info">
+            <div class="file-name">TechVision_FinalManuscript.pdf</div>
+            <div class="file-meta">Group 04 · May 8 · v4 · Reviewed</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><span class="card-title">My availability this week</span><span class="card-action">Edit →</span></div>
+      <div style="display:flex;gap:6px;margin-bottom:10px;">
+        <span style="font-size:11px;padding:3px 8px;border-radius:99px;background:var(--success-bg);color:var(--success);">● Open panel slot</span>
+        <span style="font-size:11px;padding:3px 8px;border-radius:99px;background:var(--teal-bg);color:var(--teal);">● Advisory time</span>
+        <span style="font-size:11px;padding:3px 8px;border-radius:99px;background:var(--danger-bg);color:var(--danger);">● Busy</span>
+      </div>
+      <div class="avail-grid">
+        <div class="avail-day">
+          <div class="avail-label">Mon</div>
+          <div class="avail-slot avail-advisory">8–10</div>
+          <div class="avail-slot avail-open">10–12</div>
+          <div class="avail-slot avail-busy">1–3</div>
+        </div>
+        <div class="avail-day">
+          <div class="avail-label">Tue</div>
+          <div class="avail-slot avail-busy">8–10</div>
+          <div class="avail-slot avail-open">10–12</div>
+          <div class="avail-slot avail-advisory">1–3</div>
+        </div>
+        <div class="avail-day">
+          <div class="avail-label">Wed</div>
+          <div class="avail-slot avail-open">8–10</div>
+          <div class="avail-slot avail-open">10–12</div>
+          <div class="avail-slot avail-open">1–3</div>
+        </div>
+        <div class="avail-day">
+          <div class="avail-label">Thu</div>
+          <div class="avail-slot avail-advisory">8–10</div>
+          <div class="avail-slot avail-busy">10–12</div>
+          <div class="avail-slot avail-open">1–3</div>
+        </div>
+        <div class="avail-day">
+          <div class="avail-label">Fri</div>
+          <div class="avail-slot avail-open">8–10</div>
+          <div class="avail-slot avail-advisory">10–12</div>
+          <div class="avail-slot avail-busy">1–3</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><span class="card-title">Notifications</span><span class="card-action">Mark all read</span></div>
+      <div class="notif-item">
+        <div class="notif-dot" style="background:var(--danger);"></div>
+        <div><div class="notif-text"><strong>Group 11 — AquaNet</strong> uploaded a new manuscript version (v3). Review required before May 13.</div><div class="notif-time">Today · 9:12 AM</div></div>
+      </div>
+      <div class="notif-item">
+        <div class="notif-dot" style="background:var(--warning);"></div>
+        <div><div class="notif-text">Defense schedule for <strong>Group 19 — EduSync</strong> was updated to May 15, 9:00 AM by the coordinator.</div><div class="notif-time">Today · 6:30 AM</div></div>
+      </div>
+      <div class="notif-item">
+        <div class="notif-dot"></div>
+        <div><div class="notif-text"><strong>Group 04 — TechVision</strong> defense confirmed for May 13, 8:00 AM at Room 301.</div><div class="notif-time">Yesterday · 4:00 PM</div></div>
+      </div>
+      <div class="notif-item">
+        <div class="notif-dot" style="background:var(--success);"></div>
+        <div><div class="notif-text">Your panel availability for the week of May 12–16 has been saved successfully.</div><div class="notif-time">May 10 · 2:15 PM</div></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+</body>
+</html>

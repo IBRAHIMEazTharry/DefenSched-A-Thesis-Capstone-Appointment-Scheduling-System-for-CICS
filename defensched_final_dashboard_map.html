@@ -1,0 +1,205 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+.wrap{padding:1rem;}
+.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;}
+.sys-title{font-size:15px;font-weight:500;color:var(--color-text-primary);}
+.sys-sub{font-size:12px;color:var(--color-text-secondary);margin-top:2px;}
+.tab-row{display:flex;gap:6px;margin-bottom:1.25rem;flex-wrap:wrap;}
+.tab{font-size:12px;font-weight:500;padding:5px 14px;border-radius:99px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);cursor:pointer;color:var(--color-text-secondary);transition:all 0.15s;}
+.tab:hover{background:var(--color-background-secondary);}
+.tab.active-admin{background:#E6F1FB;color:#0C447C;border-color:#85B7EB;}
+.tab.active-faculty{background:#EAF3DE;color:#27500A;border-color:#97C459;}
+.tab.active-student{background:#EEEDFE;color:#3C3489;border-color:#AFA9EC;}
+.role-label{font-size:11px;font-weight:500;padding:3px 9px;border-radius:99px;display:inline-block;margin-bottom:8px;}
+.rl-admin{background:#E6F1FB;color:#0C447C;}
+.rl-faculty{background:#EAF3DE;color:#27500A;}
+.rl-student{background:#EEEDFE;color:#3C3489;}
+.rl-shared{background:#F1EFE8;color:#444441;}
+.section-title{font-size:11px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:0.06em;margin:1rem 0 0.5rem;}
+.page-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px;}
+.page-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px;transition:border-color 0.15s;}
+.page-card:hover{border-color:var(--color-border-secondary);}
+.page-card-head{display:flex;align-items:center;gap:8px;margin-bottom:5px;}
+.page-icon{font-size:16px;color:var(--color-text-secondary);}
+.page-name{font-size:13px;font-weight:500;color:var(--color-text-primary);}
+.page-desc{font-size:11px;color:var(--color-text-secondary);line-height:1.5;}
+.badge-row{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap;}
+.badge{font-size:10px;padding:2px 7px;border-radius:99px;font-weight:500;}
+.b-view{background:#E6F1FB;color:#0C447C;}
+.b-manage{background:#EAF3DE;color:#27500A;}
+.b-action{background:#EEEDFE;color:#3C3489;}
+.b-security{background:#FAEEDA;color:#633806;}
+.b-shared{background:#F1EFE8;color:#444441;}
+.hidden{display:none;}
+.legend{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:1rem;}
+.leg-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--color-text-secondary);}
+.leg-dot{width:8px;height:8px;border-radius:50%;}
+</style>
+
+<h2 class="sr-only">DefenSched final dashboard map showing all pages for Admin, Faculty, and Student roles</h2>
+
+<div class="wrap">
+  <div class="top-bar">
+    <div>
+      <div class="sys-title">DefenSched — final dashboard map</div>
+      <div class="sys-sub">All pages per role · Thesis/Capstone Scheduling System</div>
+    </div>
+  </div>
+
+  <div class="tab-row">
+    <button class="tab active-admin" onclick="show('all',this)">All roles</button>
+    <button class="tab" onclick="show('admin',this)">Admin only</button>
+    <button class="tab" onclick="show('faculty',this)">Faculty only</button>
+    <button class="tab" onclick="show('student',this)">Student only</button>
+  </div>
+
+  <div class="legend">
+    <div class="leg-item"><div class="leg-dot" style="background:#378ADD;"></div>View</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#639922;"></div>Manage</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#7F77DD;"></div>Action</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#EF9F27;"></div>Security</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#888780;"></div>Shared</div>
+  </div>
+
+  <div id="sec-shared">
+    <div class="section-title">Shared — all roles</div>
+    <div class="page-grid">
+      <div class="page-card" data-roles="all">
+        <div class="page-card-head"><i class="ti ti-home page-icon" aria-hidden="true"></i><span class="page-name">Overview / home</span></div>
+        <div class="page-desc">Personal snapshot — upcoming defenses, pending tasks, status summary tailored per role.</div>
+        <div class="badge-row"><span class="badge b-view">View</span><span class="badge b-shared">All roles</span></div>
+      </div>
+      <div class="page-card" data-roles="all">
+        <div class="page-card-head"><i class="ti ti-calendar page-icon" aria-hidden="true"></i><span class="page-name">Defense schedule board</span></div>
+        <div class="page-desc">Public read-only board showing all scheduled defenses — group, date, time, venue, panelists. Admin gets extra filter controls.</div>
+        <div class="badge-row"><span class="badge b-view">View</span><span class="badge b-shared">All roles</span></div>
+      </div>
+      <div class="page-card" data-roles="all">
+        <div class="page-card-head"><i class="ti ti-bell page-icon" aria-hidden="true"></i><span class="page-name">Notifications</span></div>
+        <div class="page-desc">Alerts for schedule changes, manuscript uploads, panelist swaps, confirmations, and reminders.</div>
+        <div class="badge-row"><span class="badge b-view">View</span><span class="badge b-shared">All roles</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="sec-admin">
+    <div class="section-title">Research coordinator (admin)</div>
+    <div class="page-grid">
+      <div class="page-card" data-roles="admin">
+        <div class="page-card-head"><i class="ti ti-calendar-event page-icon" aria-hidden="true"></i><span class="page-name">Schedule management</span></div>
+        <div class="page-desc">Create, edit, or cancel any defense slot. Assign venues. Resolve conflicts. Full cancel authority with no time restriction.</div>
+        <div class="badge-row"><span class="badge b-manage">Manage</span><span class="badge b-action">Cancel any</span></div>
+      </div>
+      <div class="page-card" data-roles="admin">
+        <div class="page-card-head"><i class="ti ti-users page-icon" aria-hidden="true"></i><span class="page-name">Group & student management</span></div>
+        <div class="page-desc">All capstone groups, current stage, assigned adviser, and submission status. Create groups and assign members.</div>
+        <div class="badge-row"><span class="badge b-manage">Manage</span></div>
+      </div>
+      <div class="page-card" data-roles="admin">
+        <div class="page-card-head"><i class="ti ti-user page-icon" aria-hidden="true"></i><span class="page-name">Faculty management</span></div>
+        <div class="page-desc">Faculty directory with advisory loads, panel assignments, and availability. Add or deactivate faculty accounts.</div>
+        <div class="badge-row"><span class="badge b-manage">Manage</span></div>
+      </div>
+      <div class="page-card" data-roles="admin">
+        <div class="page-card-head"><i class="ti ti-building page-icon" aria-hidden="true"></i><span class="page-name">Venue management</span></div>
+        <div class="page-desc">Add, edit, or deactivate CICS rooms and online links available for defense scheduling.</div>
+        <div class="badge-row"><span class="badge b-manage">Manage</span></div>
+      </div>
+      <div class="page-card" data-roles="admin">
+        <div class="page-card-head"><i class="ti ti-cash page-icon" aria-hidden="true"></i><span class="page-name">Honoraria</span></div>
+        <div class="page-desc">Dual-track breakdown — adviser honoraria per group, panelist honoraria per session. Real-time running total with export for financial reporting.</div>
+        <div class="badge-row"><span class="badge b-view">View</span><span class="badge b-action">Export</span></div>
+      </div>
+      <div class="page-card" data-roles="admin">
+        <div class="page-card-head"><i class="ti ti-chart-bar page-icon" aria-hidden="true"></i><span class="page-name">Reports</span></div>
+        <div class="page-desc">Semester-wide summaries: defense completion rates, pending groups, honoraria totals — formatted for accreditation.</div>
+        <div class="badge-row"><span class="badge b-view">View</span><span class="badge b-action">Export</span></div>
+      </div>
+      <div class="page-card" data-roles="admin">
+        <div class="page-card-head"><i class="ti ti-lock page-icon" aria-hidden="true"></i><span class="page-name">Audit log</span></div>
+        <div class="page-desc">Read-only table of every system action — who changed what and when. Admin eyes only. Supports dispute resolution.</div>
+        <div class="badge-row"><span class="badge b-security">Security</span><span class="badge b-view">Read-only</span></div>
+      </div>
+      <div class="page-card" data-roles="admin">
+        <div class="page-card-head"><i class="ti ti-settings page-icon" aria-hidden="true"></i><span class="page-name">Account management</span></div>
+        <div class="page-desc">Create, deactivate, or reset passwords for any user — students and faculty. Manages role assignments.</div>
+        <div class="badge-row"><span class="badge b-manage">Manage</span><span class="badge b-security">Security</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="sec-faculty">
+    <div class="section-title">Faculty</div>
+    <div class="page-grid">
+      <div class="page-card" data-roles="faculty">
+        <div class="page-card-head"><i class="ti ti-users page-icon" aria-hidden="true"></i><span class="page-name">My advisees</span></div>
+        <div class="page-desc">Assigned student groups with current stage, last submission, and next milestone. Faculty can leave comments or feedback per group.</div>
+        <div class="badge-row"><span class="badge b-view">View</span><span class="badge b-action">Comment</span></div>
+      </div>
+      <div class="page-card" data-roles="faculty">
+        <div class="page-card-head"><i class="ti ti-calendar page-icon" aria-hidden="true"></i><span class="page-name">My panel schedule</span></div>
+        <div class="page-desc">All defenses assigned as panelist. Withdraw request button sends a reassignment request to the coordinator — does not cancel outright.</div>
+        <div class="badge-row"><span class="badge b-view">View</span><span class="badge b-action">Withdraw request</span></div>
+      </div>
+      <div class="page-card" data-roles="faculty">
+        <div class="page-card-head"><i class="ti ti-clock page-icon" aria-hidden="true"></i><span class="page-name">Availability settings</span></div>
+        <div class="page-desc">Set consultation hours (advisory time) and open slots for panel assignments separately. System reads this during student booking.</div>
+        <div class="badge-row"><span class="badge b-manage">Manage</span></div>
+      </div>
+      <div class="page-card" data-roles="faculty">
+        <div class="page-card-head"><i class="ti ti-file page-icon" aria-hidden="true"></i><span class="page-name">Manuscript inbox</span></div>
+        <div class="page-desc">All manuscripts routed to this faculty member, organized by group and submission date with version history visible.</div>
+        <div class="badge-row"><span class="badge b-view">View</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="sec-student">
+    <div class="section-title">Student (group)</div>
+    <div class="page-grid">
+      <div class="page-card" data-roles="student">
+        <div class="page-card-head"><i class="ti ti-calendar-plus page-icon" aria-hidden="true"></i><span class="page-name">Book a defense</span></div>
+        <div class="page-desc">Scheduling form with quadruple-check validation running in the background. Unavailable slots are grayed out automatically.</div>
+        <div class="badge-row"><span class="badge b-action">Action</span></div>
+      </div>
+      <div class="page-card" data-roles="student">
+        <div class="page-card-head"><i class="ti ti-calendar-event page-icon" aria-hidden="true"></i><span class="page-name">My schedule</span></div>
+        <div class="page-desc">Confirmed or pending appointment — date, time, venue, panelists, adviser. Cancel button available within the allowed window (e.g. 48 hrs before). Cancels notify all parties and re-open the slot.</div>
+        <div class="badge-row"><span class="badge b-view">View</span><span class="badge b-action">Cancel (windowed)</span></div>
+      </div>
+      <div class="page-card" data-roles="student">
+        <div class="page-card-head"><i class="ti ti-upload page-icon" aria-hidden="true"></i><span class="page-name">Manuscript submission</span></div>
+        <div class="page-desc">Upload page with version history and timestamps. Slot status upgrades from Pending to Confirmed only after a file is uploaded and routed to adviser and panelists.</div>
+        <div class="badge-row"><span class="badge b-action">Upload</span><span class="badge b-view">Version history</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function show(role, btn) {
+  document.querySelectorAll('.tab').forEach(t => {
+    t.classList.remove('active-admin','active-faculty','active-student');
+  });
+  if(role==='all') btn.classList.add('active-admin');
+  else if(role==='admin') btn.classList.add('active-admin');
+  else if(role==='faculty') btn.classList.add('active-faculty');
+  else btn.classList.add('active-student');
+
+  const sections = {
+    admin: document.getElementById('sec-admin'),
+    faculty: document.getElementById('sec-faculty'),
+    student: document.getElementById('sec-student'),
+    shared: document.getElementById('sec-shared'),
+  };
+  if(role==='all'){
+    Object.values(sections).forEach(s => s.classList.remove('hidden'));
+  } else {
+    Object.entries(sections).forEach(([key,sec]) => {
+      if(key===role || key==='shared') sec.classList.remove('hidden');
+      else sec.classList.add('hidden');
+    });
+  }
+}
+</script>
