@@ -94,13 +94,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // Check if already logged in
     try {
-        const res = await fetch('/api/auth/me');
+        const res = await fetch(`/api/auth/me`);
         if (res.ok) {
             const data = await res.json();
             currentUser = data.user;
+            const dashboardMap = { admin: `/admin-dashboard`, faculty: `/faculty-dashboard`, student: `/student-dashboard` };
+            const dest = dashboardMap[currentUser.role];
+            if (dest) { window.location.replace(dest); return; }
             showMainLayout(currentUser);
         }
-    } catch (e) { console.error('Session check failed', e); }
+    } catch (e) { console.error(`Session check failed`, e); }
 
     // ============================================================
     // PASSWORD VISIBILITY TOGGLE
@@ -150,8 +153,18 @@ document.addEventListener('DOMContentLoaded', async () => {
             
             if (res.ok) {
                 currentUser = data.user;
-                showMainLayout(currentUser);
-                showToast(`Welcome back, ${currentUser.name}!`, 'success');
+                const dashboardMap = {
+                    admin:   '/admin-dashboard',
+                    faculty: '/faculty-dashboard',
+                    student: '/student-dashboard'
+                };
+                const dest = dashboardMap[currentUser.role];
+                if (dest) {
+                    window.location.replace(dest);
+                } else {
+                    showMainLayout(currentUser);
+                    showToast(`Welcome back, ${currentUser.name}!`, 'success');
+                }
             } else {
                 showToast(data.error || 'Login failed', 'error');
             }

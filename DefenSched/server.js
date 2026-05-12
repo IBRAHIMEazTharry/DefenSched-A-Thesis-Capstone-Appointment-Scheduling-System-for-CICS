@@ -66,6 +66,20 @@ app.delete('/api/venues/:id', requireRole('admin'), (req, res) => {
   res.json({ success: true });
 });
 
+// ── Dashboard pages (role-protected) ─────────────────────────────
+app.get('/admin-dashboard', (req, res) => {
+  if (!req.session?.userId || req.session.role !== 'admin') return res.redirect('/');
+  res.sendFile(path.join(__dirname, 'public', 'admin-dashboard.html'));
+});
+app.get('/faculty-dashboard', (req, res) => {
+  if (!req.session?.userId || req.session.role !== 'faculty') return res.redirect('/');
+  res.sendFile(path.join(__dirname, 'public', 'faculty-dashboard.html'));
+});
+app.get('/student-dashboard', (req, res) => {
+  if (!req.session?.userId || req.session.role !== 'student') return res.redirect('/');
+  res.sendFile(path.join(__dirname, 'public', 'student-dashboard.html'));
+});
+
 // ── Catch-all: serve SPA ──────────────────────────────────────────
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));

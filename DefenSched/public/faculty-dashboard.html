@@ -181,12 +181,15 @@
       <span class="nav-badge">4</span>
     </div>
   </nav>
-  <div class="sidebar-user">
-    <div class="avatar">RS</div>
-    <div>
-      <div class="user-name">Dr. R. Santos</div>
-      <div class="user-role">Faculty · Adviser & Panelist</div>
+  <div class="sidebar-user" style="display:flex;align-items:center;gap:10px;">
+    <div class="avatar" id="user-avatar">RS</div>
+    <div style="flex:1;min-width:0;">
+      <div class="user-name" id="user-display-name">Dr. R. Santos</div>
+      <div class="user-role">Faculty · Adviser &amp; Panelist</div>
     </div>
+    <button id="logout-btn" title="Logout" style="background:none;border:none;cursor:pointer;color:var(--text3);padding:4px;border-radius:6px;flex-shrink:0;">
+      <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
   </div>
 </aside>
 
@@ -394,5 +397,72 @@
   </div>
 </main>
 
+<script>
+(async () => {
+  // ── Prevent back button to login ────────────────────────────────
+  history.pushState(null, '', window.location.href);
+  window.addEventListener('popstate', () => {
+    history.pushState(null, '', window.location.href);
+  });
+
+  // ── Auth guard ──────────────────────────────────────────────────
+  let user;
+  try {
+    const res = await fetch('/api/auth/me');
+    if (!res.ok) { window.location.replace('/'); return; }
+    const data = await res.json();
+    user = data.user;
+    if (user.role !== 'faculty') { window.location.replace('/'); return; }
+  } catch (e) { window.location.replace('/'); return; }
+
+  // ── Populate user info ──────────────────────────────────────────
+  const initials = user.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+  const avatarEl = document.getElementById('user-avatar') || document.querySelector('.avatar');
+  const nameEl   = document.getElementById('user-display-name') || document.querySelector('.user-name');
+  if (avatarEl) avatarEl.textContent = initials;
+  if (nameEl)   nameEl.textContent   = user.name;
+
+  // ── Logout ──────────────────────────────────────────────────────
+  const logoutBtn = document.getElementById('logout-btn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', async () => {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      window.location.replace('/');
+    });
+  }
+
+  // ── Load real stats ─────────────────────────────────────────────
+  try {
+    const apptRes = await fetch('/api/appointments');
+    if (apptRes.ok) {
+      const { appointments } = await apptRes.json();
+      const statValues = document.querySelectorAll('.stat-value');
+      const myAppts    = appointments.filter(a => a.adviser_id === user.id);
+      const upcoming   = myAppts.filter(a => a.status === 'confirmed').length;
+      const pending    = myAppts.filter(a => a.status === 'pending').length;
+      if (statValues[0]) statValues[0].textContent = upcoming;
+      if (statValues[1]) statValues[1].textContent = myAppts.length;
+      if (statValues[2]) statValues[2].textContent = pending;
+
+      // ── Render appointments table if present ──────────────────
+      const tbody = document.querySelector('.appt-table tbody, table tbody');
+      if (tbody && appointments.length > 0) {
+        tbody.innerHTML = '';
+        appointments.forEach(a => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${a.group_name || '—'}</td>
+            <td>${a.date || '—'}</td>
+            <td>${a.time_slot || '—'}</td>
+            <td>${a.venue_name || '—'}</td>
+            <td><span class="tag tag-${a.status}">${a.status}</span></td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+    }
+  } catch (e) { console.error('Stats load error', e); }
+})();
+</script>
 </body>
 </html>
