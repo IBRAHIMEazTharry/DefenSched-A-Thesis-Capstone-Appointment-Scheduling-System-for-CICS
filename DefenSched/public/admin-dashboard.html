@@ -1,540 +1,1780 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DefenSched — Admin Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#0d0f14;--surface:#13161d;--surface2:#1a1e28;--border:#252a38;--border2:#2e3447;--accent:#4f8ef7;--accent2:#3a6fd8;--accent-glow:rgba(79,142,247,.12);--text:#e8eaf0;--text2:#8b90a0;--text3:#555b70;--success:#3ecf8e;--warning:#f5a623;--danger:#e05c5c;--purple:#a78bfa;--teal:#2dd4bf;--font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;--radius:10px;--radius-lg:16px}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;display:flex;font-size:14px}
-.sidebar{width:220px;min-height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100}
-.logo{padding:24px 20px 20px;border-bottom:1px solid var(--border)}
-.logo-name{font-size:16px;font-weight:600;letter-spacing:-.3px}
-.logo-badge{font-size:10px;font-weight:500;background:var(--accent-glow);color:var(--accent);border:1px solid rgba(79,142,247,.25);border-radius:99px;padding:2px 8px;margin-left:6px}
-.logo-sub{font-size:11px;color:var(--text3);margin-top:3px}
-.nav{flex:1;padding:12px 10px;overflow-y:auto}
-.nav-section{font-size:10px;font-weight:500;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;padding:8px 10px 4px;margin-top:8px}
-.nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--radius);cursor:pointer;color:var(--text2);font-size:13px;transition:all .15s;margin-bottom:1px;user-select:none}
-.nav-item:hover{background:var(--surface2);color:var(--text)}
-.nav-item.active{background:var(--accent-glow);color:var(--accent);font-weight:500}
-.nav-item svg{width:16px;height:16px;flex-shrink:0}
-.nav-badge{margin-left:auto;font-size:10px;font-family:var(--mono);background:var(--danger);color:#fff;border-radius:99px;padding:1px 6px}
-.sidebar-user{padding:14px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px}
-.avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#4f8ef7,#a78bfa);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff;flex-shrink:0}
-.user-name{font-size:13px;font-weight:500}
-.user-role{font-size:11px;color:var(--text3)}
-.main{margin-left:220px;flex:1;padding:28px 32px;min-height:100vh}
-.section{display:none}.section.active{display:block}
-.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px}
-.page-title{font-size:22px;font-weight:600;letter-spacing:-.5px}
-.page-sub{font-size:13px;color:var(--text2);margin-top:3px}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--radius);font-size:13px;font-weight:500;cursor:pointer;border:none;font-family:var(--font);transition:all .15s}
-.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent2)}
-.btn-ghost{background:var(--surface2);color:var(--text2);border:1px solid var(--border2)}.btn-ghost:hover{color:var(--text)}
-.btn-danger{background:rgba(224,92,92,.1);color:var(--danger);border:1px solid rgba(224,92,92,.2)}.btn-danger:hover{background:rgba(224,92,92,.2)}
-.btn-sm{padding:5px 11px;font-size:12px}
-.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
-.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px}
-.stat-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;font-weight:500;margin-bottom:8px}
-.stat-value{font-size:28px;font-weight:600;font-family:var(--mono);letter-spacing:-1px}
-.stat-change{font-size:11px;margin-top:6px;display:flex;align-items:center;gap:4px}
-.stat-up{color:var(--success)}.stat-down{color:var(--danger)}.stat-neutral{color:var(--text3)}
-.stat-dot{width:6px;height:6px;border-radius:50%;display:inline-block}
-.content-grid{display:grid;grid-template-columns:1fr 340px;gap:16px;margin-bottom:16px}
-.content-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px}
-.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-.card-title{font-size:13px;font-weight:600}
-.card-action{font-size:12px;color:var(--accent);cursor:pointer}
-.table{width:100%;border-collapse:collapse}
-.table th{font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;padding:0 8px 10px 0;text-align:left;border-bottom:1px solid var(--border)}
-.table td{padding:11px 8px 11px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2);vertical-align:middle}
-.table tr:last-child td{border-bottom:none}
-.table td:first-child{color:var(--text);font-weight:500}
-.tag{display:inline-flex;align-items:center;font-size:11px;font-weight:500;padding:3px 8px;border-radius:99px}
-.tag-confirmed{background:rgba(62,207,142,.12);color:var(--success)}
-.tag-pending{background:rgba(245,166,35,.12);color:var(--warning)}
-.tag-cancelled{background:rgba(224,92,92,.12);color:var(--danger)}
-.tag-completed{background:rgba(79,142,247,.12);color:var(--accent)}
-.tag-rescheduled{background:rgba(167,139,250,.12);color:var(--purple)}
-.schedule-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
-.schedule-item:last-child{border-bottom:none}
-.schedule-time{font-family:var(--mono);font-size:11px;color:var(--text3);min-width:48px;padding-top:2px}
-.schedule-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:4px;flex-shrink:0}
-.schedule-dot.done{background:var(--success)}.schedule-dot.warn{background:var(--warning)}
-.schedule-name{font-size:13px;font-weight:500}
-.schedule-meta{font-size:11px;color:var(--text3);margin-top:2px}
-.progress-wrap{margin-bottom:12px}
-.progress-label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px}
-.progress-name{color:var(--text2)}.progress-val{font-weight:500;font-family:var(--mono)}
-.progress-bar{height:5px;background:var(--surface2);border-radius:99px;overflow:hidden}
-.progress-fill{height:100%;border-radius:99px;transition:width .4s}
-.log-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
-.log-item:last-child{border-bottom:none}
-.log-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.log-icon svg{width:14px;height:14px}
-.log-text{font-size:12px;color:var(--text2);line-height:1.5}
-.log-text strong{color:var(--text);font-weight:500}
-.log-time{font-size:11px;color:var(--text3);margin-top:2px;font-family:var(--mono)}
-.honor-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
-.honor-row:last-child{border-bottom:none}
-.honor-name{font-size:13px;font-weight:500}
-.honor-type{font-size:11px;color:var(--text3);margin-top:1px}
-.honor-amount{font-family:var(--mono);font-size:13px;color:var(--success);font-weight:500}
-.form-group{margin-bottom:14px}
-.form-label{font-size:12px;color:var(--text2);font-weight:500;margin-bottom:6px;display:block}
-.form-input,.form-select{width:100%;padding:9px 12px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);font-size:13px;outline:none;font-family:var(--font);transition:border-color .15s}
-.form-input:focus,.form-select:focus{border-color:var(--accent)}
-.form-select option{background:var(--surface2)}
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:999;align-items:center;justify-content:center}
-.modal-overlay.open{display:flex}
-.modal{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:24px;width:480px;max-width:95vw;max-height:90vh;overflow-y:auto}
-.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
-.modal-title{font-size:16px;font-weight:600}
-.modal-close{background:none;border:none;color:var(--text3);cursor:pointer;font-size:20px;line-height:1}
-.live-indicator{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--success);font-family:var(--mono)}
-.live-dot{width:6px;height:6px;border-radius:50%;background:var(--success);animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.skeleton{background:linear-gradient(90deg,var(--surface2) 25%,var(--border) 50%,var(--surface2) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:6px;height:14px;margin-bottom:8px}
-@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DefenSched — Admin Dashboard</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0d0f14;
+      --surface: #13161d;
+      --surface2: #1a1e28;
+      --border: #252a38;
+      --border2: #2e3447;
+      --accent: #4f8ef7;
+      --accent2: #3a6fd8;
+      --accent-glow: rgba(79, 142, 247, .12);
+      --text: #e8eaf0;
+      --text2: #8b90a0;
+      --text3: #555b70;
+      --success: #3ecf8e;
+      --warning: #f5a623;
+      --danger: #e05c5c;
+      --purple: #a78bfa;
+      --teal: #2dd4bf;
+      --font: 'DM Sans', sans-serif;
+      --mono: 'DM Mono', monospace;
+      --radius: 10px;
+      --radius-lg: 16px
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      font-size: 14px
+    }
+
+    .sidebar {
+      width: 220px;
+      min-height: 100vh;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      z-index: 100
+    }
+
+    .logo {
+      padding: 24px 20px 20px;
+      border-bottom: 1px solid var(--border)
+    }
+
+    .logo-name {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -.3px
+    }
+
+    .logo-badge {
+      font-size: 10px;
+      font-weight: 500;
+      background: var(--accent-glow);
+      color: var(--accent);
+      border: 1px solid rgba(79, 142, 247, .25);
+      border-radius: 99px;
+      padding: 2px 8px;
+      margin-left: 6px
+    }
+
+    .logo-sub {
+      font-size: 11px;
+      color: var(--text3);
+      margin-top: 3px
+    }
+
+    .nav {
+      flex: 1;
+      padding: 12px 10px;
+      overflow-y: auto
+    }
+
+    .nav-section {
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--text3);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 8px 10px 4px;
+      margin-top: 8px
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 10px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      color: var(--text2);
+      font-size: 13px;
+      transition: all .15s;
+      margin-bottom: 1px;
+      user-select: none
+    }
+
+    .nav-item:hover {
+      background: var(--surface2);
+      color: var(--text)
+    }
+
+    .nav-item.active {
+      background: var(--accent-glow);
+      color: var(--accent);
+      font-weight: 500
+    }
+
+    .nav-item svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0
+    }
+
+    .nav-badge {
+      margin-left: auto;
+      font-size: 10px;
+      font-family: var(--mono);
+      background: var(--danger);
+      color: #fff;
+      border-radius: 99px;
+      padding: 1px 6px
+    }
+
+    .sidebar-user {
+      padding: 14px 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #4f8ef7, #a78bfa);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: #fff;
+      flex-shrink: 0
+    }
+
+    .user-name {
+      font-size: 13px;
+      font-weight: 500
+    }
+
+    .user-role {
+      font-size: 11px;
+      color: var(--text3)
+    }
+
+    .main {
+      margin-left: 220px;
+      flex: 1;
+      padding: 28px 32px;
+      min-height: 100vh
+    }
+
+    .section {
+      display: none
+    }
+
+    .section.active {
+      display: block
+    }
+
+    .page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 28px
+    }
+
+    .page-title {
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: -.5px
+    }
+
+    .page-sub {
+      font-size: 13px;
+      color: var(--text2);
+      margin-top: 3px
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      font-family: var(--font);
+      transition: all .15s
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff
+    }
+
+    .btn-primary:hover {
+      background: var(--accent2)
+    }
+
+    .btn-ghost {
+      background: var(--surface2);
+      color: var(--text2);
+      border: 1px solid var(--border2)
+    }
+
+    .btn-ghost:hover {
+      color: var(--text)
+    }
+
+    .btn-danger {
+      background: rgba(224, 92, 92, .1);
+      color: var(--danger);
+      border: 1px solid rgba(224, 92, 92, .2)
+    }
+
+    .btn-danger:hover {
+      background: rgba(224, 92, 92, .2)
+    }
+
+    .btn-sm {
+      padding: 5px 11px;
+      font-size: 12px
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 24px
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 18px 20px
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--text3);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      font-weight: 500;
+      margin-bottom: 8px
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 600;
+      font-family: var(--mono);
+      letter-spacing: -1px
+    }
+
+    .stat-change {
+      font-size: 11px;
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+      gap: 4px
+    }
+
+    .stat-up {
+      color: var(--success)
+    }
+
+    .stat-down {
+      color: var(--danger)
+    }
+
+    .stat-neutral {
+      color: var(--text3)
+    }
+
+    .stat-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      display: inline-block
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 16px;
+      margin-bottom: 16px
+    }
+
+    .content-grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px
+    }
+
+    .card-title {
+      font-size: 13px;
+      font-weight: 600
+    }
+
+    .card-action {
+      font-size: 12px;
+      color: var(--accent);
+      cursor: pointer
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse
+    }
+
+    .table th {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text3);
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      padding: 0 8px 10px 0;
+      text-align: left;
+      border-bottom: 1px solid var(--border)
+    }
+
+    .table td {
+      padding: 11px 8px 11px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--text2);
+      vertical-align: middle
+    }
+
+    .table tr:last-child td {
+      border-bottom: none
+    }
+
+    .table td:first-child {
+      color: var(--text);
+      font-weight: 500
+    }
+
+    .table tr:hover td {
+      background: var(--surface2)
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 3px 8px;
+      border-radius: 99px
+    }
+
+    .tag-confirmed {
+      background: rgba(62, 207, 142, .12);
+      color: var(--success)
+    }
+
+    .tag-pending {
+      background: rgba(245, 166, 35, .12);
+      color: var(--warning)
+    }
+
+    .tag-cancelled {
+      background: rgba(224, 92, 92, .12);
+      color: var(--danger)
+    }
+
+    .tag-completed {
+      background: rgba(79, 142, 247, .12);
+      color: var(--accent)
+    }
+
+    .tag-rescheduled {
+      background: rgba(167, 139, 250, .12);
+      color: var(--purple)
+    }
+
+    .schedule-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border)
+    }
+
+    .schedule-item:last-child {
+      border-bottom: none
+    }
+
+    .schedule-time {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text3);
+      min-width: 48px;
+      padding-top: 2px
+    }
+
+    .schedule-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      margin-top: 4px;
+      flex-shrink: 0
+    }
+
+    .schedule-dot.done {
+      background: var(--success)
+    }
+
+    .schedule-dot.warn {
+      background: var(--warning)
+    }
+
+    .schedule-name {
+      font-size: 13px;
+      font-weight: 500
+    }
+
+    .schedule-meta {
+      font-size: 11px;
+      color: var(--text3);
+      margin-top: 2px
+    }
+
+    .progress-wrap {
+      margin-bottom: 12px
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      margin-bottom: 5px
+    }
+
+    .progress-name {
+      color: var(--text2)
+    }
+
+    .progress-val {
+      font-weight: 500;
+      font-family: var(--mono)
+    }
+
+    .progress-bar {
+      height: 5px;
+      background: var(--surface2);
+      border-radius: 99px;
+      overflow: hidden
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 99px;
+      transition: width .4s
+    }
+
+    .log-item {
+      display: flex;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border)
+    }
+
+    .log-item:last-child {
+      border-bottom: none
+    }
+
+    .log-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0
+    }
+
+    .log-icon svg {
+      width: 14px;
+      height: 14px
+    }
+
+    .log-text {
+      font-size: 12px;
+      color: var(--text2);
+      line-height: 1.5
+    }
+
+    .log-text strong {
+      color: var(--text);
+      font-weight: 500
+    }
+
+    .log-time {
+      font-size: 11px;
+      color: var(--text3);
+      margin-top: 2px;
+      font-family: var(--mono)
+    }
+
+    .honor-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border)
+    }
+
+    .honor-row:last-child {
+      border-bottom: none
+    }
+
+    .honor-name {
+      font-size: 13px;
+      font-weight: 500
+    }
+
+    .honor-type {
+      font-size: 11px;
+      color: var(--text3);
+      margin-top: 1px
+    }
+
+    .honor-amount {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--success);
+      font-weight: 500
+    }
+
+    .form-group {
+      margin-bottom: 14px
+    }
+
+    .form-label {
+      font-size: 12px;
+      color: var(--text2);
+      font-weight: 500;
+      margin-bottom: 6px;
+      display: block
+    }
+
+    .form-input,
+    .form-select {
+      width: 100%;
+      padding: 9px 12px;
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-size: 13px;
+      outline: none;
+      font-family: var(--font);
+      transition: border-color .15s
+    }
+
+    .form-input:focus,
+    .form-select:focus {
+      border-color: var(--accent)
+    }
+
+    .form-select option {
+      background: var(--surface2)
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .75);
+      z-index: 999;
+      align-items: center;
+      justify-content: center
+    }
+
+    .modal-overlay.open {
+      display: flex
+    }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      width: 480px;
+      max-width: 95vw;
+      max-height: 90vh;
+      overflow-y: auto
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px
+    }
+
+    .modal-title {
+      font-size: 16px;
+      font-weight: 600
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text3);
+      cursor: pointer;
+      font-size: 20px;
+      line-height: 1
+    }
+
+    .live-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--success);
+      font-family: var(--mono)
+    }
+
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--success);
+      animation: pulse 2s infinite
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: .3
+      }
+    }
+
+    .skeleton {
+      background: linear-gradient(90deg, var(--surface2) 25%, var(--border) 50%, var(--surface2) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 6px;
+      height: 14px;
+      margin-bottom: 8px
+    }
+
+    @keyframes shimmer {
+      0% {
+        background-position: 200% 0
+      }
+
+      100% {
+        background-position: -200% 0
+      }
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 500
+    }
+
+    .badge-admin {
+      background: rgba(167, 139, 250, .15);
+      color: var(--purple)
+    }
+
+    .badge-faculty {
+      background: rgba(45, 212, 191, .15);
+      color: var(--teal)
+    }
+
+    .badge-student {
+      background: rgba(79, 142, 247, .15);
+      color: var(--accent)
+    }
+
+    .badge-active {
+      background: rgba(62, 207, 142, .15);
+      color: var(--success)
+    }
+
+    .badge-inactive {
+      background: rgba(224, 92, 92, .15);
+      color: var(--danger)
+    }
+
+    .db-search-wrap {
+      position: relative;
+      flex: 1;
+      max-width: 260px
+    }
+
+    .db-search-wrap svg {
+      position: absolute;
+      left: 9px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text3);
+      pointer-events: none
+    }
+
+    .db-search-input {
+      padding-left: 30px !important
+    }
+
+    .table-wrap {
+      overflow-x: auto
+    }
+
+    .db-tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--surface2);
+      padding: 4px;
+      border-radius: 10px
+    }
+
+    .db-tab {
+      padding: 5px 13px;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      color: var(--text2);
+      transition: all .15s
+    }
+
+    .db-tab.active {
+      background: var(--surface);
+      color: var(--text);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, .3)
+    }
+
+    .db-empty {
+      padding: 36px;
+      text-align: center;
+      color: var(--text3);
+      font-size: 13px
+    }
+
+    .section-tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--surface2);
+      padding: 4px;
+      border-radius: 10px;
+      margin-bottom: 20px
+    }
+
+    .section-tab {
+      padding: 6px 14px;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      color: var(--text2);
+      transition: all .15s
+    }
+
+    .section-tab.active {
+      background: var(--surface);
+      color: var(--text);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, .3)
+    }
+
+    .sub-panel {
+      display: none
+    }
+
+    .sub-panel.active {
+      display: block
+    }
+  </style>
 </head>
+
 <body>
-<aside class="sidebar">
-  <div class="logo">
-    <div><span class="logo-name">DefenSched</span><span class="logo-badge">Admin</span></div>
-    <div class="logo-sub">CICS · MSU Main Campus</div>
-  </div>
-  <nav class="nav">
-    <div class="nav-section">Main</div>
-    <div class="nav-item active" data-section="overview">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" stroke-width="1.8"/><rect x="14" y="3" width="7" height="7" rx="1" stroke-width="1.8"/><rect x="3" y="14" width="7" height="7" rx="1" stroke-width="1.8"/><rect x="14" y="14" width="7" height="7" rx="1" stroke-width="1.8"/></svg>
-      Overview
+  <aside class="sidebar">
+    <div class="logo">
+      <div><span class="logo-name">DefenSched</span><span class="logo-badge">Admin</span></div>
+      <div class="logo-sub">CICS · MSU Main Campus</div>
     </div>
-    <div class="nav-item" data-section="schedule-board">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" stroke-width="1.8"/><path d="M16 2v4M8 2v4M3 10h18" stroke-width="1.8"/></svg>
-      Defense schedule board
+    <nav class="nav">
+      <div class="nav-section">Main</div>
+      <div class="nav-item active" data-section="overview">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <rect x="3" y="3" width="7" height="7" rx="1" stroke-width="1.8" />
+          <rect x="14" y="3" width="7" height="7" rx="1" stroke-width="1.8" />
+          <rect x="3" y="14" width="7" height="7" rx="1" stroke-width="1.8" />
+          <rect x="14" y="14" width="7" height="7" rx="1" stroke-width="1.8" />
+        </svg>
+        Overview
+      </div>
+      <div class="nav-item" data-section="schedule-board">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <rect x="3" y="4" width="18" height="18" rx="2" stroke-width="1.8" />
+          <path d="M16 2v4M8 2v4M3 10h18" stroke-width="1.8" />
+        </svg>
+        Defense schedule board
+      </div>
+      <div class="nav-section">Management</div>
+      <div class="nav-item" data-section="appointments">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" stroke-width="1.8" stroke-linecap="round" />
+        </svg>
+        All appointments
+      </div>
+      <div class="nav-item" data-section="students">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"
+            stroke-width="1.8" stroke-linecap="round" />
+        </svg>
+        Group & students
+        <span class="nav-badge" id="pending-badge" style="display:none">0</span>
+      </div>
+      <div class="nav-item" data-section="faculty">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" stroke-width="1.8"
+            stroke-linecap="round" />
+        </svg>
+        Faculty management
+      </div>
+      <div class="nav-item" data-section="venues">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke-width="1.8" />
+          <polyline points="9 22 9 12 15 12 15 22" stroke-width="1.8" />
+        </svg>
+        Venue management
+      </div>
+      <div class="nav-section">Finance</div>
+      <div class="nav-item" data-section="honoraria">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <line x1="12" y1="1" x2="12" y2="23" stroke-width="1.8" />
+          <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" stroke-width="1.8" stroke-linecap="round" />
+        </svg>
+        Honoraria
+      </div>
+      <div class="nav-item" data-section="notifications">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8zM6 1v3M10 1v3M14 1v3"
+            stroke-width="1.8" stroke-linecap="round" />
+        </svg>
+        Notifications
+        <span class="nav-badge" id="notif-badge" style="display:none">0</span>
+      </div>
+      <div class="nav-section">System</div>
+      <div class="nav-item" data-section="settings">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="3" stroke-width="1.8" />
+          <path
+            d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"
+            stroke-width="1.8" />
+        </svg>
+        System Settings
+      </div>
+    </nav>
+    <div class="sidebar-user">
+      <div class="avatar" id="user-avatar">RC</div>
+      <div style="flex:1;min-width:0">
+        <div class="user-name" id="user-display-name">Loading…</div>
+        <div class="user-role">Research Coordinator</div>
+      </div>
+      <button id="logout-btn" title="Logout"
+        style="background:none;border:none;cursor:pointer;color:var(--text3);padding:4px;border-radius:6px;flex-shrink:0">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" stroke-width="2"
+            stroke-linecap="round" />
+        </svg>
+      </button>
     </div>
-    <div class="nav-section">Management</div>
-    <div class="nav-item" data-section="appointments">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" stroke-width="1.8" stroke-linecap="round"/></svg>
-      All appointments
-    </div>
-    <div class="nav-item" data-section="students">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke-width="1.8" stroke-linecap="round"/></svg>
-      Group & students
-      <span class="nav-badge" id="pending-badge" style="display:none">0</span>
-    </div>
-    <div class="nav-item" data-section="faculty">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" stroke-width="1.8" stroke-linecap="round"/></svg>
-      Faculty management
-    </div>
-    <div class="nav-item" data-section="venues">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke-width="1.8"/><polyline points="9 22 9 12 15 12 15 22" stroke-width="1.8"/></svg>
-      Venue management
-    </div>
-    <div class="nav-section">Finance</div>
-    <div class="nav-item" data-section="honoraria">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23" stroke-width="1.8"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" stroke-width="1.8" stroke-linecap="round"/></svg>
-      Honoraria
-    </div>
-    <div class="nav-item" data-section="notifications">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8zM6 1v3M10 1v3M14 1v3" stroke-width="1.8" stroke-linecap="round"/></svg>
-      Notifications
-      <span class="nav-badge" id="notif-badge" style="display:none">0</span>
-    </div>
-  </nav>
-  <div class="sidebar-user">
-    <div class="avatar" id="user-avatar">RC</div>
-    <div style="flex:1;min-width:0">
-      <div class="user-name" id="user-display-name">Loading…</div>
-      <div class="user-role">Research Coordinator</div>
-    </div>
-    <button id="logout-btn" title="Logout" style="background:none;border:none;cursor:pointer;color:var(--text3);padding:4px;border-radius:6px;flex-shrink:0">
-      <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" stroke-width="2" stroke-linecap="round"/></svg>
-    </button>
-  </div>
-</aside>
+  </aside>
 
-<main class="main">
+  <main class="main">
 
-<!-- OVERVIEW -->
-<div class="section active" id="section-overview">
-  <div class="page-header">
-    <div>
-      <div class="page-title" id="greeting">Good morning, Admin 👋</div>
-      <div class="page-sub" id="overview-sub">Loading…</div>
+    <!-- OVERVIEW -->
+    <div class="section active" id="section-overview">
+      <div class="page-header">
+        <div>
+          <div class="page-title" id="greeting">Good morning, Admin 👋</div>
+          <div class="page-sub" id="overview-sub">Loading…</div>
+        </div>
+        <span class="live-indicator"><span class="live-dot"></span>Live · auto-refresh 30s</span>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total appointments</div>
+          <div class="stat-value" id="stat-total">—</div>
+          <div class="stat-change stat-neutral"><span class="stat-dot" style="background:var(--text3)"></span>All time
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Confirmed</div>
+          <div class="stat-value" id="stat-confirmed">—</div>
+          <div class="stat-change stat-up"><span class="stat-dot" style="background:var(--success)"></span>Active
+            defenses</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Pending</div>
+          <div class="stat-value" id="stat-pending">—</div>
+          <div class="stat-change stat-down"><span class="stat-dot" style="background:var(--warning)"></span>Awaiting
+            action</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Honoraria owed</div>
+          <div class="stat-value" id="stat-honoraria" style="font-size:22px">₱—</div>
+          <div class="stat-change stat-neutral"><span class="stat-dot" style="background:var(--text3)"></span>Total
+            payable</div>
+        </div>
+      </div>
+      <div class="content-grid">
+        <div class="card">
+          <div class="card-header"><span class="card-title">Upcoming defenses</span><span class="card-action"
+              onclick="switchSection('schedule-board')">Full board →</span></div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Group</th>
+                <th>Date & Time</th>
+                <th>Venue</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="upcoming-tbody">
+              <tr>
+                <td colspan="5">
+                  <div class="skeleton"></div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="card">
+            <div class="card-header"><span class="card-title">Today's schedule</span><span
+                style="font-size:11px;color:var(--text3);font-family:var(--mono)" id="today-date">—</span></div>
+            <div id="today-schedule">
+              <div class="skeleton"></div>
+              <div class="skeleton"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><span class="card-title">Honoraria summary</span><span class="card-action"
+                onclick="switchSection('honoraria')">Full report →</span></div>
+            <div id="honor-summary">
+              <div class="skeleton"></div>
+              <div class="skeleton"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="content-grid-3">
+        <div class="card">
+          <div class="card-header"><span class="card-title">Appointment breakdown</span></div>
+          <div id="appt-breakdown">
+            <div class="skeleton"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Venue usage</span></div>
+          <div id="venue-breakdown">
+            <div class="skeleton"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Recent appointments</span><span class="card-action"
+              onclick="switchSection('appointments')">View all →</span></div>
+          <div id="recent-activity">
+            <div class="skeleton"></div>
+          </div>
+        </div>
+      </div>
     </div>
-    <span class="live-indicator"><span class="live-dot"></span>Live · auto-refresh 30s</span>
-  </div>
-  <div class="stats-grid">
-    <div class="stat-card"><div class="stat-label">Total appointments</div><div class="stat-value" id="stat-total">—</div><div class="stat-change stat-neutral"><span class="stat-dot" style="background:var(--text3)"></span>All time</div></div>
-    <div class="stat-card"><div class="stat-label">Confirmed</div><div class="stat-value" id="stat-confirmed">—</div><div class="stat-change stat-up"><span class="stat-dot" style="background:var(--success)"></span>Active defenses</div></div>
-    <div class="stat-card"><div class="stat-label">Pending</div><div class="stat-value" id="stat-pending">—</div><div class="stat-change stat-down"><span class="stat-dot" style="background:var(--warning)"></span>Awaiting action</div></div>
-    <div class="stat-card"><div class="stat-label">Honoraria owed</div><div class="stat-value" id="stat-honoraria" style="font-size:22px">₱—</div><div class="stat-change stat-neutral"><span class="stat-dot" style="background:var(--text3)"></span>Total payable</div></div>
-  </div>
-  <div class="content-grid">
-    <div class="card">
-      <div class="card-header"><span class="card-title">Upcoming defenses</span><span class="card-action" onclick="switchSection('schedule-board')">Full board →</span></div>
-      <table class="table"><thead><tr><th>Group</th><th>Date & Time</th><th>Venue</th><th>Status</th><th></th></tr></thead><tbody id="upcoming-tbody"><tr><td colspan="5"><div class="skeleton"></div></td></tr></tbody></table>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:16px">
-      <div class="card">
-        <div class="card-header"><span class="card-title">Today's schedule</span><span style="font-size:11px;color:var(--text3);font-family:var(--mono)" id="today-date">—</span></div>
-        <div id="today-schedule"><div class="skeleton"></div><div class="skeleton"></div></div>
+
+    <!-- SCHEDULE BOARD -->
+    <div class="section" id="section-schedule-board">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Defense Schedule Board</div>
+          <div class="page-sub">All appointments — real-time view</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <select id="board-filter" class="form-select" style="width:150px">
+            <option value="">All statuses</option>
+            <option value="pending">Pending</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
       </div>
       <div class="card">
-        <div class="card-header"><span class="card-title">Honoraria summary</span><span class="card-action" onclick="switchSection('honoraria')">Full report →</span></div>
-        <div id="honor-summary"><div class="skeleton"></div><div class="skeleton"></div></div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Group</th>
+              <th>Adviser</th>
+              <th>Panelists</th>
+              <th>Date & Time</th>
+              <th>Venue</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="board-tbody">
+            <tr>
+              <td colspan="7">
+                <div class="skeleton"></div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ALL APPOINTMENTS -->
+    <div class="section" id="section-appointments">
+      <div class="page-header">
+        <div>
+          <div class="page-title">All Appointments</div>
+          <div class="page-sub">Manage and update defense appointments — direct DB access</div>
+        </div>
+        <input type="text" id="appt-search" class="form-input" placeholder="Search group or adviser…"
+          style="width:220px">
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Group</th>
+                <th>Adviser</th>
+                <th>Date & Time</th>
+                <th>Venue</th>
+                <th>Status</th>
+                <th>Change status</th>
+              </tr>
+            </thead>
+            <tbody id="appt-tbody">
+              <tr>
+                <td colspan="7">
+                  <div class="skeleton"></div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- STUDENTS / GROUPS -->
+    <div class="section" id="section-students">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Groups & Students</div>
+          <div class="page-sub">Student accounts, appointment status and direct DB editing</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <div class="db-search-wrap">
+            <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="8" stroke-width="2" />
+              <path d="M21 21l-4.35-4.35" stroke-width="2" stroke-linecap="round" />
+            </svg>
+            <input class="form-input db-search-input" id="student-search" placeholder="Search name or email…"
+              oninput="loadStudents()">
+          </div>
+          <button class="btn btn-primary" onclick="openCreateUserModal('student')"><svg width="13" height="13"
+              fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path d="M12 5v14M5 12h14" stroke-width="2.5" stroke-linecap="round" />
+            </svg>Add group</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Group name</th>
+                <th>Email</th>
+                <th>Group tag</th>
+                <th>Defense date</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="students-tbody">
+              <tr>
+                <td colspan="7">
+                  <div class="skeleton"></div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- FACULTY -->
+    <div class="section" id="section-faculty">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Faculty Management</div>
+          <div class="page-sub">Faculty accounts, assignments, honoraria and direct DB editing</div>
+        </div>
+        <button class="btn btn-primary" onclick="openCreateUserModal('faculty')"><svg width="14" height="14" fill="none"
+            stroke="currentColor" viewBox="0 0 24 24">
+            <line x1="12" y1="5" x2="12" y2="19" stroke-width="2" />
+            <line x1="5" y1="12" x2="19" y2="12" stroke-width="2" />
+          </svg>Add faculty</button>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th>Adviser sessions</th>
+                <th>Panel sessions</th>
+                <th>Honoraria</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="faculty-tbody">
+              <tr>
+                <td colspan="8">
+                  <div class="skeleton"></div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- VENUES -->
+    <div class="section" id="section-venues">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Venue Management</div>
+          <div class="page-sub">Defense rooms and virtual meeting spaces — direct DB access</div>
+        </div>
+        <button class="btn btn-primary" onclick="openVenueModal()"><svg width="14" height="14" fill="none"
+            stroke="currentColor" viewBox="0 0 24 24">
+            <line x1="12" y1="5" x2="12" y2="19" stroke-width="2" />
+            <line x1="5" y1="12" x2="19" y2="12" stroke-width="2" />
+          </svg>Add venue</button>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Venue</th>
+                <th>Type</th>
+                <th>Capacity</th>
+                <th>Active bookings</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="venues-tbody">
+              <tr>
+                <td colspan="7">
+                  <div class="skeleton"></div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- HONORARIA -->
+    <div class="section" id="section-honoraria">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Honoraria Report</div>
+          <div class="page-sub">Faculty pay based on confirmed / completed defenses</div>
+        </div>
+        <button class="btn btn-ghost" onclick="openRatesModal()">⚙ Update rates</button>
+      </div>
+      <div class="stats-grid" style="grid-template-columns:repeat(3,1fr)">
+        <div class="stat-card">
+          <div class="stat-label">Panelist rate</div>
+          <div class="stat-value" id="panelist-rate" style="font-size:22px">₱—</div>
+          <div class="stat-change stat-neutral"><span class="stat-dot" style="background:var(--text3)"></span>Per
+            session</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Adviser rate</div>
+          <div class="stat-value" id="adviser-rate" style="font-size:22px">₱—</div>
+          <div class="stat-change stat-neutral"><span class="stat-dot" style="background:var(--text3)"></span>Per
+            session</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Grand total owed</div>
+          <div class="stat-value" id="grand-total" style="font-size:22px">₱—</div>
+          <div class="stat-change stat-up"><span class="stat-dot" style="background:var(--success)"></span>All faculty
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Faculty breakdown</span></div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Faculty</th>
+              <th>Adviser sessions</th>
+              <th>Panel sessions</th>
+              <th>Adviser pay</th>
+              <th>Panel pay</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody id="honoraria-tbody">
+            <tr>
+              <td colspan="6">
+                <div class="skeleton"></div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- NOTIFICATIONS -->
+    <div class="section" id="section-notifications">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Notifications</div>
+          <div class="page-sub">System alerts and activity notifications</div>
+        </div>
+        <button class="btn btn-ghost" onclick="markAllRead()">Mark all read</button>
+      </div>
+      <div class="card" id="notif-list" style="padding:0">
+        <div style="padding:20px">
+          <div class="skeleton"></div>
+          <div class="skeleton"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SYSTEM SETTINGS -->
+    <div class="section" id="section-settings">
+      <div class="page-header">
+        <div>
+          <div class="page-title">System Settings</div>
+          <div class="page-sub">System-wide scheduling configuration</div>
+        </div>
+      </div>
+      <div class="card" style="max-width:500px">
+        <div style="padding:20px;display:flex;flex-direction:column;gap:14px" id="settings-form">
+          <div class="db-empty">Loading…</div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- MODAL: Edit/Add User (shared) -->
+  <div class="modal-overlay" id="user-modal">
+    <div class="modal" style="width:520px">
+      <div class="modal-header"><span class="modal-title" id="user-modal-title">Edit User</span><button
+          class="modal-close" onclick="closeModal('user-modal')">×</button></div>
+      <input type="hidden" id="edit-uid">
+      <div class="form-group"><label class="form-label">Full Name</label><input class="form-input" id="edit-name"
+          placeholder="e.g. Dr. Jose Reyes"></div>
+      <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="edit-email"
+          type="email" placeholder="user@cics.edu.ph"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="form-group"><label class="form-label">Role</label><select class="form-select" id="edit-role"
+            onchange="toggleGroupField()">
+            <option value="admin">Admin</option>
+            <option value="faculty">Faculty</option>
+            <option value="student">Student</option>
+          </select></div>
+        <div class="form-group" id="group-field"><label class="form-label">Group Name</label><input class="form-input"
+            id="edit-group" placeholder="e.g. Group Alpha"></div>
+      </div>
+      <div class="form-group"><label class="form-label">New Password <span
+            style="font-weight:400;color:var(--text3);text-transform:none">(blank = keep current)</span></label><input
+          class="form-input" id="edit-password" type="password" placeholder="••••••••"></div>
+      <div class="form-group" id="status-field"><label class="form-label">Status</label><select class="form-select"
+          id="edit-status">
+          <option value="1">Active</option>
+          <option value="0">Inactive</option>
+        </select></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:20px">
+        <button class="btn btn-ghost" onclick="closeModal('user-modal')">Cancel</button>
+        <button class="btn btn-primary" id="save-user-btn" onclick="saveUser()">Save</button>
       </div>
     </div>
   </div>
-  <div class="content-grid-3">
-    <div class="card"><div class="card-header"><span class="card-title">Appointment breakdown</span></div><div id="appt-breakdown"><div class="skeleton"></div></div></div>
-    <div class="card"><div class="card-header"><span class="card-title">Venue usage</span></div><div id="venue-breakdown"><div class="skeleton"></div></div></div>
-    <div class="card"><div class="card-header"><span class="card-title">Recent appointments</span><span class="card-action" onclick="switchSection('appointments')">View all →</span></div><div id="recent-activity"><div class="skeleton"></div></div></div>
-  </div>
-</div>
 
-<!-- SCHEDULE BOARD -->
-<div class="section" id="section-schedule-board">
-  <div class="page-header">
-    <div><div class="page-title">Defense Schedule Board</div><div class="page-sub">All appointments — real-time view</div></div>
-    <div style="display:flex;gap:8px">
-      <select id="board-filter" class="form-select" style="width:150px">
-        <option value="">All statuses</option>
-        <option value="pending">Pending</option>
-        <option value="confirmed">Confirmed</option>
-        <option value="completed">Completed</option>
-        <option value="cancelled">Cancelled</option>
+  <!-- MODAL: Status -->
+  <div class="modal-overlay" id="status-modal">
+    <div class="modal">
+      <div class="modal-header"><span class="modal-title">Update Appointment Status</span><button class="modal-close"
+          onclick="closeModal('status-modal')">×</button></div>
+      <div class="form-group"><label class="form-label">Appointment</label>
+        <div id="status-appt-info"
+          style="font-size:13px;color:var(--text2);padding:10px;background:var(--surface2);border-radius:var(--radius)">
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">New Status</label><select id="status-select"
+          class="form-select">
+          <option value="pending">Pending</option>
+          <option value="confirmed">Confirmed</option>
+          <option value="rescheduled">Rescheduled</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
+        </select></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:20px"><button class="btn btn-ghost"
+          onclick="closeModal('status-modal')">Cancel</button><button class="btn btn-primary"
+          onclick="submitStatusUpdate()">Update</button></div>
+    </div>
+  </div>
+
+  <!-- MODAL: Create User (quick) -->
+  <div class="modal-overlay" id="create-user-modal">
+    <div class="modal">
+      <div class="modal-header"><span class="modal-title" id="create-user-title">Add User</span><button
+          class="modal-close" onclick="closeModal('create-user-modal')">×</button></div>
+      <div class="form-group"><label class="form-label">Name</label><input type="text" class="form-input" id="cu-name"
+          placeholder="Full name or group name"></div>
+      <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input"
+          id="cu-email" placeholder="email@cics.edu.ph"></div>
+      <div class="form-group" id="cu-groupname-wrap"><label class="form-label">Group Name (for student)</label><input
+          type="text" class="form-input" id="cu-groupname" placeholder="e.g. Group Gamma"></div>
+      <div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input"
+          id="cu-password" placeholder="Minimum 8 characters"></div>
+      <input type="hidden" id="cu-role">
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:20px"><button class="btn btn-ghost"
+          onclick="closeModal('create-user-modal')">Cancel</button><button class="btn btn-primary"
+          onclick="submitCreateUser()">Create</button></div>
+    </div>
+  </div>
+
+  <!-- MODAL: Venue -->
+  <div class="modal-overlay" id="venue-modal">
+    <div class="modal">
+      <div class="modal-header"><span class="modal-title" id="venue-modal-title">Add Venue</span><button
+          class="modal-close" onclick="closeModal('venue-modal')">×</button></div>
+      <div class="form-group"><label class="form-label">Venue Name</label><input type="text" class="form-input"
+          id="v-name" placeholder="e.g. CICS Room 301"></div>
+      <div class="form-group"><label class="form-label">Type</label><select class="form-select" id="v-type">
+          <option value="physical">Physical</option>
+          <option value="virtual">Virtual</option>
+        </select></div>
+      <div class="form-group"><label class="form-label">Capacity</label><input type="number" class="form-input"
+          id="v-capacity" value="15" min="1"></div>
+      <input type="hidden" id="v-id">
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:20px"><button class="btn btn-ghost"
+          onclick="closeModal('venue-modal')">Cancel</button><button class="btn btn-primary"
+          onclick="submitVenue()">Save</button></div>
+    </div>
+  </div>
+
+  <!-- MODAL: Rates -->
+  <div class="modal-overlay" id="rates-modal">
+    <div class="modal">
+      <div class="modal-header"><span class="modal-title">Update Honoraria Rates</span><button class="modal-close"
+          onclick="closeModal('rates-modal')">×</button></div>
+      <div class="form-group"><label class="form-label">Panelist rate per session (₱)</label><input type="number"
+          class="form-input" id="r-panelist" placeholder="1500"></div>
+      <div class="form-group"><label class="form-label">Adviser rate per session (₱)</label><input type="number"
+          class="form-input" id="r-adviser" placeholder="2000"></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:20px"><button class="btn btn-ghost"
+          onclick="closeModal('rates-modal')">Cancel</button><button class="btn btn-primary"
+          onclick="submitRates()">Save</button></div>
+    </div>
+  </div>
+
+  <script>
+    let _user = null, _appointments = [], _allUsers = [], _venues = [], _honoraria = { report: [], grand_total: 0, rates: {} }, _statusApptId = null;
+
+    // ── NAVIGATION (single clean handler, no duplicates) ──────────────
+    const SECTION_LOADERS = {
+      'overview': () => loadOverview(),
+      'schedule-board': () => loadScheduleBoard(),
+      'appointments': () => loadAppts(),
+      'students': () => loadStudents(),
+      'faculty': () => loadFaculty(),
+      'venues': () => loadVenues(),
+      'honoraria': () => loadHonoraria(),
+      'notifications': () => loadNotifications(),
+      'settings': () => loadSettings()
+    };
+
+    function switchSection(id) {
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.toggle('active', el.dataset.section === id));
+      document.querySelectorAll('.section').forEach(el => el.classList.toggle('active', el.id === 'section-' + id));
+      if (SECTION_LOADERS[id]) SECTION_LOADERS[id]();
+    }
+
+    document.querySelectorAll('.nav-item[data-section]').forEach(el => {
+      el.addEventListener('click', () => switchSection(el.dataset.section));
+    });
+
+    // ── MODALS ────────────────────────────────────────────────────────
+    function openModal(id) { document.getElementById(id).classList.add('open') }
+    function closeModal(id) { document.getElementById(id).classList.remove('open') }
+    document.querySelectorAll('.modal-overlay').forEach(el => el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open') }));
+
+    // ── TOAST ─────────────────────────────────────────────────────────
+    function showToast(msg, type = 'info') {
+      let c = document.getElementById('tc');
+      if (!c) { c = document.createElement('div'); c.id = 'tc'; c.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px'; document.body.appendChild(c) }
+      const colors = { success: '#3ecf8e', error: '#e05c5c', warning: '#f5a623', info: '#4f8ef7' };
+      const t = document.createElement('div');
+      t.style.cssText = `background:var(--surface);border:1px solid var(--border2);border-left:3px solid ${colors[type] || colors.info};color:var(--text);padding:12px 18px;border-radius:10px;font-size:13px;box-shadow:0 4px 20px rgba(0,0,0,.5)`;
+      t.textContent = msg; c.appendChild(t); setTimeout(() => t.remove(), 4000);
+    }
+
+    // ── HELPERS ───────────────────────────────────────────────────────
+    function fmtStatus(s) { const m = { pending: 'tag-pending', confirmed: 'tag-confirmed', cancelled: 'tag-cancelled', completed: 'tag-completed', rescheduled: 'tag-rescheduled' }; return `<span class="tag ${m[s] || ''}">${s}</span>` }
+    function fmtDate(d) { if (!d) return '—'; return new Date(d + 'T00:00:00').toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' }) }
+    function fmtPeso(n) { return '₱' + Number(n || 0).toLocaleString('en-PH', { minimumFractionDigits: 2 }) }
+    function todayStr() { return new Date().toISOString().split('T')[0] }
+    function getHr() { const h = new Date().getHours(); return h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening' }
+
+    // ── FETCH ALL ─────────────────────────────────────────────────────
+    async function fetchAll() {
+      try {
+        const [a, u, v, h, n] = await Promise.all([fetch('/api/appointments'), fetch('/api/users'), fetch('/api/venues'), fetch('/api/honoraria/report'), fetch('/api/notifications')]);
+        _appointments = a.ok ? (await a.json()).appointments : [];
+        _allUsers = u.ok ? (await u.json()).users : [];
+        _venues = v.ok ? (await v.json()).venues : [];
+        _honoraria = h.ok ? await h.json() : { report: [], grand_total: 0, rates: {} };
+        const nd = n.ok ? await n.json() : { notifications: [], unread: 0 };
+        const nb = document.getElementById('notif-badge');
+        if (nb) { nb.textContent = nd.unread; nb.style.display = nd.unread > 0 ? '' : 'none' }
+        const pb = document.getElementById('pending-badge');
+        if (pb) { const p = _appointments.filter(a => a.status === 'pending').length; pb.textContent = p; pb.style.display = p > 0 ? '' : 'none' }
+      } catch (e) { console.error(e) }
+    }
+
+    // ── OVERVIEW ─────────────────────────────────────────────────────
+    function loadOverview() {
+      const total = _appointments.length, confirmed = _appointments.filter(a => a.status === 'confirmed').length, pending = _appointments.filter(a => a.status === 'pending').length;
+      document.getElementById('stat-total').textContent = total;
+      document.getElementById('stat-confirmed').textContent = confirmed;
+      document.getElementById('stat-pending').textContent = pending;
+      document.getElementById('stat-honoraria').textContent = fmtPeso(_honoraria.grand_total);
+      document.getElementById('greeting').textContent = `${getHr()}, ${_user?.name || 'Admin'} 👋`;
+      const today = todayStr();
+      const todayFmt = new Date().toLocaleDateString('en-PH', { weekday: 'long', month: 'long', day: 'numeric' });
+      document.getElementById('overview-sub').textContent = `${todayFmt} · ${_appointments.filter(a => a.date === today).length} defense(s) today`;
+      document.getElementById('today-date').textContent = new Date().toLocaleDateString('en-PH', { month: 'short', day: 'numeric' });
+      const upcoming = _appointments.filter(a => a.status !== 'cancelled' && a.status !== 'completed').sort((a, b) => a.date < b.date ? -1 : 1).slice(0, 6);
+      document.getElementById('upcoming-tbody').innerHTML = upcoming.length ? upcoming.map(a => `<tr><td>${a.group_name}</td><td style="font-family:var(--mono);font-size:12px">${fmtDate(a.date)} · ${a.time_slot || '—'}</td><td>${a.venue_name || '—'}</td><td>${fmtStatus(a.status)}</td><td><button class="btn btn-ghost btn-sm" onclick="openStatusModal(${a.id},'${a.group_name.replace(/'/g, "\\'")}','${a.status}')">Update</button></td></tr>`).join('') : '<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:20px">No upcoming appointments</td></tr>';
+      const todayA = _appointments.filter(a => a.date === today).sort((a, b) => a.time_slot > b.time_slot ? 1 : -1);
+      document.getElementById('today-schedule').innerHTML = todayA.length ? todayA.map(a => `<div class="schedule-item"><div class="schedule-time">${(a.time_slot || '').split('-')[0]}</div><div class="schedule-dot ${a.status === 'completed' ? 'done' : a.status === 'pending' ? 'warn' : ''}"></div><div><div class="schedule-name">${a.group_name}</div><div class="schedule-meta">${a.venue_name || '—'} · ${a.status}</div></div></div>`).join('') : '<div style="color:var(--text3);font-size:13px;padding:12px 0">No defenses today</div>';
+      const top4 = [..._honoraria.report].sort((a, b) => b.total - a.total).slice(0, 4);
+      document.getElementById('honor-summary').innerHTML = top4.length ? top4.map(f => `<div class="honor-row"><div><div class="honor-name">${f.name}</div><div class="honor-type">${f.adviser_groups} advising · ${f.panel_sessions} panels</div></div><div class="honor-amount">${fmtPeso(f.total)}</div></div>`).join('') : '<div style="color:var(--text3);font-size:13px;padding:12px 0">No honoraria yet</div>';
+      const statuses = ['confirmed', 'pending', 'completed', 'cancelled'];
+      const sColors = { confirmed: 'var(--success)', pending: 'var(--warning)', completed: 'var(--accent)', cancelled: 'var(--danger)' };
+      document.getElementById('appt-breakdown').innerHTML = statuses.map(s => { const cnt = _appointments.filter(a => a.status === s).length; const pct = total ? Math.round(cnt / total * 100) : 0; return `<div class="progress-wrap"><div class="progress-label"><span class="progress-name" style="text-transform:capitalize">${s}</span><span class="progress-val">${cnt}/${total}</span></div><div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${sColors[s]}"></div></div></div>` }).join('');
+      document.getElementById('venue-breakdown').innerHTML = _venues.slice(0, 4).map(v => { const cnt = _appointments.filter(a => a.venue_id === v.id && a.status !== 'cancelled').length; const col = cnt >= 4 ? 'var(--danger)' : cnt >= 2 ? 'var(--warning)' : 'var(--success)'; return `<div class="progress-wrap"><div class="progress-label"><span class="progress-name">${v.name}</span><span class="progress-val">${cnt} bookings</span></div><div class="progress-bar"><div class="progress-fill" style="width:${Math.min(cnt * 20, 100)}%;background:${col}"></div></div></div>` }).join('') || '<div style="color:var(--text3);font-size:13px">No venues</div>';
+      const recent = [..._appointments].sort((a, b) => b.id - a.id).slice(0, 4);
+      document.getElementById('recent-activity').innerHTML = recent.map(a => `<div class="log-item"><div class="log-icon" style="background:rgba(79,142,247,.1)"><svg fill="none" stroke="var(--accent)" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" stroke-width="1.8"/><path d="M16 2v4M8 2v4M3 10h18" stroke-width="1.8"/></svg></div><div><div class="log-text"><strong>${a.group_name}</strong> — ${a.status}</div><div class="log-time">${fmtDate(a.date)} · ${a.venue_name || '—'}</div></div></div>`).join('') || '<div style="color:var(--text3);font-size:13px">No appointments</div>';
+    }
+
+    // ── SCHEDULE BOARD ────────────────────────────────────────────────
+    function loadScheduleBoard() {
+      document.getElementById('board-filter').onchange = loadScheduleBoard;
+      const f = document.getElementById('board-filter').value;
+      const rows = _appointments.filter(a => !f || a.status === f).sort((a, b) => a.date < b.date ? -1 : 1);
+      document.getElementById('board-tbody').innerHTML = rows.length ? rows.map(a => `<tr><td><div style="font-weight:600">${a.group_name}</div></td><td>${a.adviser_name || '—'}</td><td style="font-size:12px">${(a.panelists || []).map(p => p.name).join(', ') || '—'}</td><td style="font-family:var(--mono);font-size:12px">${fmtDate(a.date)}<br>${a.time_slot || '—'}</td><td>${a.venue_name || '—'}</td><td>${fmtStatus(a.status)}</td><td><button class="btn btn-ghost btn-sm" onclick="openStatusModal(${a.id},'${a.group_name.replace(/'/g, "\\'")}','${a.status}')">Update</button></td></tr>`).join('') : '<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:30px">No appointments found</td></tr>';
+    }
+
+    // ── ALL APPOINTMENTS (with inline DB status edit) ─────────────────
+    function loadAppts() {
+      document.getElementById('appt-search').oninput = loadAppts;
+      const q = (document.getElementById('appt-search').value || '').toLowerCase();
+      const rows = _appointments.filter(a => !q || a.group_name.toLowerCase().includes(q) || (a.adviser_name || '').toLowerCase().includes(q));
+      document.getElementById('appt-tbody').innerHTML = rows.length ? rows.map(a => `<tr>
+    <td style="color:var(--text3);font-family:var(--mono);font-size:11px">#${a.id}</td>
+    <td>${a.group_name}</td>
+    <td>${a.adviser_name || '—'}</td>
+    <td style="font-family:var(--mono);font-size:12px">${fmtDate(a.date)} · ${a.time_slot || '—'}</td>
+    <td>${a.venue_name || '—'}</td>
+    <td>${fmtStatus(a.status)}</td>
+    <td>
+      <select class="form-select" style="padding:5px 9px;font-size:12px;width:130px" onchange="inlineUpdateApptStatus(${a.id},this.value)">
+        ${['pending', 'confirmed', 'rescheduled', 'completed', 'cancelled'].map(s => `<option value="${s}"${a.status === s ? ' selected' : ''}>${s}</option>`).join('')}
       </select>
-    </div>
-  </div>
-  <div class="card">
-    <table class="table"><thead><tr><th>Group</th><th>Adviser</th><th>Panelists</th><th>Date & Time</th><th>Venue</th><th>Status</th><th>Action</th></tr></thead><tbody id="board-tbody"><tr><td colspan="7"><div class="skeleton"></div></td></tr></tbody></table>
-  </div>
-</div>
+    </td>
+  </tr>`).join('') : '<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:30px">No appointments</td></tr>';
+    }
 
-<!-- ALL APPOINTMENTS -->
-<div class="section" id="section-appointments">
-  <div class="page-header">
-    <div><div class="page-title">All Appointments</div><div class="page-sub">Manage and update defense appointments</div></div>
-    <input type="text" id="appt-search" class="form-input" placeholder="Search group or adviser…" style="width:220px">
-  </div>
-  <div class="card">
-    <table class="table"><thead><tr><th>Group</th><th>Adviser</th><th>Date & Time</th><th>Venue</th><th>Status</th><th>Action</th></tr></thead><tbody id="appt-tbody"><tr><td colspan="6"><div class="skeleton"></div></td></tr></tbody></table>
-  </div>
-</div>
+    async function inlineUpdateApptStatus(id, status) {
+      const res = await fetch(`/api/appointments/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status }) });
+      if (res.ok) { showToast('Status updated!', 'success'); await refresh(); }
+      else showToast('Update failed', 'error');
+    }
 
-<!-- STUDENTS -->
-<div class="section" id="section-students">
-  <div class="page-header">
-    <div><div class="page-title">Groups & Students</div><div class="page-sub">Student group accounts and appointment status</div></div>
-    <button class="btn btn-primary" onclick="openCreateUserModal('student')"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19" stroke-width="2"/><line x1="5" y1="12" x2="19" y2="12" stroke-width="2"/></svg>Add group</button>
-  </div>
-  <div class="card">
-    <table class="table"><thead><tr><th>Group name</th><th>Email</th><th>Defense date</th><th>Status</th><th>Action</th></tr></thead><tbody id="students-tbody"><tr><td colspan="5"><div class="skeleton"></div></td></tr></tbody></table>
-  </div>
-</div>
+    // ── STUDENTS (with full DB edit) ──────────────────────────────────
+    function loadStudents() {
+      const q = (document.getElementById('student-search')?.value || '').toLowerCase();
+      const students = _allUsers.filter(u => u.role === 'student' && (!q || u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q)));
+      document.getElementById('students-tbody').innerHTML = students.length ? students.map(s => {
+        const appt = _appointments.find(a => a.student_id === s.id) || null;
+        return `<tr>
+      <td style="color:var(--text3);font-family:var(--mono);font-size:11px">#${s.id}</td>
+      <td>${s.name}</td>
+      <td style="font-size:12px;color:var(--text3)">${s.email}</td>
+      <td style="font-size:12px;color:var(--text3)">${s.group_name || '—'}</td>
+      <td>${appt ? `${fmtDate(appt.date)} · ${appt.time_slot || '—'}` : '<span style="color:var(--text3)">Not scheduled</span>'}</td>
+      <td><span class="badge ${s.is_active ? 'badge-active' : 'badge-inactive'}">${s.is_active ? 'Active' : 'Inactive'}</span></td>
+      <td><div style="display:flex;gap:6px">
+        <button class="btn btn-ghost btn-sm" onclick='openEditUserModal(${JSON.stringify(s)})'>Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="deactivateUser(${s.id},'${s.name.replace(/'/g, "\\'")}')">Deactivate</button>
+      </div></td>
+    </tr>`;
+      }).join('') : '<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:30px">No student groups found</td></tr>';
+    }
 
-<!-- FACULTY -->
-<div class="section" id="section-faculty">
-  <div class="page-header">
-    <div><div class="page-title">Faculty Management</div><div class="page-sub">Faculty accounts, assignments, and honoraria</div></div>
-    <button class="btn btn-primary" onclick="openCreateUserModal('faculty')"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19" stroke-width="2"/><line x1="5" y1="12" x2="19" y2="12" stroke-width="2"/></svg>Add faculty</button>
-  </div>
-  <div class="card">
-    <table class="table"><thead><tr><th>Name</th><th>Email</th><th>Adviser sessions</th><th>Panel sessions</th><th>Honoraria</th><th>Action</th></tr></thead><tbody id="faculty-tbody"><tr><td colspan="6"><div class="skeleton"></div></td></tr></tbody></table>
-  </div>
-</div>
+    // ── FACULTY (with full DB edit) ───────────────────────────────────
+    function loadFaculty() {
+      const faculty = _allUsers.filter(u => u.role === 'faculty');
+      document.getElementById('faculty-tbody').innerHTML = faculty.length ? faculty.map(f => {
+        const hr = _honoraria.report.find(r => r.id === f.id) || { adviser_groups: 0, panel_sessions: 0, total: 0 };
+        return `<tr>
+      <td style="color:var(--text3);font-family:var(--mono);font-size:11px">#${f.id}</td>
+      <td>${f.name}</td>
+      <td style="font-size:12px;color:var(--text3)">${f.email}</td>
+      <td><span class="badge ${f.is_active ? 'badge-active' : 'badge-inactive'}">${f.is_active ? 'Active' : 'Inactive'}</span></td>
+      <td style="font-family:var(--mono)">${hr.adviser_groups}</td>
+      <td style="font-family:var(--mono)">${hr.panel_sessions}</td>
+      <td style="font-family:var(--mono);color:var(--success)">${fmtPeso(hr.total)}</td>
+      <td><div style="display:flex;gap:6px">
+        <button class="btn btn-ghost btn-sm" onclick='openEditUserModal(${JSON.stringify(f)})'>Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="deactivateUser(${f.id},'${f.name.replace(/'/g, "\\'")}')">Deactivate</button>
+      </div></td>
+    </tr>`;
+      }).join('') : '<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:30px">No faculty found</td></tr>';
+    }
 
-<!-- VENUES -->
-<div class="section" id="section-venues">
-  <div class="page-header">
-    <div><div class="page-title">Venue Management</div><div class="page-sub">Defense rooms and virtual meeting spaces</div></div>
-    <button class="btn btn-primary" onclick="openVenueModal()"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19" stroke-width="2"/><line x1="5" y1="12" x2="19" y2="12" stroke-width="2"/></svg>Add venue</button>
-  </div>
-  <div class="card">
-    <table class="table"><thead><tr><th>Venue</th><th>Type</th><th>Capacity</th><th>Active bookings</th><th>Status</th><th>Action</th></tr></thead><tbody id="venues-tbody"><tr><td colspan="6"><div class="skeleton"></div></td></tr></tbody></table>
-  </div>
-</div>
+    // ── VENUES ────────────────────────────────────────────────────────
+    function loadVenues() {
+      document.getElementById('venues-tbody').innerHTML = _venues.length ? _venues.map(v => {
+        const cnt = _appointments.filter(a => a.venue_id === v.id && a.status !== 'cancelled').length;
+        return `<tr>
+      <td style="color:var(--text3);font-family:var(--mono);font-size:11px">#${v.id}</td>
+      <td>${v.name}</td>
+      <td><span class="badge ${v.type === 'physical' ? 'badge-faculty' : 'badge-admin'}">${v.type}</span></td>
+      <td style="font-family:var(--mono)">${v.capacity}</td>
+      <td style="font-family:var(--mono)">${cnt}</td>
+      <td><span class="tag ${v.is_active ? 'tag-confirmed' : 'tag-cancelled'}">${v.is_active ? 'Active' : 'Inactive'}</span></td>
+      <td style="display:flex;gap:6px">
+        <button class="btn btn-ghost btn-sm" onclick="openVenueModal(${v.id},'${v.name.replace(/'/g, "\\'")}','${v.type}',${v.capacity})">Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteVenue(${v.id})">Remove</button>
+      </td>
+    </tr>`;
+      }).join('') : '<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:30px">No venues</td></tr>';
+    }
 
-<!-- HONORARIA -->
-<div class="section" id="section-honoraria">
-  <div class="page-header">
-    <div><div class="page-title">Honoraria Report</div><div class="page-sub">Faculty pay based on confirmed / completed defenses</div></div>
-    <button class="btn btn-ghost" onclick="openRatesModal()">⚙ Update rates</button>
-  </div>
-  <div class="stats-grid" style="grid-template-columns:repeat(3,1fr)">
-    <div class="stat-card"><div class="stat-label">Panelist rate</div><div class="stat-value" id="panelist-rate" style="font-size:22px">₱—</div><div class="stat-change stat-neutral"><span class="stat-dot" style="background:var(--text3)"></span>Per session</div></div>
-    <div class="stat-card"><div class="stat-label">Adviser rate</div><div class="stat-value" id="adviser-rate" style="font-size:22px">₱—</div><div class="stat-change stat-neutral"><span class="stat-dot" style="background:var(--text3)"></span>Per session</div></div>
-    <div class="stat-card"><div class="stat-label">Grand total owed</div><div class="stat-value" id="grand-total" style="font-size:22px">₱—</div><div class="stat-change stat-up"><span class="stat-dot" style="background:var(--success)"></span>All faculty</div></div>
-  </div>
-  <div class="card">
-    <div class="card-header"><span class="card-title">Faculty breakdown</span></div>
-    <table class="table"><thead><tr><th>Faculty</th><th>Adviser sessions</th><th>Panel sessions</th><th>Adviser pay</th><th>Panel pay</th><th>Total</th></tr></thead><tbody id="honoraria-tbody"><tr><td colspan="6"><div class="skeleton"></div></td></tr></tbody></table>
-  </div>
-</div>
+    // ── HONORARIA ─────────────────────────────────────────────────────
+    function loadHonoraria() {
+      const r = _honoraria.rates || {};
+      document.getElementById('panelist-rate').textContent = fmtPeso(r.panelist || 0);
+      document.getElementById('adviser-rate').textContent = fmtPeso(r.adviser || 0);
+      document.getElementById('grand-total').textContent = fmtPeso(_honoraria.grand_total || 0);
+      document.getElementById('honoraria-tbody').innerHTML = _honoraria.report.length ? _honoraria.report.map(f => `<tr><td>${f.name}</td><td style="font-family:var(--mono)">${f.adviser_groups}</td><td style="font-family:var(--mono)">${f.panel_sessions}</td><td style="font-family:var(--mono)">${fmtPeso(f.adviser_honoraria)}</td><td style="font-family:var(--mono)">${fmtPeso(f.panel_honoraria)}</td><td style="font-family:var(--mono);color:var(--success);font-weight:600">${fmtPeso(f.total)}</td></tr>`).join('') : '<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:30px">No data. Honoraria computed from confirmed/completed appointments.</td></tr>';
+    }
 
-<!-- NOTIFICATIONS -->
-<div class="section" id="section-notifications">
-  <div class="page-header">
-    <div><div class="page-title">Notifications</div><div class="page-sub">System alerts and activity notifications</div></div>
-    <button class="btn btn-ghost" onclick="markAllRead()">Mark all read</button>
-  </div>
-  <div class="card" id="notif-list" style="padding:0"><div style="padding:20px"><div class="skeleton"></div><div class="skeleton"></div></div></div>
-</div>
+    // ── NOTIFICATIONS ─────────────────────────────────────────────────
+    async function loadNotifications() {
+      const res = await fetch('/api/notifications'); if (!res.ok) return;
+      const { notifications } = await res.json();
+      const colors = { info: 'var(--accent)', success: 'var(--success)', warning: 'var(--warning)', error: 'var(--danger)' };
+      document.getElementById('notif-list').innerHTML = notifications.length ? notifications.map(n => `<div style="display:flex;gap:12px;padding:16px 20px;border-bottom:1px solid var(--border);${n.is_read ? 'opacity:.55' : ''}"><div style="width:8px;height:8px;border-radius:50%;background:${colors[n.type] || colors.info};margin-top:5px;flex-shrink:0"></div><div style="flex:1"><div style="font-size:13px;line-height:1.5">${n.message}</div><div style="font-size:11px;color:var(--text3);font-family:var(--mono);margin-top:3px">${new Date(n.created_at).toLocaleString('en-PH')}</div></div>${!n.is_read ? `<button class="btn btn-ghost btn-sm" onclick="markRead(${n.id},this)">Read</button>` : ''}</div>`).join('') : '<div style="padding:40px;text-align:center;color:var(--text3)">No notifications</div>';
+    }
 
-</main>
+    async function markRead(id, btn) { await fetch(`/api/notifications/${id}/read`, { method: 'PUT' }); btn.closest('div[style]').style.opacity = '.55'; btn.remove() }
+    async function markAllRead() { await fetch('/api/notifications/read-all', { method: 'PUT' }); loadNotifications(); document.getElementById('notif-badge').style.display = 'none'; showToast('All marked as read', 'success') }
 
-<!-- MODAL: Status -->
-<div class="modal-overlay" id="status-modal">
-  <div class="modal">
-    <div class="modal-header"><span class="modal-title">Update Appointment Status</span><button class="modal-close" onclick="closeModal('status-modal')">×</button></div>
-    <div class="form-group"><label class="form-label">Appointment</label><div id="status-appt-info" style="font-size:13px;color:var(--text2);padding:10px;background:var(--surface2);border-radius:var(--radius)"></div></div>
-    <div class="form-group"><label class="form-label">New Status</label><select id="status-select" class="form-select"><option value="pending">Pending</option><option value="confirmed">Confirmed</option><option value="rescheduled">Rescheduled</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option></select></div>
-    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:20px"><button class="btn btn-ghost" onclick="closeModal('status-modal')">Cancel</button><button class="btn btn-primary" onclick="submitStatusUpdate()">Update</button></div>
-  </div>
-</div>
+    // ── SYSTEM SETTINGS ───────────────────────────────────────────────
+    async function loadSettings() {
+      const res = await fetch('/api/settings');
+      const form = document.getElementById('settings-form');
+      if (!res.ok) { form.innerHTML = `<div class="db-empty">Settings API not available.</div>`; return }
+      const { settings } = await res.json();
+      if (!settings) { form.innerHTML = `<div class="db-empty">No settings found.</div>`; return }
+      form.innerHTML = Object.entries(settings).map(([k, v]) => `
+    <div class="form-group"><label class="form-label">${k.replace(/_/g, ' ')}</label><input class="form-input" id="set-${k}" value="${v}"></div>
+  `).join('') + `<button class="btn btn-primary" style="margin-top:4px" onclick="saveSettings(${JSON.stringify(Object.keys(settings))})">Save Settings</button>`;
+    }
+    async function saveSettings(keys) {
+      for (const k of keys) {
+        const v = document.getElementById('set-' + k)?.value;
+        if (v !== undefined) await fetch('/api/settings', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: k, value: v }) });
+      }
+      showToast('Settings saved!', 'success');
+    }
 
-<!-- MODAL: Create User -->
-<div class="modal-overlay" id="create-user-modal">
-  <div class="modal">
-    <div class="modal-header"><span class="modal-title" id="create-user-title">Add User</span><button class="modal-close" onclick="closeModal('create-user-modal')">×</button></div>
-    <div class="form-group"><label class="form-label">Name</label><input type="text" class="form-input" id="cu-name" placeholder="Full name or group name"></div>
-    <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="cu-email" placeholder="email@cics.edu.ph"></div>
-    <div class="form-group" id="cu-groupname-wrap"><label class="form-label">Group Name (for student)</label><input type="text" class="form-input" id="cu-groupname" placeholder="e.g. Group Gamma"></div>
-    <div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" id="cu-password" placeholder="Minimum 8 characters"></div>
-    <input type="hidden" id="cu-role">
-    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:20px"><button class="btn btn-ghost" onclick="closeModal('create-user-modal')">Cancel</button><button class="btn btn-primary" onclick="submitCreateUser()">Create</button></div>
-  </div>
-</div>
+    // ── STATUS MODAL ─────────────────────────────────────────────────
+    function openStatusModal(id, name, status) { _statusApptId = id; document.getElementById('status-appt-info').textContent = name; document.getElementById('status-select').value = status; openModal('status-modal') }
+    async function submitStatusUpdate() {
+      const status = document.getElementById('status-select').value;
+      const res = await fetch(`/api/appointments/${_statusApptId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status }) });
+      if (res.ok) { closeModal('status-modal'); showToast('Status updated', 'success'); await refresh() } else showToast('Failed', 'error');
+    }
 
-<!-- MODAL: Venue -->
-<div class="modal-overlay" id="venue-modal">
-  <div class="modal">
-    <div class="modal-header"><span class="modal-title" id="venue-modal-title">Add Venue</span><button class="modal-close" onclick="closeModal('venue-modal')">×</button></div>
-    <div class="form-group"><label class="form-label">Venue Name</label><input type="text" class="form-input" id="v-name" placeholder="e.g. CICS Room 301"></div>
-    <div class="form-group"><label class="form-label">Type</label><select class="form-select" id="v-type"><option value="physical">Physical</option><option value="virtual">Virtual</option></select></div>
-    <div class="form-group"><label class="form-label">Capacity</label><input type="number" class="form-input" id="v-capacity" value="15" min="1"></div>
-    <input type="hidden" id="v-id">
-    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:20px"><button class="btn btn-ghost" onclick="closeModal('venue-modal')">Cancel</button><button class="btn btn-primary" onclick="submitVenue()">Save</button></div>
-  </div>
-</div>
+    // ── USER EDIT MODAL (unified for students & faculty) ─────────────
+    function openEditUserModal(u) {
+      document.getElementById('user-modal-title').textContent = 'Edit User';
+      document.getElementById('save-user-btn').textContent = 'Save Changes';
+      document.getElementById('edit-uid').value = u.id;
+      document.getElementById('edit-name').value = u.name;
+      document.getElementById('edit-email').value = u.email;
+      document.getElementById('edit-role').value = u.role;
+      document.getElementById('edit-group').value = u.group_name || '';
+      document.getElementById('edit-password').value = '';
+      document.getElementById('edit-status').value = u.is_active ? '1' : '0';
+      toggleGroupField(); openModal('user-modal');
+    }
+    function toggleGroupField() {
+      const role = document.getElementById('edit-role').value;
+      document.getElementById('group-field').style.display = role === 'student' ? '' : 'none';
+    }
+    async function saveUser() {
+      const id = document.getElementById('edit-uid').value;
+      const name = document.getElementById('edit-name').value.trim();
+      const email = document.getElementById('edit-email').value.trim();
+      const role = document.getElementById('edit-role').value;
+      const group = document.getElementById('edit-group').value.trim();
+      const password = document.getElementById('edit-password').value;
+      const status = document.getElementById('edit-status').value;
+      if (!name || !email) { showToast('Name and email required', 'error'); return }
+      if (!id && !password) { showToast('Password required for new users', 'error'); return }
+      const body = { name, email, role, group_name: role === 'student' ? group : null, is_active: parseInt(status) };
+      if (password) body.password = password;
+      const btn = document.getElementById('save-user-btn');
+      btn.disabled = true; btn.textContent = 'Saving…';
+      try {
+        const res = id
+          ? await fetch(`/api/users/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+          : await fetch('/api/users', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...body, password }) });
+        const d = await res.json();
+        if (res.ok) { showToast(id ? 'User updated!' : 'User created!', 'success'); closeModal('user-modal'); await refresh(); }
+        else showToast(d.error || 'Failed', 'error');
+      } catch { showToast('Server error', 'error'); }
+      finally { btn.disabled = false; btn.textContent = id ? 'Save Changes' : 'Create User'; }
+    }
 
-<!-- MODAL: Rates -->
-<div class="modal-overlay" id="rates-modal">
-  <div class="modal">
-    <div class="modal-header"><span class="modal-title">Update Honoraria Rates</span><button class="modal-close" onclick="closeModal('rates-modal')">×</button></div>
-    <div class="form-group"><label class="form-label">Panelist rate per session (₱)</label><input type="number" class="form-input" id="r-panelist" placeholder="1500"></div>
-    <div class="form-group"><label class="form-label">Adviser rate per session (₱)</label><input type="number" class="form-input" id="r-adviser" placeholder="2000"></div>
-    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:20px"><button class="btn btn-ghost" onclick="closeModal('rates-modal')">Cancel</button><button class="btn btn-primary" onclick="submitRates()">Save</button></div>
-  </div>
-</div>
+    // ── CREATE USER (quick add) ───────────────────────────────────────
+    function openCreateUserModal(role) {
+      ['cu-name', 'cu-email', 'cu-password', 'cu-groupname'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('cu-role').value = role;
+      document.getElementById('create-user-title').textContent = role === 'faculty' ? 'Add Faculty' : 'Add Student Group';
+      document.getElementById('cu-groupname-wrap').style.display = role === 'student' ? '' : 'none';
+      openModal('create-user-modal');
+    }
+    async function submitCreateUser() {
+      const name = document.getElementById('cu-name').value.trim(), email = document.getElementById('cu-email').value.trim(), password = document.getElementById('cu-password').value, role = document.getElementById('cu-role').value, group_name = role === 'student' ? document.getElementById('cu-groupname').value.trim() : null;
+      if (!name || !email || !password) { showToast('All fields required', 'error'); return }
+      const res = await fetch('/api/users', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, email, password, role, group_name }) });
+      if (res.ok) { closeModal('create-user-modal'); showToast('Account created', 'success'); await refresh() } else { const d = await res.json(); showToast(d.error || 'Failed', 'error') }
+    }
+    async function deactivateUser(id, name) { if (!confirm(`Deactivate ${name}?`)) return; await fetch(`/api/users/${id}`, { method: 'DELETE' }); showToast(`${name} deactivated`, 'info'); await refresh() }
 
-<script>
-let _user=null,_appointments=[],_allUsers=[],_venues=[],_honoraria={report:[],grand_total:0,rates:{}},_statusApptId=null;
+    // ── VENUES ────────────────────────────────────────────────────────
+    function openVenueModal(id, name, type, capacity) {
+      document.getElementById('v-id').value = id || ''; document.getElementById('v-name').value = name || ''; document.getElementById('v-type').value = type || 'physical'; document.getElementById('v-capacity').value = capacity || 15;
+      document.getElementById('venue-modal-title').textContent = id ? 'Edit Venue' : 'Add Venue'; openModal('venue-modal');
+    }
+    async function submitVenue() {
+      const id = document.getElementById('v-id').value, name = document.getElementById('v-name').value.trim(), type = document.getElementById('v-type').value, capacity = parseInt(document.getElementById('v-capacity').value);
+      if (!name) { showToast('Name required', 'error'); return }
+      const res = await fetch(id ? `/api/venues/${id}` : '/api/venues', { method: id ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, type, capacity }) });
+      if (res.ok) { closeModal('venue-modal'); showToast(id ? 'Venue updated' : 'Venue added', 'success'); await refresh() } else showToast('Failed', 'error');
+    }
+    async function deleteVenue(id) { if (!confirm('Remove venue?')) return; await fetch(`/api/venues/${id}`, { method: 'DELETE' }); showToast('Venue removed', 'info'); await refresh() }
 
-// NAV
-function switchSection(id){
-  document.querySelectorAll('.nav-item').forEach(el=>el.classList.toggle('active',el.dataset.section===id));
-  document.querySelectorAll('.section').forEach(el=>el.classList.toggle('active',el.id==='section-'+id));
-  ({overview:loadOverview,'schedule-board':loadScheduleBoard,appointments:loadAppts,students:loadStudents,faculty:loadFaculty,venues:loadVenues,honoraria:loadHonoraria,notifications:loadNotifications})[id]?.();
-}
-document.querySelectorAll('.nav-item[data-section]').forEach(el=>el.addEventListener('click',()=>switchSection(el.dataset.section)));
+    // ── RATES ─────────────────────────────────────────────────────────
+    function openRatesModal() { const r = _honoraria.rates || {}; document.getElementById('r-panelist').value = r.panelist || 1500; document.getElementById('r-adviser').value = r.adviser || 2000; openModal('rates-modal') }
+    async function submitRates() {
+      const panelist_rate = parseFloat(document.getElementById('r-panelist').value), adviser_rate = parseFloat(document.getElementById('r-adviser').value);
+      const res = await fetch('/api/honoraria/rates', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ panelist_rate, adviser_rate }) });
+      if (res.ok) { closeModal('rates-modal'); showToast('Rates updated', 'success'); await refresh() } else showToast('Failed', 'error');
+    }
 
-// MODALS
-function openModal(id){document.getElementById(id).classList.add('open')}
-function closeModal(id){document.getElementById(id).classList.remove('open')}
-document.querySelectorAll('.modal-overlay').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open')}));
+    // ── REFRESH ───────────────────────────────────────────────────────
+    async function refresh() {
+      await fetchAll();
+      const s = document.querySelector('.section.active');
+      if (s) { const id = s.id.replace('section-', ''); if (SECTION_LOADERS[id]) SECTION_LOADERS[id](); }
+    }
 
-// TOAST
-function showToast(msg,type='info'){
-  let c=document.getElementById('tc');
-  if(!c){c=document.createElement('div');c.id='tc';c.style.cssText='position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px';document.body.appendChild(c)}
-  const colors={success:'#3ecf8e',error:'#e05c5c',warning:'#f5a623',info:'#4f8ef7'};
-  const t=document.createElement('div');
-  t.style.cssText=`background:var(--surface);border:1px solid var(--border2);border-left:3px solid ${colors[type]||colors.info};color:var(--text);padding:12px 18px;border-radius:10px;font-size:13px;box-shadow:0 4px 20px rgba(0,0,0,.5)`;
-  t.textContent=msg;c.appendChild(t);setTimeout(()=>t.remove(),4000);
-}
-
-// HELPERS
-function fmtStatus(s){const m={pending:'tag-pending',confirmed:'tag-confirmed',cancelled:'tag-cancelled',completed:'tag-completed',rescheduled:'tag-rescheduled'};return`<span class="tag ${m[s]||''}">${s}</span>`}
-function fmtDate(d){if(!d)return'—';return new Date(d+'T00:00:00').toLocaleDateString('en-PH',{month:'short',day:'numeric',year:'numeric'})}
-function fmtPeso(n){return'₱'+Number(n||0).toLocaleString('en-PH',{minimumFractionDigits:2})}
-function todayStr(){return new Date().toISOString().split('T')[0]}
-function getHr(){const h=new Date().getHours();return h<12?'Good morning':h<18?'Good afternoon':'Good evening'}
-
-// FETCH ALL
-async function fetchAll(){
-  try{
-    const [a,u,v,h,n]=await Promise.all([fetch('/api/appointments'),fetch('/api/users'),fetch('/api/venues'),fetch('/api/honoraria/report'),fetch('/api/notifications')]);
-    _appointments=a.ok?(await a.json()).appointments:[];
-    _allUsers=u.ok?(await u.json()).users:[];
-    _venues=v.ok?(await v.json()).venues:[];
-    _honoraria=h.ok?await h.json():{report:[],grand_total:0,rates:{}};
-    const nd=n.ok?await n.json():{notifications:[],unread:0};
-    const nb=document.getElementById('notif-badge');
-    if(nb){nb.textContent=nd.unread;nb.style.display=nd.unread>0?'':'none'}
-    const pb=document.getElementById('pending-badge');
-    if(pb){const p=_appointments.filter(a=>a.status==='pending').length;pb.textContent=p;pb.style.display=p>0?'':'none'}
-  }catch(e){console.error(e)}
-}
-
-// OVERVIEW
-function loadOverview(){
-  const total=_appointments.length,confirmed=_appointments.filter(a=>a.status==='confirmed').length,pending=_appointments.filter(a=>a.status==='pending').length;
-  document.getElementById('stat-total').textContent=total;
-  document.getElementById('stat-confirmed').textContent=confirmed;
-  document.getElementById('stat-pending').textContent=pending;
-  document.getElementById('stat-honoraria').textContent=fmtPeso(_honoraria.grand_total);
-  document.getElementById('greeting').textContent=`${getHr()}, ${_user?.name||'Admin'} 👋`;
-  const today=todayStr();
-  const todayFmt=new Date().toLocaleDateString('en-PH',{weekday:'long',month:'long',day:'numeric'});
-  document.getElementById('overview-sub').textContent=`${todayFmt} · ${_appointments.filter(a=>a.date===today).length} defense(s) today`;
-  document.getElementById('today-date').textContent=new Date().toLocaleDateString('en-PH',{month:'short',day:'numeric'});
-
-  // Upcoming table
-  const upcoming=_appointments.filter(a=>a.status!=='cancelled'&&a.status!=='completed').sort((a,b)=>a.date<b.date?-1:1).slice(0,6);
-  document.getElementById('upcoming-tbody').innerHTML=upcoming.length?upcoming.map(a=>`<tr><td>${a.group_name}</td><td style="font-family:var(--mono);font-size:12px">${fmtDate(a.date)} · ${a.time_slot||'—'}</td><td>${a.venue_name||'—'}</td><td>${fmtStatus(a.status)}</td><td><button class="btn btn-ghost btn-sm" onclick="openStatusModal(${a.id},'${a.group_name.replace(/'/g,"\\'")}','${a.status}')">Update</button></td></tr>`).join(''):'<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:20px">No upcoming appointments</td></tr>';
-
-  // Today
-  const todayA=_appointments.filter(a=>a.date===today).sort((a,b)=>a.time_slot>b.time_slot?1:-1);
-  document.getElementById('today-schedule').innerHTML=todayA.length?todayA.map(a=>`<div class="schedule-item"><div class="schedule-time">${(a.time_slot||'').split('-')[0]}</div><div class="schedule-dot ${a.status==='completed'?'done':a.status==='pending'?'warn':''}"></div><div><div class="schedule-name">${a.group_name}</div><div class="schedule-meta">${a.venue_name||'—'} · ${a.status}</div></div></div>`).join(''):'<div style="color:var(--text3);font-size:13px;padding:12px 0">No defenses today</div>';
-
-  // Honor summary
-  const top4=[..._honoraria.report].sort((a,b)=>b.total-a.total).slice(0,4);
-  document.getElementById('honor-summary').innerHTML=top4.length?top4.map(f=>`<div class="honor-row"><div><div class="honor-name">${f.name}</div><div class="honor-type">${f.adviser_groups} advising · ${f.panel_sessions} panels</div></div><div class="honor-amount">${fmtPeso(f.total)}</div></div>`).join(''):'<div style="color:var(--text3);font-size:13px;padding:12px 0">No honoraria yet</div>';
-
-  // Breakdown
-  const statuses=['confirmed','pending','completed','cancelled'];
-  const sColors={confirmed:'var(--success)',pending:'var(--warning)',completed:'var(--accent)',cancelled:'var(--danger)'};
-  document.getElementById('appt-breakdown').innerHTML=statuses.map(s=>{const cnt=_appointments.filter(a=>a.status===s).length;const pct=total?Math.round(cnt/total*100):0;return`<div class="progress-wrap"><div class="progress-label"><span class="progress-name" style="text-transform:capitalize">${s}</span><span class="progress-val">${cnt}/${total}</span></div><div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${sColors[s]}"></div></div></div>`}).join('');
-
-  // Venue usage
-  document.getElementById('venue-breakdown').innerHTML=_venues.slice(0,4).map(v=>{const cnt=_appointments.filter(a=>a.venue_id===v.id&&a.status!=='cancelled').length;const col=cnt>=4?'var(--danger)':cnt>=2?'var(--warning)':'var(--success)';return`<div class="progress-wrap"><div class="progress-label"><span class="progress-name">${v.name}</span><span class="progress-val">${cnt} bookings</span></div><div class="progress-bar"><div class="progress-fill" style="width:${Math.min(cnt*20,100)}%;background:${col}"></div></div></div>`}).join('')||'<div style="color:var(--text3);font-size:13px">No venues</div>';
-
-  // Recent
-  const recent=[..._appointments].sort((a,b)=>b.id-a.id).slice(0,4);
-  document.getElementById('recent-activity').innerHTML=recent.map(a=>`<div class="log-item"><div class="log-icon" style="background:rgba(79,142,247,.1)"><svg fill="none" stroke="var(--accent)" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" stroke-width="1.8"/><path d="M16 2v4M8 2v4M3 10h18" stroke-width="1.8"/></svg></div><div><div class="log-text"><strong>${a.group_name}</strong> — ${a.status}</div><div class="log-time">${fmtDate(a.date)} · ${a.venue_name||'—'}</div></div></div>`).join('')||'<div style="color:var(--text3);font-size:13px">No appointments</div>';
-}
-
-// SCHEDULE BOARD
-function loadScheduleBoard(){
-  document.getElementById('board-filter').onchange=loadScheduleBoard;
-  const f=document.getElementById('board-filter').value;
-  const rows=_appointments.filter(a=>!f||a.status===f).sort((a,b)=>a.date<b.date?-1:1);
-  document.getElementById('board-tbody').innerHTML=rows.length?rows.map(a=>`<tr><td><div style="font-weight:600">${a.group_name}</div></td><td>${a.adviser_name||'—'}</td><td style="font-size:12px">${(a.panelists||[]).map(p=>p.name).join(', ')||'—'}</td><td style="font-family:var(--mono);font-size:12px">${fmtDate(a.date)}<br>${a.time_slot||'—'}</td><td>${a.venue_name||'—'}</td><td>${fmtStatus(a.status)}</td><td><button class="btn btn-ghost btn-sm" onclick="openStatusModal(${a.id},'${a.group_name.replace(/'/g,"\\'")}','${a.status}')">Update</button></td></tr>`).join(''):'<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:30px">No appointments found</td></tr>';
-}
-
-// ALL APPOINTMENTS
-function loadAppts(){
-  document.getElementById('appt-search').oninput=loadAppts;
-  const q=(document.getElementById('appt-search').value||'').toLowerCase();
-  const rows=_appointments.filter(a=>!q||a.group_name.toLowerCase().includes(q)||(a.adviser_name||'').toLowerCase().includes(q));
-  document.getElementById('appt-tbody').innerHTML=rows.length?rows.map(a=>`<tr><td>${a.group_name}</td><td>${a.adviser_name||'—'}</td><td style="font-family:var(--mono);font-size:12px">${fmtDate(a.date)} · ${a.time_slot||'—'}</td><td>${a.venue_name||'—'}</td><td>${fmtStatus(a.status)}</td><td><button class="btn btn-ghost btn-sm" onclick="openStatusModal(${a.id},'${a.group_name.replace(/'/g,"\\'")}','${a.status}')">Update</button></td></tr>`).join(''):'<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:30px">No appointments</td></tr>';
-}
-
-// STUDENTS
-function loadStudents(){
-  const students=_allUsers.filter(u=>u.role==='student'&&u.is_active);
-  document.getElementById('students-tbody').innerHTML=students.length?students.map(s=>{const appt=_appointments.find(a=>a.student_id===s.id)||null;return`<tr><td>${s.name}</td><td style="font-size:12px;color:var(--text3)">${s.email}</td><td>${appt?`${fmtDate(appt.date)} · ${appt.time_slot||'—'}`:'<span style="color:var(--text3)">Not scheduled</span>'}</td><td>${appt?fmtStatus(appt.status):'—'}</td><td><button class="btn btn-danger btn-sm" onclick="deactivateUser(${s.id},'${s.name.replace(/'/g,"\\'")}')">Deactivate</button></td></tr>`}).join(''):'<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:30px">No student groups found</td></tr>';
-}
-
-// FACULTY
-function loadFaculty(){
-  const faculty=_allUsers.filter(u=>u.role==='faculty');
-  document.getElementById('faculty-tbody').innerHTML=faculty.length?faculty.map(f=>{const hr=_honoraria.report.find(r=>r.id===f.id)||{adviser_groups:0,panel_sessions:0,total:0};return`<tr><td>${f.name}</td><td style="font-size:12px;color:var(--text3)">${f.email}</td><td style="font-family:var(--mono)">${hr.adviser_groups}</td><td style="font-family:var(--mono)">${hr.panel_sessions}</td><td style="font-family:var(--mono);color:var(--success)">${fmtPeso(hr.total)}</td><td><button class="btn btn-danger btn-sm" onclick="deactivateUser(${f.id},'${f.name.replace(/'/g,"\\'")}')">Deactivate</button></td></tr>`}).join(''):'<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:30px">No faculty found</td></tr>';
-}
-
-// VENUES
-function loadVenues(){
-  document.getElementById('venues-tbody').innerHTML=_venues.length?_venues.map(v=>{const cnt=_appointments.filter(a=>a.venue_id===v.id&&a.status!=='cancelled').length;return`<tr><td>${v.name}</td><td><span class="tag ${v.type==='virtual'?'tag-completed':'tag-rescheduled'}">${v.type}</span></td><td style="font-family:var(--mono)">${v.capacity}</td><td style="font-family:var(--mono)">${cnt}</td><td><span class="tag ${v.is_active?'tag-confirmed':'tag-cancelled'}">${v.is_active?'Active':'Inactive'}</span></td><td style="display:flex;gap:6px"><button class="btn btn-ghost btn-sm" onclick="openVenueModal(${v.id},'${v.name.replace(/'/g,"\\'")}','${v.type}',${v.capacity})">Edit</button><button class="btn btn-danger btn-sm" onclick="deleteVenue(${v.id})">Remove</button></td></tr>`}).join(''):'<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:30px">No venues</td></tr>';
-}
-
-// HONORARIA
-function loadHonoraria(){
-  const r=_honoraria.rates||{};
-  document.getElementById('panelist-rate').textContent=fmtPeso(r.panelist||0);
-  document.getElementById('adviser-rate').textContent=fmtPeso(r.adviser||0);
-  document.getElementById('grand-total').textContent=fmtPeso(_honoraria.grand_total||0);
-  document.getElementById('honoraria-tbody').innerHTML=_honoraria.report.length?_honoraria.report.map(f=>`<tr><td>${f.name}</td><td style="font-family:var(--mono)">${f.adviser_groups}</td><td style="font-family:var(--mono)">${f.panel_sessions}</td><td style="font-family:var(--mono)">${fmtPeso(f.adviser_honoraria)}</td><td style="font-family:var(--mono)">${fmtPeso(f.panel_honoraria)}</td><td style="font-family:var(--mono);color:var(--success);font-weight:600">${fmtPeso(f.total)}</td></tr>`).join(''):'<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:30px">No data. Honoraria computed from confirmed/completed appointments.</td></tr>';
-}
-
-// NOTIFICATIONS
-async function loadNotifications(){
-  const res=await fetch('/api/notifications');if(!res.ok)return;
-  const{notifications}=await res.json();
-  const colors={info:'var(--accent)',success:'var(--success)',warning:'var(--warning)',error:'var(--danger)'};
-  document.getElementById('notif-list').innerHTML=notifications.length?notifications.map(n=>`<div style="display:flex;gap:12px;padding:16px 20px;border-bottom:1px solid var(--border);${n.is_read?'opacity:.55':''}"><div style="width:8px;height:8px;border-radius:50%;background:${colors[n.type]||colors.info};margin-top:5px;flex-shrink:0"></div><div style="flex:1"><div style="font-size:13px;line-height:1.5">${n.message}</div><div style="font-size:11px;color:var(--text3);font-family:var(--mono);margin-top:3px">${new Date(n.created_at).toLocaleString('en-PH')}</div></div>${!n.is_read?`<button class="btn btn-ghost btn-sm" onclick="markRead(${n.id},this)">Read</button>`:''}</div>`).join(''):'<div style="padding:40px;text-align:center;color:var(--text3)">No notifications</div>';
-}
-
-async function markRead(id,btn){await fetch(`/api/notifications/${id}/read`,{method:'PUT'});btn.closest('div[style]').style.opacity='.55';btn.remove()}
-async function markAllRead(){await fetch('/api/notifications/read-all',{method:'PUT'});loadNotifications();document.getElementById('notif-badge').style.display='none';showToast('All marked as read','success')}
-
-// STATUS MODAL
-function openStatusModal(id,name,status){_statusApptId=id;document.getElementById('status-appt-info').textContent=name;document.getElementById('status-select').value=status;openModal('status-modal')}
-async function submitStatusUpdate(){
-  const status=document.getElementById('status-select').value;
-  const res=await fetch(`/api/appointments/${_statusApptId}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({status})});
-  if(res.ok){closeModal('status-modal');showToast('Status updated','success');await refresh()}else showToast('Failed','error');
-}
-
-// CREATE USER
-function openCreateUserModal(role){
-  ['cu-name','cu-email','cu-password','cu-groupname'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('cu-role').value=role;
-  document.getElementById('create-user-title').textContent=role==='faculty'?'Add Faculty':'Add Student Group';
-  document.getElementById('cu-groupname-wrap').style.display=role==='student'?'':'none';
-  openModal('create-user-modal');
-}
-async function submitCreateUser(){
-  const name=document.getElementById('cu-name').value.trim(),email=document.getElementById('cu-email').value.trim(),password=document.getElementById('cu-password').value,role=document.getElementById('cu-role').value,group_name=role==='student'?document.getElementById('cu-groupname').value.trim():null;
-  if(!name||!email||!password){showToast('All fields required','error');return}
-  const res=await fetch('/api/users',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,password,role,group_name})});
-  if(res.ok){closeModal('create-user-modal');showToast('Account created','success');await refresh()}else{const d=await res.json();showToast(d.error||'Failed','error')}
-}
-async function deactivateUser(id,name){if(!confirm(`Deactivate ${name}?`))return;await fetch(`/api/users/${id}`,{method:'DELETE'});showToast(`${name} deactivated`,'info');await refresh()}
-
-// VENUES
-function openVenueModal(id,name,type,capacity){
-  document.getElementById('v-id').value=id||'';document.getElementById('v-name').value=name||'';document.getElementById('v-type').value=type||'physical';document.getElementById('v-capacity').value=capacity||15;
-  document.getElementById('venue-modal-title').textContent=id?'Edit Venue':'Add Venue';openModal('venue-modal');
-}
-async function submitVenue(){
-  const id=document.getElementById('v-id').value,name=document.getElementById('v-name').value.trim(),type=document.getElementById('v-type').value,capacity=parseInt(document.getElementById('v-capacity').value);
-  if(!name){showToast('Name required','error');return}
-  const res=await fetch(id?`/api/venues/${id}`:'/api/venues',{method:id?'PUT':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,type,capacity})});
-  if(res.ok){closeModal('venue-modal');showToast(id?'Venue updated':'Venue added','success');await refresh()}else showToast('Failed','error');
-}
-async function deleteVenue(id){if(!confirm('Remove venue?'))return;await fetch(`/api/venues/${id}`,{method:'DELETE'});showToast('Venue removed','info');await refresh()}
-
-// RATES
-function openRatesModal(){const r=_honoraria.rates||{};document.getElementById('r-panelist').value=r.panelist||1500;document.getElementById('r-adviser').value=r.adviser||2000;openModal('rates-modal')}
-async function submitRates(){
-  const panelist_rate=parseFloat(document.getElementById('r-panelist').value),adviser_rate=parseFloat(document.getElementById('r-adviser').value);
-  const res=await fetch('/api/honoraria/rates',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({panelist_rate,adviser_rate})});
-  if(res.ok){closeModal('rates-modal');showToast('Rates updated','success');await refresh()}else showToast('Failed','error');
-}
-
-// REFRESH
-async function refresh(){await fetchAll();const s=document.querySelector('.section.active');if(s){const id=s.id.replace('section-','');({overview:loadOverview,'schedule-board':loadScheduleBoard,appointments:loadAppts,students:loadStudents,faculty:loadFaculty,venues:loadVenues,honoraria:loadHonoraria,notifications:loadNotifications})[id]?.()}}
-
-// INIT
-(async()=>{
-  history.pushState(null,'',window.location.href);
-  window.addEventListener('popstate',()=>history.pushState(null,'',window.location.href));
-  try{const res=await fetch('/api/auth/me');if(!res.ok){window.location.replace('/');return}const d=await res.json();_user=d.user;if(_user.role!=='admin'){window.location.replace('/');return}}catch{window.location.replace('/');return}
-  const init=_user.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-  document.getElementById('user-avatar').textContent=init;
-  document.getElementById('user-display-name').textContent=_user.name;
-  document.getElementById('logout-btn').addEventListener('click',async()=>{await fetch('/api/auth/logout',{method:'POST'});window.location.replace('/')});
-  await fetchAll();
-  loadOverview();
-  setInterval(refresh,30000);
-})();
-</script>
+    // ── INIT ─────────────────────────────────────────────────────────
+    (async () => {
+      history.pushState(null, '', window.location.href);
+      window.addEventListener('popstate', () => history.pushState(null, '', window.location.href));
+      try {
+        const res = await fetch('/api/auth/me');
+        if (!res.ok) { window.location.replace('/'); return }
+        const d = await res.json();
+        _user = d.user;
+        if (_user.role !== 'admin') { window.location.replace('/'); return }
+      } catch { window.location.replace('/'); return }
+      const init = _user.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+      document.getElementById('user-avatar').textContent = init;
+      document.getElementById('user-display-name').textContent = _user.name;
+      document.getElementById('logout-btn').addEventListener('click', async () => { await fetch('/api/auth/logout', { method: 'POST' }); window.location.replace('/') });
+      await fetchAll();
+      loadOverview();
+      setInterval(refresh, 30000);
+    })();
+  </script>
 </body>
+
 </html>

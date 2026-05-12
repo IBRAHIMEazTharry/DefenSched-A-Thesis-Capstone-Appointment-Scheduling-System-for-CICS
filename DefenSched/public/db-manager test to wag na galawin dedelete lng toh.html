@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DefenSched — Database Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0d0f14; --surface:#13161d; --surface2:#1a1e28; --surface3:#21263a;
+    --border:#252a38; --border2:#2e3447;
+    --accent:#4f8ef7; --accent2:#3a6fd8; --accent-glow:rgba(79,142,247,.12);
+    --text:#e8eaf0; --text2:#8b90a0; --text3:#555b70;
+    --success:#3ecf8e; --warning:#f5a623; --danger:#e05c5c;
+    --purple:#a78bfa; --teal:#2dd4bf;
+    --font:'DM Sans',sans-serif; --mono:'DM Mono',monospace;
+    --r:10px; --rl:16px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;display:flex;}
+
+  /* ── Sidebar ── */
+  aside{width:220px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:0;}
+  .sidebar-logo{padding:20px 18px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+  .logo-mark{width:30px;height:30px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;}
+  .logo-text{font-size:14px;font-weight:600;color:var(--text);}
+  .logo-sub{font-size:10px;color:var(--text3);margin-top:1px;}
+  nav{flex:1;padding:10px 8px;display:flex;flex-direction:column;gap:2px;overflow-y:auto;}
+  .nav-item{padding:8px 10px;border-radius:8px;font-size:13px;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:9px;transition:all .15s;user-select:none;}
+  .nav-item:hover{background:var(--surface2);color:var(--text);}
+  .nav-item.active{background:var(--accent-glow);color:var(--accent);font-weight:500;}
+  .nav-section{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;padding:12px 10px 4px;}
+  .sidebar-user{padding:14px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+  .avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#4f8ef7,#a78bfa);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff;flex-shrink:0;}
+
+  /* ── Main ── */
+  main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+  .topbar{padding:16px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--surface);}
+  .topbar-title{font-size:15px;font-weight:600;}
+  .topbar-sub{font-size:12px;color:var(--text3);margin-top:2px;}
+  .content{flex:1;overflow-y:auto;padding:24px 28px;display:flex;flex-direction:column;gap:20px;}
+
+  /* ── Cards ── */
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;}
+  .card-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  .card-title{font-size:14px;font-weight:600;}
+  .card-sub{font-size:12px;color:var(--text3);margin-top:1px;}
+
+  /* ── Table ── */
+  .table-wrap{overflow-x:auto;}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  th{padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);white-space:nowrap;}
+  td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:middle;}
+  tr:last-child td{border-bottom:none;}
+  tr:hover td{background:var(--surface2);}
+  .cell-name{color:var(--text);font-weight:500;}
+  .badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;}
+  .badge-admin{background:rgba(167,139,250,.15);color:var(--purple);}
+  .badge-faculty{background:rgba(45,212,191,.15);color:var(--teal);}
+  .badge-student{background:rgba(79,142,247,.15);color:var(--accent);}
+  .badge-active{background:rgba(62,207,142,.15);color:var(--success);}
+  .badge-inactive{background:rgba(224,92,92,.15);color:var(--danger);}
+
+  /* ── Buttons ── */
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:var(--font);transition:all .15s;}
+  .btn-primary{background:var(--accent);color:#fff;}
+  .btn-primary:hover{background:var(--accent2);}
+  .btn-ghost{background:var(--surface2);color:var(--text2);border:1px solid var(--border2);}
+  .btn-ghost:hover{color:var(--text);border-color:var(--accent);}
+  .btn-danger{background:rgba(224,92,92,.12);color:var(--danger);border:1px solid rgba(224,92,92,.2);}
+  .btn-danger:hover{background:rgba(224,92,92,.22);}
+  .btn-sm{padding:5px 10px;font-size:11px;}
+  .btn-icon{padding:5px;background:none;border:none;cursor:pointer;color:var(--text3);border-radius:6px;}
+  .btn-icon:hover{color:var(--text);background:var(--surface2);}
+
+  /* ── Forms & Inputs ── */
+  .input{width:100%;padding:9px 12px;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:13px;font-family:var(--font);outline:none;transition:border .15s;}
+  .input:focus{border-color:var(--accent);}
+  select.input option{background:var(--surface2);}
+  label{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;display:block;margin-bottom:5px;}
+  .form-grid{display:grid;gap:14px;}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .form-hint{font-size:11px;color:var(--text3);margin-top:4px;}
+
+  /* ── Modal ── */
+  .modal-bg{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.65);align-items:center;justify-content:center;}
+  .modal-bg.open{display:flex;}
+  .modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:28px 30px;width:100%;max-width:480px;box-shadow:0 20px 60px rgba(0,0,0,.5);}
+  .modal-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;}
+  .modal-title{font-size:15px;font-weight:700;}
+  .modal-sub{font-size:12px;color:var(--text3);margin-top:2px;}
+  .modal-footer{display:flex;gap:10px;margin-top:22px;}
+
+  /* ── Search ── */
+  .search-wrap{position:relative;flex:1;max-width:280px;}
+  .search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none;}
+  .search-input{padding-left:32px;}
+
+  /* ── Tabs ── */
+  .tabs{display:flex;gap:4px;background:var(--surface2);padding:4px;border-radius:10px;}
+  .tab{padding:6px 14px;border-radius:7px;font-size:12px;font-weight:500;cursor:pointer;color:var(--text2);transition:all .15s;}
+  .tab.active{background:var(--surface);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.3);}
+
+  /* ── Toast ── */
+  #toast-container{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;}
+  .toast{padding:12px 18px;border-radius:10px;font-size:13px;font-weight:500;color:#fff;box-shadow:0 4px 16px rgba(0,0,0,.3);animation:fadeIn .2s ease;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  /* ── Empty state ── */
+  .empty{padding:40px;text-align:center;color:var(--text3);font-size:13px;}
+</style>
+</head>
+<body>
+
+<!-- ── Sidebar ─────────────────────────────────────────────── -->
+<aside>
+  <div class="sidebar-logo">
+    <div class="logo-mark">DS</div>
+    <div>
+      <div class="logo-text">DefenSched</div>
+      <div class="logo-sub">DB Manager</div>
+    </div>
+  </div>
+
+  <nav>
+    <div class="nav-section">Tables</div>
+    <div class="nav-item active" onclick="showTab('users')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke-width="2"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke-width="2" stroke-linecap="round"/></svg>
+      Users
+    </div>
+    <div class="nav-item" onclick="showTab('venues')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="9 22 9 12 15 12 15 22" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Venues
+    </div>
+    <div class="nav-item" onclick="showTab('appointments')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" stroke-width="2"/><path d="M16 2v4M8 2v4M3 10h18" stroke-width="2" stroke-linecap="round"/></svg>
+      Appointments
+    </div>
+    <div class="nav-item" onclick="showTab('settings')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" stroke-width="2"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" stroke-width="2"/></svg>
+      Settings
+    </div>
+
+    <div class="nav-section" style="margin-top:8px;">Navigation</div>
+    <div class="nav-item" onclick="window.location.href='/admin-dashboard'">
+      <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 12L12 3l9 9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 21V12h6v9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Back to Dashboard
+    </div>
+  </nav>
+
+  <div class="sidebar-user">
+    <div class="avatar" id="user-avatar">AD</div>
+    <div style="flex:1;min-width:0;">
+      <div style="font-size:13px;font-weight:500;color:var(--text);" id="user-display-name">Admin</div>
+      <div style="font-size:11px;color:var(--text3);">Database Manager</div>
+    </div>
+    <button id="logout-btn" title="Logout" class="btn-icon">
+      <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+</aside>
+
+<!-- ── Main ────────────────────────────────────────────────── -->
+<main>
+  <div class="topbar">
+    <div>
+      <div class="topbar-title" id="tab-title">Users</div>
+      <div class="topbar-sub" id="tab-sub">Manage all user accounts</div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <div class="search-wrap">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8" stroke-width="2"/><path d="M21 21l-4.35-4.35" stroke-width="2" stroke-linecap="round"/></svg>
+        <input class="input search-input" id="search-input" placeholder="Search..." oninput="filterTable(this.value)">
+      </div>
+      <button class="btn btn-primary" id="add-btn" onclick="openAddModal()">
+        <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke-width="2.5" stroke-linecap="round"/></svg>
+        Add User
+      </button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- Users Table -->
+    <div class="card" id="tab-users">
+      <div class="card-header">
+        <div>
+          <div class="card-title">All Users</div>
+          <div class="card-sub" id="user-count">Loading...</div>
+        </div>
+        <div class="tabs">
+          <div class="tab active" onclick="filterRole('all',this)">All</div>
+          <div class="tab" onclick="filterRole('admin',this)">Admin</div>
+          <div class="tab" onclick="filterRole('faculty',this)">Faculty</div>
+          <div class="tab" onclick="filterRole('student',this)">Student</div>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table id="user-table">
+          <thead>
+            <tr>
+              <th>ID</th><th>Name</th><th>Email</th><th>Role</th><th>Group</th><th>Status</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="user-tbody">
+            <tr><td colspan="7" class="empty">Loading users...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Venues Table -->
+    <div class="card" id="tab-venues" style="display:none;">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Venues</div>
+          <div class="card-sub">Rooms and virtual meeting spaces</div>
+        </div>
+        <button class="btn btn-primary" onclick="openAddVenueModal()">
+          <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke-width="2.5" stroke-linecap="round"/></svg>
+          Add Venue
+        </button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>ID</th><th>Name</th><th>Type</th><th>Capacity</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="venue-tbody"><tr><td colspan="6" class="empty">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Appointments Table -->
+    <div class="card" id="tab-appointments" style="display:none;">
+      <div class="card-header">
+        <div class="card-title">Appointments</div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>ID</th><th>Group</th><th>Date</th><th>Time</th><th>Venue</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="appt-tbody"><tr><td colspan="7" class="empty">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Settings -->
+    <div class="card" id="tab-settings" style="display:none;">
+      <div class="card-header">
+        <div class="card-title">Defense Settings</div>
+        <div class="card-sub">System-wide scheduling configuration</div>
+      </div>
+      <div style="padding:20px;display:flex;flex-direction:column;gap:16px;max-width:440px;" id="settings-form">
+        <div class="empty">Loading settings...</div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- ── Edit / Add User Modal ───────────────────────────────── -->
+<div class="modal-bg" id="user-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modal-title">Edit User</div>
+        <div class="modal-sub" id="modal-sub">Update user account details</div>
+      </div>
+      <button class="btn-icon" onclick="closeModal('user-modal')">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="form-grid">
+      <input type="hidden" id="edit-user-id">
+      <div>
+        <label>Full Name</label>
+        <input class="input" id="edit-name" type="text" placeholder="e.g. Dr. Jose Reyes">
+      </div>
+      <div>
+        <label>Email Address</label>
+        <input class="input" id="edit-email" type="email" placeholder="user@cics.edu.ph">
+      </div>
+      <div class="form-row">
+        <div>
+          <label>Role</label>
+          <select class="input" id="edit-role" onchange="toggleGroupField()">
+            <option value="admin">Admin</option>
+            <option value="faculty">Faculty</option>
+            <option value="student">Student</option>
+          </select>
+        </div>
+        <div id="group-field">
+          <label>Group Name</label>
+          <input class="input" id="edit-group" type="text" placeholder="e.g. Group Alpha">
+        </div>
+      </div>
+      <div>
+        <label>New Password <span style="font-weight:400;color:var(--text3);text-transform:none;letter-spacing:0;">(leave blank to keep current)</span></label>
+        <input class="input" id="edit-password" type="password" placeholder="••••••••">
+      </div>
+      <div id="status-field">
+        <label>Account Status</label>
+        <select class="input" id="edit-status">
+          <option value="1">Active</option>
+          <option value="0">Inactive</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" style="flex:1;" onclick="closeModal('user-modal')">Cancel</button>
+      <button class="btn btn-primary" style="flex:2;" id="save-user-btn" onclick="saveUser()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Add Venue Modal ────────────────────────────────────── -->
+<div class="modal-bg" id="venue-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="venue-modal-title">Add Venue</div>
+      </div>
+      <button class="btn-icon" onclick="closeModal('venue-modal')">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="form-grid">
+      <input type="hidden" id="edit-venue-id">
+      <div>
+        <label>Venue Name</label>
+        <input class="input" id="edit-venue-name" type="text" placeholder="e.g. Room 301">
+      </div>
+      <div class="form-row">
+        <div>
+          <label>Type</label>
+          <select class="input" id="edit-venue-type">
+            <option value="physical">Physical</option>
+            <option value="virtual">Virtual</option>
+          </select>
+        </div>
+        <div>
+          <label>Capacity</label>
+          <input class="input" id="edit-venue-capacity" type="number" min="1" placeholder="15">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" style="flex:1;" onclick="closeModal('venue-modal')">Cancel</button>
+      <button class="btn btn-primary" style="flex:2;" onclick="saveVenue()">Save Venue</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Confirm Delete Modal ──────────────────────────────── -->
+<div class="modal-bg" id="confirm-modal">
+  <div class="modal" style="max-width:380px;">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">Confirm Deactivate</div>
+        <div class="modal-sub" id="confirm-msg">This will deactivate the user account.</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" style="flex:1;" onclick="closeModal('confirm-modal')">Cancel</button>
+      <button class="btn btn-danger" style="flex:1;" id="confirm-ok-btn">Deactivate</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script>
+// ── State ─────────────────────────────────────────────────────────
+let allUsers = [], currentRoleFilter = 'all', currentTab = 'users';
+
+// ── Auth guard ────────────────────────────────────────────────────
+history.pushState(null, '', window.location.href);
+window.addEventListener('popstate', () => history.pushState(null, '', window.location.href));
+
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const res  = await fetch('/api/auth/me');
+    if (!res.ok) { window.location.replace('/'); return; }
+    const { user } = await res.json();
+    if (user.role !== 'admin') { window.location.replace('/admin-dashboard'); return; }
+
+    const initials = user.name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+    document.getElementById('user-avatar').textContent       = initials;
+    document.getElementById('user-display-name').textContent = user.name;
+  } catch { window.location.replace('/'); return; }
+
+  document.getElementById('logout-btn').onclick = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' });
+    window.location.replace('/');
+  };
+
+  loadUsers();
+});
+
+// ── Tab switching ─────────────────────────────────────────────────
+const tabMeta = {
+  users:        { title: 'Users',        sub: 'Manage all user accounts',          addLabel: 'Add User' },
+  venues:       { title: 'Venues',       sub: 'Manage rooms and meeting spaces',   addLabel: null },
+  appointments: { title: 'Appointments', sub: 'View and manage defense schedules', addLabel: null },
+  settings:     { title: 'Settings',     sub: 'System-wide scheduling config',     addLabel: null },
+};
+function showTab(name) {
+  currentTab = name;
+  ['users','venues','appointments','settings'].forEach(t => {
+    document.getElementById('tab-' + t).style.display = t === name ? '' : 'none';
+  });
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.toggle('active', el.getAttribute('onclick')?.includes(name)));
+  const m = tabMeta[name];
+  document.getElementById('tab-title').textContent = m.title;
+  document.getElementById('tab-sub').textContent   = m.sub;
+  const addBtn = document.getElementById('add-btn');
+  if (m.addLabel) { addBtn.style.display = ''; addBtn.innerHTML = `<svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke-width="2.5" stroke-linecap="round"/></svg>${m.addLabel}`; }
+  else addBtn.style.display = 'none';
+  if (name === 'venues')       loadVenues();
+  if (name === 'appointments') loadAppointments();
+  if (name === 'settings')     loadSettings();
+}
+
+// ── USERS ─────────────────────────────────────────────────────────
+async function loadUsers() {
+  const res = await fetch('/api/users');
+  const { users } = await res.json();
+  allUsers = users;
+  document.getElementById('user-count').textContent = `${users.length} total accounts`;
+  renderUsers();
+}
+function renderUsers() {
+  const q    = (document.getElementById('search-input').value || '').toLowerCase();
+  const rows = allUsers.filter(u => {
+    if (currentRoleFilter !== 'all' && u.role !== currentRoleFilter) return false;
+    if (q && !u.name.toLowerCase().includes(q) && !u.email.toLowerCase().includes(q)) return false;
+    return true;
+  });
+  const tbody = document.getElementById('user-tbody');
+  if (!rows.length) { tbody.innerHTML = `<tr><td colspan="7" class="empty">No users found.</td></tr>`; return; }
+  tbody.innerHTML = rows.map(u => `
+    <tr>
+      <td style="color:var(--text3);font-family:var(--mono);font-size:12px;">#${u.id}</td>
+      <td class="cell-name">${u.name}</td>
+      <td style="color:var(--text3);">${u.email}</td>
+      <td><span class="badge badge-${u.role}">${u.role}</span></td>
+      <td style="color:var(--text3);">${u.group_name || '—'}</td>
+      <td><span class="badge ${u.is_active ? 'badge-active' : 'badge-inactive'}">${u.is_active ? 'Active' : 'Inactive'}</span></td>
+      <td>
+        <div style="display:flex;gap:6px;">
+          <button class="btn btn-ghost btn-sm" onclick='openEditModal(${JSON.stringify(u)})'>
+            <svg width="11" height="11" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke-width="2"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke-width="2"/></svg>
+            Edit
+          </button>
+          <button class="btn btn-danger btn-sm" onclick="confirmDeactivate(${u.id},'${u.name}')">
+            <svg width="11" height="11" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path d="M15 9l-6 6M9 9l6 6" stroke-width="2" stroke-linecap="round"/></svg>
+            ${u.is_active ? 'Deactivate' : 'Deactivated'}
+          </button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+function filterRole(role, el) {
+  currentRoleFilter = role;
+  document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderUsers();
+}
+function filterTable(q) { if (currentTab === 'users') renderUsers(); }
+
+function openAddModal() {
+  document.getElementById('modal-title').textContent    = 'Add New User';
+  document.getElementById('modal-sub').textContent      = 'Create a new account';
+  document.getElementById('save-user-btn').textContent  = 'Create User';
+  document.getElementById('edit-user-id').value = '';
+  document.getElementById('edit-name').value    = '';
+  document.getElementById('edit-email').value   = '';
+  document.getElementById('edit-role').value    = 'student';
+  document.getElementById('edit-group').value   = '';
+  document.getElementById('edit-password').value= '';
+  document.getElementById('edit-status').value  = '1';
+  toggleGroupField();
+  document.getElementById('user-modal').classList.add('open');
+}
+function openEditModal(u) {
+  document.getElementById('modal-title').textContent    = 'Edit User';
+  document.getElementById('modal-sub').textContent      = `Editing: ${u.email}`;
+  document.getElementById('save-user-btn').textContent  = 'Save Changes';
+  document.getElementById('edit-user-id').value = u.id;
+  document.getElementById('edit-name').value    = u.name;
+  document.getElementById('edit-email').value   = u.email;
+  document.getElementById('edit-role').value    = u.role;
+  document.getElementById('edit-group').value   = u.group_name || '';
+  document.getElementById('edit-password').value= '';
+  document.getElementById('edit-status').value  = u.is_active ? '1' : '0';
+  toggleGroupField();
+  document.getElementById('user-modal').classList.add('open');
+}
+function toggleGroupField() {
+  const role = document.getElementById('edit-role').value;
+  document.getElementById('group-field').style.display = role === 'student' ? '' : 'none';
+}
+async function saveUser() {
+  const id       = document.getElementById('edit-user-id').value;
+  const name     = document.getElementById('edit-name').value.trim();
+  const email    = document.getElementById('edit-email').value.trim();
+  const role     = document.getElementById('edit-role').value;
+  const group    = document.getElementById('edit-group').value.trim();
+  const password = document.getElementById('edit-password').value;
+  const status   = document.getElementById('edit-status').value;
+
+  if (!name || !email) { showToast('Name and email are required.', 'error'); return; }
+
+  const body = { name, email, role, group_name: role === 'student' ? group : null, is_active: parseInt(status) };
+  if (password) body.password = password;
+  if (!id && !password) { showToast('Password is required for new users.', 'error'); return; }
+
+  const btn = document.getElementById('save-user-btn');
+  btn.disabled = true; btn.textContent = 'Saving...';
+
+  try {
+    const res = id
+      ? await fetch(`/api/users/${id}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) })
+      : await fetch('/api/users',       { method: 'POST',headers: {'Content-Type':'application/json'}, body: JSON.stringify({...body, password}) });
+    const data = await res.json();
+    if (res.ok) {
+      showToast(id ? 'User updated!' : 'User created!', 'success');
+      closeModal('user-modal');
+      loadUsers();
+    } else {
+      showToast(data.error || 'Failed to save.', 'error');
+    }
+  } catch { showToast('Server error.', 'error'); }
+  finally { btn.disabled = false; btn.textContent = id ? 'Save Changes' : 'Create User'; }
+}
+function confirmDeactivate(id, name) {
+  document.getElementById('confirm-msg').textContent = `Deactivate account for "${name}"? They won't be able to log in.`;
+  document.getElementById('confirm-ok-btn').onclick = async () => {
+    try {
+      const res = await fetch(`/api/users/${id}`, { method: 'DELETE' });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        showToast(data.error || 'Failed to deactivate user.', 'error');
+        return;
+      }
+      showToast(`"${name}" has been deactivated.`, 'info');
+      closeModal('confirm-modal');
+      loadUsers();
+    } catch (err) {
+      showToast('Network error. Could not deactivate user.', 'error');
+    }
+  };
+  document.getElementById('confirm-modal').classList.add('open');
+}
+
+// ── VENUES ───────────────────────────────────────────────────────
+async function loadVenues() {
+  const res = await fetch('/api/venues');
+  const { venues } = await res.json();
+  const tbody = document.getElementById('venue-tbody');
+  if (!venues?.length) { tbody.innerHTML = `<tr><td colspan="6" class="empty">No venues found.</td></tr>`; return; }
+  tbody.innerHTML = venues.map(v => `
+    <tr>
+      <td style="color:var(--text3);font-family:var(--mono);font-size:12px;">#${v.id}</td>
+      <td class="cell-name">${v.name}</td>
+      <td><span class="badge ${v.type==='physical'?'badge-faculty':'badge-admin'}">${v.type}</span></td>
+      <td style="color:var(--text3);">${v.capacity}</td>
+      <td><span class="badge ${v.is_active?'badge-active':'badge-inactive'}">${v.is_active?'Active':'Inactive'}</span></td>
+      <td>
+        <button class="btn btn-ghost btn-sm" onclick='openEditVenueModal(${JSON.stringify(v)})'>
+          <svg width="11" height="11" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke-width="2"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke-width="2"/></svg>
+          Edit
+        </button>
+      </td>
+    </tr>`).join('');
+}
+function openAddVenueModal() {
+  document.getElementById('venue-modal-title').textContent = 'Add Venue';
+  document.getElementById('edit-venue-id').value       = '';
+  document.getElementById('edit-venue-name').value     = '';
+  document.getElementById('edit-venue-type').value     = 'physical';
+  document.getElementById('edit-venue-capacity').value = '15';
+  document.getElementById('venue-modal').classList.add('open');
+}
+function openEditVenueModal(v) {
+  document.getElementById('venue-modal-title').textContent = 'Edit Venue';
+  document.getElementById('edit-venue-id').value       = v.id;
+  document.getElementById('edit-venue-name').value     = v.name;
+  document.getElementById('edit-venue-type').value     = v.type;
+  document.getElementById('edit-venue-capacity').value = v.capacity;
+  document.getElementById('venue-modal').classList.add('open');
+}
+async function saveVenue() {
+  const id       = document.getElementById('edit-venue-id').value;
+  const name     = document.getElementById('edit-venue-name').value.trim();
+  const type     = document.getElementById('edit-venue-type').value;
+  const capacity = parseInt(document.getElementById('edit-venue-capacity').value);
+  if (!name) { showToast('Venue name is required.', 'error'); return; }
+  const body = { name, type, capacity };
+  const res = id
+    ? await fetch(`/api/venues/${id}`, { method: 'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) })
+    : await fetch('/api/venues',       { method: 'POST',headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+  if (res.ok) { showToast('Venue saved!', 'success'); closeModal('venue-modal'); loadVenues(); }
+  else { const d = await res.json(); showToast(d.error || 'Failed.', 'error'); }
+}
+
+// ── APPOINTMENTS ─────────────────────────────────────────────────
+async function loadAppointments() {
+  const res = await fetch('/api/appointments');
+  const { appointments } = await res.json();
+  const tbody = document.getElementById('appt-tbody');
+  if (!appointments?.length) { tbody.innerHTML = `<tr><td colspan="7" class="empty">No appointments found.</td></tr>`; return; }
+  const statusColors = { pending:'badge-admin', confirmed:'badge-active', cancelled:'badge-inactive', completed:'badge-faculty', rescheduled:'badge-student' };
+  tbody.innerHTML = appointments.map(a => `
+    <tr>
+      <td style="color:var(--text3);font-family:var(--mono);font-size:12px;">#${a.id}</td>
+      <td class="cell-name">${a.group_name}</td>
+      <td style="color:var(--text3);">${a.date}</td>
+      <td style="color:var(--text3);">${a.time_slot}</td>
+      <td style="color:var(--text3);">${a.venue_name || '—'}</td>
+      <td><span class="badge ${statusColors[a.status]||''}">${a.status}</span></td>
+      <td>
+        <select class="input" style="padding:4px 8px;font-size:12px;width:130px;" onchange="updateApptStatus(${a.id},this.value)">
+          ${['pending','confirmed','rescheduled','completed','cancelled'].map(s=>`<option value="${s}"${a.status===s?' selected':''}>${s}</option>`).join('')}
+        </select>
+      </td>
+    </tr>`).join('');
+}
+async function updateApptStatus(id, status) {
+  const res = await fetch(`/api/appointments/${id}`, { method: 'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ status }) });
+  if (res.ok) showToast('Status updated!', 'success');
+  else showToast('Update failed.', 'error');
+}
+
+// ── SETTINGS ─────────────────────────────────────────────────────
+async function loadSettings() {
+  const res = await fetch('/api/settings');
+  const form = document.getElementById('settings-form');
+  if (!res.ok) { form.innerHTML = `<div class="empty">Settings API not available.</div>`; return; }
+  const { settings } = await res.json();
+  if (!settings) { form.innerHTML = `<div class="empty">No settings found.</div>`; return; }
+  form.innerHTML = Object.entries(settings).map(([k, v]) => `
+    <div>
+      <label>${k.replace(/_/g,' ')}</label>
+      <input class="input" id="setting-${k}" value="${v}">
+    </div>`).join('') + `
+    <button class="btn btn-primary" style="margin-top:6px;" onclick="saveSettings(${JSON.stringify(Object.keys(settings))})">Save Settings</button>`;
+}
+async function saveSettings(keys) {
+  for (const k of keys) {
+    const v = document.getElementById('setting-' + k)?.value;
+    if (v !== undefined) await fetch('/api/settings', { method: 'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ key: k, value: v }) });
+  }
+  showToast('Settings saved!', 'success');
+}
+
+// ── Helpers ───────────────────────────────────────────────────────
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function showToast(msg, type = 'info') {
+  let c = document.getElementById('toast-container');
+  const colors = { success:'#10B981', error:'#EF4444', warning:'#F59E0B', info:'#3B82F6' };
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.style.background = colors[type] || colors.info;
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(() => t.remove(), 3500);
+}
+// Close modal on backdrop click
+document.querySelectorAll('.modal-bg').forEach(bg => {
+  bg.addEventListener('click', e => { if (e.target === bg) bg.classList.remove('open'); });
+});
+</script>
+</body>
+</html>
