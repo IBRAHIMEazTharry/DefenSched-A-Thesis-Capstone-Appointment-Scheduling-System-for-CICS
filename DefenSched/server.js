@@ -62,6 +62,9 @@ app.put('/api/venues/:id', requireRole('admin'), (req, res) => {
   res.json({ success: true });
 });
 app.delete('/api/venues/:id', requireRole('admin'), (req, res) => {
+  const venue = db.prepare('SELECT id FROM venues WHERE id = ?').get(req.params.id);
+  if (!venue) return res.status(404).json({ error: 'Venue not found.' });
+  // Soft-delete: mark inactive (keeps FK integrity with existing appointments)
   db.prepare('UPDATE venues SET is_active = 0 WHERE id = ?').run(req.params.id);
   res.json({ success: true });
 });

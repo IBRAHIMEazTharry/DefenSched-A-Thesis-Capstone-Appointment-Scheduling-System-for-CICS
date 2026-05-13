@@ -76,7 +76,6 @@ router.get('/check-conflict', requireAuth, (req, res) => {
 
   const ex = exclude_id ? `AND a.id != ${parseInt(exclude_id)}` : '';
 
-  // Rule 1: Schedule rules
   const dayName     = getDayName(date);
   const allowedDays = (settings.defense_days || '').split(',');
   const slotStart   = time_slot.split('-')[0];
@@ -90,7 +89,6 @@ router.get('/check-conflict', requireAuth, (req, res) => {
     rules = { ok: true, message: 'Within approved schedule window.' };
   }
 
-  // Rule 2: Adviser
   const advConflict = db.prepare(`
     SELECT id FROM appointments
     WHERE adviser_id = ? AND date = ? AND time_slot = ? AND status != 'cancelled' ${ex}
@@ -99,7 +97,6 @@ router.get('/check-conflict', requireAuth, (req, res) => {
     ? { ok: false, message: 'Adviser has a conflict at this time.' }
     : { ok: true,  message: 'Adviser is available.' };
 
-  // Rule 3: Panelists
   const pIds = panelist_ids ? panelist_ids.split(',').map(Number).filter(Boolean) : [];
   let panelists = { ok: false, message: 'No panelists selected.', details: [] };
   if (pIds.length) {
@@ -121,7 +118,6 @@ router.get('/check-conflict', requireAuth, (req, res) => {
     };
   }
 
-  // Rule 4: Venue
   const venConflict = db.prepare(`
     SELECT id FROM appointments
     WHERE venue_id = ? AND date = ? AND time_slot = ? AND status != 'cancelled' ${ex}
@@ -157,9 +153,16 @@ router.post('/', requireAuth, (req, res) => {
   const insPan = db.prepare('INSERT INTO appointment_panelists (appointment_id, panelist_id) VALUES (?, ?)');
   for (const pid of panelist_ids) insPan.run(apptId, pid);
 
+  // Notify adviser, panelists, and submitting student
   notify(parseInt(adviser_id), `New defense scheduled: ${group_name} on ${date} at ${time_slot}.`, 'info');
   for (const pid of panelist_ids) notify(pid, `You are assigned as panelist for ${group_name} on ${date}.`, 'info');
   notify(userId, 'Appointment submitted. Upload your manuscript to confirm.', 'success');
+
+  // Notify all admin users about the new booking
+  const admins = db.prepare("SELECT id FROM users WHERE role = 'admin' AND is_active = 1").all();
+  for (const admin of admins) {
+    notify(admin.id, `New appointment request from ${group_name} on ${date} at ${time_slot}.`, 'info');
+  }
 
   res.status(201).json({ success: true, appointment_id: apptId });
 });
@@ -186,12 +189,17 @@ router.put('/:id', requireAuth, (req, res) => {
   res.json({ success: true });
 });
 
-// ── DELETE /api/appointments/:id ──────────────────────────────────
+// ── DELETE /api/appointments/:id — hard delete ────────────────────
 router.delete('/:id', requireRole('admin'), (req, res) => {
   const appt = db.prepare('SELECT * FROM appointments WHERE id = ?').get(req.params.id);
   if (!appt) return res.status(404).json({ error: 'Appointment not found.' });
-  db.prepare(`UPDATE appointments SET status = 'cancelled' WHERE id = ?`).run(req.params.id);
-  notify(appt.student_id, `Your appointment on ${appt.date} has been cancelled.`, 'error');
+
+  // Notify student before removing
+  try { notify(appt.student_id, `Your appointment on ${appt.date} has been deleted by the admin.`, 'error'); } catch (_) {}
+
+  // Hard delete — appointment_panelists cascades via FK ON DELETE CASCADE
+  db.prepare('DELETE FROM appointments WHERE id = ?').run(req.params.id);
+
   res.json({ success: true });
 });
 

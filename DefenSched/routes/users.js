@@ -67,13 +67,38 @@ router.put('/:id', requireRole('admin'), (req, res) => {
   res.json({ success: true });
 });
 
-// DELETE /api/users/:id — soft delete (deactivate)
+// DELETE /api/users/:id — hard delete (FK-safe)
 router.delete('/:id', requireRole('admin'), (req, res) => {
-  db.prepare('UPDATE users SET is_active = 0 WHERE id = ?').run(req.params.id);
-  res.json({ success: true });
+  const uid = parseInt(req.params.id);
+  const user = db.prepare('SELECT id, role FROM users WHERE id = ?').get(uid);
+  if (!user) return res.status(404).json({ error: 'User not found.' });
+  if (user.role === 'admin') return res.status(403).json({ error: 'Cannot delete admin accounts.' });
+
+  try {
+    // Run everything in a single transaction
+    db.transaction(() => {
+      // 1. Remove from panelist assignments first (avoids orphan FK on appointment_panelists)
+      db.prepare('DELETE FROM appointment_panelists WHERE panelist_id = ?').run(uid);
+
+      // 2. Hard-delete appointments where user is student (panelists cascade via FK)
+      //    We must DELETE (not just cancel) to remove the FK reference on student_id
+      db.prepare('DELETE FROM appointments WHERE student_id = ?').run(uid);
+
+      // 3. Hard-delete appointments where user is adviser
+      db.prepare('DELETE FROM appointments WHERE adviser_id = ?').run(uid);
+
+      // 4. Delete the user — notifications cascade via FK ON DELETE CASCADE
+      db.prepare('DELETE FROM users WHERE id = ?').run(uid);
+    })();
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Delete user error:', err.message);
+    res.status(500).json({ error: 'Failed to delete user: ' + err.message });
+  }
 });
 
-// GET /api/users/venues/all — venue list (put here for convenience)
+// GET /api/users/venues/all — venue list
 router.get('/venues/all', requireAuth, (req, res) => {
   const venues = db.prepare('SELECT * FROM venues WHERE is_active = 1 ORDER BY name').all();
   res.json({ venues });
