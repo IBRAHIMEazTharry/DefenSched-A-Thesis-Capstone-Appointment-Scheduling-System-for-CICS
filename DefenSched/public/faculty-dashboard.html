@@ -1,468 +1,1400 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DefenSched — Faculty Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #f7f8fc;
-    --surface: #ffffff;
-    --surface2: #f0f2f8;
-    --border: #e4e8f0;
-    --border2: #d0d6e8;
-    --accent: #2563eb;
-    --accent-light: #eff4ff;
-    --accent2: #1d4ed8;
-    --text: #111827;
-    --text2: #4b5563;
-    --text3: #9ca3af;
-    --success: #059669;
-    --success-bg: #ecfdf5;
-    --warning: #d97706;
-    --warning-bg: #fffbeb;
-    --danger: #dc2626;
-    --danger-bg: #fef2f2;
-    --purple: #7c3aed;
-    --purple-bg: #f5f3ff;
-    --teal: #0d9488;
-    --teal-bg: #f0fdfa;
-    --font: 'Sora', sans-serif;
-    --mono: 'JetBrains Mono', monospace;
-    --radius: 10px;
-    --radius-lg: 14px;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; display: flex; font-size: 14px; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DefenSched — Faculty Dashboard</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f7f8fc;
+      --surface: #ffffff;
+      --surface2: #f0f2f8;
+      --border: #e4e8f0;
+      --border2: #d0d6e8;
+      --accent: #2563eb;
+      --accent-light: #eff4ff;
+      --accent2: #1d4ed8;
+      --text: #111827;
+      --text2: #4b5563;
+      --text3: #9ca3af;
+      --success: #059669;
+      --success-bg: #ecfdf5;
+      --warning: #d97706;
+      --warning-bg: #fffbeb;
+      --danger: #dc2626;
+      --danger-bg: #fef2f2;
+      --purple: #7c3aed;
+      --purple-bg: #f5f3ff;
+      --teal: #0d9488;
+      --teal-bg: #f0fdfa;
+      --font: 'Sora', sans-serif;
+      --mono: 'JetBrains Mono', monospace;
+      --radius: 10px;
+      --radius-lg: 14px;
+    }
 
-  .sidebar {
-    width: 230px; min-height: 100vh; background: var(--surface);
-    border-right: 1px solid var(--border); display: flex; flex-direction: column;
-    position: fixed; top: 0; left: 0; bottom: 0;
-  }
-  .logo { padding: 22px 20px 18px; border-bottom: 1px solid var(--border); }
-  .logo-name { font-size: 15px; font-weight: 600; color: var(--text); }
-  .logo-badge { font-size: 10px; font-weight: 600; background: var(--teal-bg); color: var(--teal); border-radius: 99px; padding: 2px 8px; margin-left: 6px; }
-  .logo-sub { font-size: 11px; color: var(--text3); margin-top: 3px; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-  .nav { flex: 1; padding: 10px 10px; }
-  .nav-section { font-size: 10px; font-weight: 600; color: var(--text3); letter-spacing: 0.1em; text-transform: uppercase; padding: 10px 10px 4px; }
-  .nav-item {
-    display: flex; align-items: center; gap: 10px; padding: 9px 10px;
-    border-radius: var(--radius); cursor: pointer; color: var(--text2);
-    font-size: 13px; transition: all 0.15s; margin-bottom: 2px;
-  }
-  .nav-item:hover { background: var(--surface2); color: var(--text); }
-  .nav-item.active { background: var(--accent-light); color: var(--accent); font-weight: 500; }
-  .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
-  .nav-badge { margin-left: auto; font-size: 10px; font-family: var(--mono); background: var(--danger); color: #fff; border-radius: 99px; padding: 1px 6px; }
-  .nav-badge-warn { margin-left: auto; font-size: 10px; font-family: var(--mono); background: var(--warning); color: #fff; border-radius: 99px; padding: 1px 6px; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      font-size: 14px;
+    }
 
-  .sidebar-user { padding: 14px 16px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
-  .avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, #0d9488, #2563eb); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: #fff; flex-shrink: 0; }
-  .user-name { font-size: 13px; font-weight: 500; }
-  .user-role { font-size: 11px; color: var(--text3); }
+    .sidebar {
+      width: 230px;
+      min-height: 100vh;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+    }
 
-  .main { margin-left: 230px; flex: 1; padding: 28px 32px; }
-  .page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 24px; }
-  .page-title { font-size: 20px; font-weight: 600; letter-spacing: -0.4px; }
-  .page-sub { font-size: 13px; color: var(--text2); margin-top: 3px; }
-  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: var(--radius); font-size: 13px; font-weight: 500; cursor: pointer; border: none; font-family: var(--font); transition: all 0.15s; }
-  .btn-primary { background: var(--accent); color: #fff; }
-  .btn-primary:hover { background: var(--accent2); }
-  .btn-outline { background: var(--surface); color: var(--text2); border: 1px solid var(--border2); }
-  .btn-outline:hover { background: var(--surface2); }
-  .btn-danger-soft { background: var(--danger-bg); color: var(--danger); border: 1px solid #fecaca; font-size: 12px; padding: 5px 12px; }
+    .logo {
+      padding: 22px 20px 18px;
+      border-bottom: 1px solid var(--border);
+    }
 
-  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 22px; }
-  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px 18px; }
-  .stat-label { font-size: 11px; color: var(--text3); font-weight: 500; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px; }
-  .stat-value { font-size: 26px; font-weight: 600; color: var(--text); font-family: var(--mono); letter-spacing: -1px; }
-  .stat-sub { font-size: 11px; color: var(--text3); margin-top: 4px; }
-  .stat-sub span { font-weight: 500; }
+    .logo-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+    }
 
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
-  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+    .logo-badge {
+      font-size: 10px;
+      font-weight: 600;
+      background: var(--teal-bg);
+      color: var(--teal);
+      border-radius: 99px;
+      padding: 2px 8px;
+      margin-left: 6px;
+    }
 
-  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px 20px; }
-  .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-  .card-title { font-size: 13px; font-weight: 600; }
-  .card-action { font-size: 12px; color: var(--accent); cursor: pointer; }
+    .logo-sub {
+      font-size: 11px;
+      color: var(--text3);
+      margin-top: 3px;
+    }
 
-  .advisee-card { border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-bottom: 10px; transition: border-color 0.15s; }
-  .advisee-card:hover { border-color: var(--border2); }
-  .advisee-card:last-child { margin-bottom: 0; }
-  .advisee-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-  .advisee-name { font-size: 13px; font-weight: 600; color: var(--text); }
-  .advisee-meta { font-size: 11px; color: var(--text3); margin-top: 1px; }
-  .advisee-progress { margin-top: 10px; }
-  .advisee-bar { height: 4px; background: var(--surface2); border-radius: 99px; margin-top: 4px; overflow: hidden; }
-  .advisee-fill { height: 100%; border-radius: 99px; }
+    .nav {
+      flex: 1;
+      padding: 10px 10px;
+    }
 
-  .tag { display: inline-flex; align-items: center; font-size: 11px; font-weight: 500; padding: 3px 8px; border-radius: 99px; }
-  .tag-confirmed { background: var(--success-bg); color: var(--success); }
-  .tag-pending { background: var(--warning-bg); color: var(--warning); }
-  .tag-final { background: var(--accent-light); color: var(--accent); }
-  .tag-title { background: var(--purple-bg); color: var(--purple); }
-  .tag-advisory { background: var(--teal-bg); color: var(--teal); }
+    .nav-section {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text3);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 10px 10px 4px;
+    }
 
-  .panel-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
-  .panel-item:last-child { border-bottom: none; }
-  .panel-date { font-family: var(--mono); font-size: 11px; color: var(--text3); min-width: 52px; }
-  .panel-info { flex: 1; }
-  .panel-name { font-size: 13px; font-weight: 500; color: var(--text); }
-  .panel-meta { font-size: 11px; color: var(--text3); margin-top: 1px; }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 10px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      color: var(--text2);
+      font-size: 13px;
+      transition: all 0.15s;
+      margin-bottom: 2px;
+    }
 
-  .avail-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
-  .avail-day { text-align: center; }
-  .avail-label { font-size: 10px; color: var(--text3); font-weight: 500; margin-bottom: 4px; text-transform: uppercase; }
-  .avail-slot { font-size: 10px; padding: 4px 2px; border-radius: 6px; margin-bottom: 3px; text-align: center; font-family: var(--mono); }
-  .avail-open { background: var(--success-bg); color: var(--success); }
-  .avail-busy { background: var(--danger-bg); color: var(--danger); }
-  .avail-advisory { background: var(--teal-bg); color: var(--teal); }
+    .nav-item:hover {
+      background: var(--surface2);
+      color: var(--text);
+    }
 
-  .manuscript-item { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--border); }
-  .manuscript-item:last-child { border-bottom: none; }
-  .file-icon { width: 32px; height: 32px; background: var(--accent-light); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .file-icon svg { width: 16px; height: 16px; color: var(--accent); stroke: var(--accent); }
-  .file-name { font-size: 13px; font-weight: 500; color: var(--text); }
-  .file-meta { font-size: 11px; color: var(--text3); margin-top: 1px; }
-  .file-new { font-size: 10px; background: var(--danger); color: #fff; border-radius: 99px; padding: 1px 6px; font-weight: 600; margin-left: 6px; }
+    .nav-item.active {
+      background: var(--accent-light);
+      color: var(--accent);
+      font-weight: 500;
+    }
 
-  .notif-item { display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); }
-  .notif-item:last-child { border-bottom: none; }
-  .notif-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); margin-top: 5px; flex-shrink: 0; }
-  .notif-text { font-size: 12px; color: var(--text2); line-height: 1.5; }
-  .notif-text strong { color: var(--text); font-weight: 500; }
-  .notif-time { font-size: 11px; color: var(--text3); margin-top: 2px; font-family: var(--mono); }
-</style>
-</head>
-<body>
+    .nav-item svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
 
-<aside class="sidebar">
-  <div class="logo">
-    <div><span class="logo-name">DefenSched</span><span class="logo-badge">Faculty</span></div>
-    <div class="logo-sub">CICS · MSU Main Campus</div>
-  </div>
-  <nav class="nav">
-    <div class="nav-section">Main</div>
-    <div class="nav-item active">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" stroke-width="1.8"/><rect x="14" y="3" width="7" height="7" rx="1" stroke-width="1.8"/><rect x="3" y="14" width="7" height="7" rx="1" stroke-width="1.8"/><rect x="14" y="14" width="7" height="7" rx="1" stroke-width="1.8"/></svg>
-      Overview
-    </div>
-    <div class="nav-item">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" stroke-width="1.8" stroke-linecap="round"/></svg>
-      Defense schedule board
-    </div>
-    <div class="nav-section">My roles</div>
-    <div class="nav-item">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8z" stroke-width="1.8" stroke-linecap="round"/></svg>
-      My advisees
-    </div>
-    <div class="nav-item">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" stroke-width="1.8"/><path d="M16 2v4M8 2v4M3 10h18" stroke-width="1.8"/></svg>
-      My panel schedule
-      <span class="nav-badge-warn">3</span>
-    </div>
-    <div class="nav-item">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="1.8"/><polyline points="12 6 12 12 16 14" stroke-width="1.8"/></svg>
-      Availability settings
-    </div>
-    <div class="nav-section">Documents</div>
-    <div class="nav-item">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke-width="1.8"/><polyline points="14 2 14 8 20 8" stroke-width="1.8"/></svg>
-      Manuscript inbox
-      <span class="nav-badge">2</span>
-    </div>
-    <div class="nav-item">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8zM6 1v3M10 1v3M14 1v3" stroke-width="1.8" stroke-linecap="round"/></svg>
-      Notifications
-      <span class="nav-badge">4</span>
-    </div>
-  </nav>
-  <div class="sidebar-user" style="display:flex;align-items:center;gap:10px;">
-    <div class="avatar" id="user-avatar">RS</div>
-    <div style="flex:1;min-width:0;">
-      <div class="user-name" id="user-display-name">Dr. R. Santos</div>
-      <div class="user-role">Faculty · Adviser &amp; Panelist</div>
-    </div>
-    <button id="logout-btn" title="Logout" style="background:none;border:none;cursor:pointer;color:var(--text3);padding:4px;border-radius:6px;flex-shrink:0;">
-      <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </button>
-  </div>
-</aside>
+    .nav-badge {
+      margin-left: auto;
+      font-size: 10px;
+      font-family: var(--mono);
+      background: var(--danger);
+      color: #fff;
+      border-radius: 99px;
+      padding: 1px 6px;
+    }
 
-<main class="main">
-  <div class="page-header">
-    <div>
-      <div class="page-title">Welcome back, Dr. Santos</div>
-      <div class="page-sub">AY 2025–2026 · Second Semester · You have 3 defenses this week as panelist</div>
-    </div>
-    <div style="display:flex;gap:8px;">
-      <button class="btn btn-outline">
-        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="1.8"/><polyline points="12 6 12 12 16 14" stroke-width="1.8"/></svg>
-        Update availability
-      </button>
-    </div>
-  </div>
+    .nav-badge-warn {
+      margin-left: auto;
+      font-size: 10px;
+      font-family: var(--mono);
+      background: var(--warning);
+      color: #fff;
+      border-radius: 99px;
+      padding: 1px 6px;
+    }
 
-  <div class="stats-grid">
-    <div class="stat-card">
-      <div class="stat-label">Groups advising</div>
-      <div class="stat-value">3</div>
-      <div class="stat-sub">This semester</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Panel assignments</div>
-      <div class="stat-value">5</div>
-      <div class="stat-sub"><span style="color:var(--warning)">3 upcoming</span> this week</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Manuscripts to review</div>
-      <div class="stat-value">2</div>
-      <div class="stat-sub"><span style="color:var(--danger)">New</span> submissions</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Honoraria (est.)</div>
-      <div class="stat-value" style="font-size:20px;">₱8,500</div>
-      <div class="stat-sub">This semester</div>
-    </div>
-  </div>
+    .sidebar-user {
+      padding: 14px 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-  <div class="grid-2" style="margin-bottom:14px;">
-    <div class="card">
-      <div class="card-header">
-        <span class="card-title">My advisees</span>
-        <span class="card-action">View all →</span>
-      </div>
-      <div class="advisee-card">
-        <div class="advisee-head">
-          <div><div class="advisee-name">Group 04 — TechVision</div><div class="advisee-meta">4 members · IT Research Track</div></div>
-          <span class="tag tag-final">Final defense</span>
-        </div>
-        <div style="font-size:11px;color:var(--text3);">Last submission: <span style="color:var(--text2);font-weight:500;">May 10 — Chapter 5 draft</span></div>
-        <div class="advisee-progress">
-          <div style="display:flex;justify-content:space-between;font-size:11px;"><span style="color:var(--text3);">Progress</span><span style="color:var(--text2);font-weight:500;">90%</span></div>
-          <div class="advisee-bar"><div class="advisee-fill" style="width:90%;background:var(--success);"></div></div>
-        </div>
-      </div>
-      <div class="advisee-card">
-        <div class="advisee-head">
-          <div><div class="advisee-name">Group 11 — AquaNet</div><div class="advisee-meta">3 members · IS Research Track</div></div>
-          <span class="tag tag-final">Final defense</span>
-        </div>
-        <div style="font-size:11px;color:var(--text3);">Last submission: <span style="color:var(--text2);font-weight:500;">May 8 — Full manuscript</span></div>
-        <div class="advisee-progress">
-          <div style="display:flex;justify-content:space-between;font-size:11px;"><span style="color:var(--text3);">Progress</span><span style="color:var(--text2);font-weight:500;">75%</span></div>
-          <div class="advisee-bar"><div class="advisee-fill" style="width:75%;background:var(--accent);"></div></div>
-        </div>
-      </div>
-      <div class="advisee-card">
-        <div class="advisee-head">
-          <div><div class="advisee-name">Group 22 — SafeRoute</div><div class="advisee-meta">4 members · IT Research Track</div></div>
-          <span class="tag tag-title">Title defense</span>
-        </div>
-        <div style="font-size:11px;color:var(--text3);">Last submission: <span style="color:var(--text2);font-weight:500;">May 5 — Proposal draft</span></div>
-        <div class="advisee-progress">
-          <div style="display:flex;justify-content:space-between;font-size:11px;"><span style="color:var(--text3);">Progress</span><span style="color:var(--text2);font-weight:500;">30%</span></div>
-          <div class="advisee-bar"><div class="advisee-fill" style="width:30%;background:var(--warning);"></div></div>
-        </div>
-      </div>
-    </div>
+    .avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #0d9488, #2563eb);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: #fff;
+      flex-shrink: 0;
+    }
 
-    <div style="display:flex;flex-direction:column;gap:14px;">
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title">My panel schedule</span>
-          <span class="card-action">View all →</span>
-        </div>
-        <div class="panel-item">
-          <div class="panel-date">May 13<br>8:00 AM</div>
-          <div class="panel-info">
-            <div class="panel-name">Group 04 — TechVision</div>
-            <div class="panel-meta">Room 301 · Final defense</div>
-          </div>
-          <span class="tag tag-confirmed">Confirmed</span>
-        </div>
-        <div class="panel-item">
-          <div class="panel-date">May 14<br>1:00 PM</div>
-          <div class="panel-info">
-            <div class="panel-name">Group 07 — MediTrack</div>
-            <div class="panel-meta">AVR · Title defense</div>
-          </div>
-          <span class="tag tag-confirmed">Confirmed</span>
-        </div>
-        <div class="panel-item">
-          <div class="panel-date">May 15<br>9:00 AM</div>
-          <div class="panel-info">
-            <div class="panel-name">Group 19 — EduSync</div>
-            <div class="panel-meta">Online · Final defense</div>
-          </div>
-          <span class="tag tag-pending">Pending</span>
-        </div>
-        <div style="margin-top:12px;">
-          <button class="btn btn-danger-soft" style="width:100%;justify-content:center;">Request withdrawal from a session</button>
-        </div>
-      </div>
+    .user-name {
+      font-size: 13px;
+      font-weight: 500;
+    }
 
-      <div class="card">
-        <div class="card-header"><span class="card-title">Manuscript inbox</span><span class="card-action">View all →</span></div>
-        <div class="manuscript-item">
-          <div class="file-icon"><svg fill="none" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke-width="1.8"/><polyline points="14 2 14 8 20 8" stroke-width="1.8"/></svg></div>
-          <div class="panel-info">
-            <div class="file-name">AquaNet_FinalManuscript.pdf <span class="file-new">NEW</span></div>
-            <div class="file-meta">Group 11 · May 10 · v3</div>
-          </div>
-        </div>
-        <div class="manuscript-item">
-          <div class="file-icon"><svg fill="none" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke-width="1.8"/><polyline points="14 2 14 8 20 8" stroke-width="1.8"/></svg></div>
-          <div class="panel-info">
-            <div class="file-name">EduSync_Chapter3.pdf <span class="file-new">NEW</span></div>
-            <div class="file-meta">Group 19 · May 9 · v1</div>
-          </div>
-        </div>
-        <div class="manuscript-item">
-          <div class="file-icon" style="background:var(--surface2);"><svg fill="none" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke-width="1.8"/><polyline points="14 2 14 8 20 8" stroke-width="1.8"/></svg></div>
-          <div class="panel-info">
-            <div class="file-name">TechVision_FinalManuscript.pdf</div>
-            <div class="file-meta">Group 04 · May 8 · v4 · Reviewed</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+    .user-role {
+      font-size: 11px;
+      color: var(--text3);
+    }
 
-  <div class="grid-2">
-    <div class="card">
-      <div class="card-header"><span class="card-title">My availability this week</span><span class="card-action">Edit →</span></div>
-      <div style="display:flex;gap:6px;margin-bottom:10px;">
-        <span style="font-size:11px;padding:3px 8px;border-radius:99px;background:var(--success-bg);color:var(--success);">● Open panel slot</span>
-        <span style="font-size:11px;padding:3px 8px;border-radius:99px;background:var(--teal-bg);color:var(--teal);">● Advisory time</span>
-        <span style="font-size:11px;padding:3px 8px;border-radius:99px;background:var(--danger-bg);color:var(--danger);">● Busy</span>
-      </div>
-      <div class="avail-grid">
-        <div class="avail-day">
-          <div class="avail-label">Mon</div>
-          <div class="avail-slot avail-advisory">8–10</div>
-          <div class="avail-slot avail-open">10–12</div>
-          <div class="avail-slot avail-busy">1–3</div>
-        </div>
-        <div class="avail-day">
-          <div class="avail-label">Tue</div>
-          <div class="avail-slot avail-busy">8–10</div>
-          <div class="avail-slot avail-open">10–12</div>
-          <div class="avail-slot avail-advisory">1–3</div>
-        </div>
-        <div class="avail-day">
-          <div class="avail-label">Wed</div>
-          <div class="avail-slot avail-open">8–10</div>
-          <div class="avail-slot avail-open">10–12</div>
-          <div class="avail-slot avail-open">1–3</div>
-        </div>
-        <div class="avail-day">
-          <div class="avail-label">Thu</div>
-          <div class="avail-slot avail-advisory">8–10</div>
-          <div class="avail-slot avail-busy">10–12</div>
-          <div class="avail-slot avail-open">1–3</div>
-        </div>
-        <div class="avail-day">
-          <div class="avail-label">Fri</div>
-          <div class="avail-slot avail-open">8–10</div>
-          <div class="avail-slot avail-advisory">10–12</div>
-          <div class="avail-slot avail-busy">1–3</div>
-        </div>
-      </div>
-    </div>
+    .main {
+      margin-left: 230px;
+      flex: 1;
+      padding: 28px 32px;
+    }
 
-    <div class="card">
-      <div class="card-header"><span class="card-title">Notifications</span><span class="card-action">Mark all read</span></div>
-      <div class="notif-item">
-        <div class="notif-dot" style="background:var(--danger);"></div>
-        <div><div class="notif-text"><strong>Group 11 — AquaNet</strong> uploaded a new manuscript version (v3). Review required before May 13.</div><div class="notif-time">Today · 9:12 AM</div></div>
-      </div>
-      <div class="notif-item">
-        <div class="notif-dot" style="background:var(--warning);"></div>
-        <div><div class="notif-text">Defense schedule for <strong>Group 19 — EduSync</strong> was updated to May 15, 9:00 AM by the coordinator.</div><div class="notif-time">Today · 6:30 AM</div></div>
-      </div>
-      <div class="notif-item">
-        <div class="notif-dot"></div>
-        <div><div class="notif-text"><strong>Group 04 — TechVision</strong> defense confirmed for May 13, 8:00 AM at Room 301.</div><div class="notif-time">Yesterday · 4:00 PM</div></div>
-      </div>
-      <div class="notif-item">
-        <div class="notif-dot" style="background:var(--success);"></div>
-        <div><div class="notif-text">Your panel availability for the week of May 12–16 has been saved successfully.</div><div class="notif-time">May 10 · 2:15 PM</div></div>
-      </div>
-    </div>
-  </div>
-</main>
+    .page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
 
-<script>
-(async () => {
-  // ── Prevent back button to login ────────────────────────────────
-  history.pushState(null, '', window.location.href);
-  window.addEventListener('popstate', () => {
-    history.pushState(null, '', window.location.href);
-  });
+    .page-title {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.4px;
+    }
 
-  // ── Auth guard ──────────────────────────────────────────────────
-  let user;
-  try {
-    const res = await fetch('/api/auth/me');
-    if (!res.ok) { window.location.replace('/'); return; }
-    const data = await res.json();
-    user = data.user;
-    if (user.role !== 'faculty') { window.location.replace('/'); return; }
-  } catch (e) { window.location.replace('/'); return; }
+    .page-sub {
+      font-size: 13px;
+      color: var(--text2);
+      margin-top: 3px;
+    }
 
-  // ── Populate user info ──────────────────────────────────────────
-  const initials = user.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
-  const avatarEl = document.getElementById('user-avatar') || document.querySelector('.avatar');
-  const nameEl   = document.getElementById('user-display-name') || document.querySelector('.user-name');
-  if (avatarEl) avatarEl.textContent = initials;
-  if (nameEl)   nameEl.textContent   = user.name;
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      font-family: var(--font);
+      transition: all 0.15s;
+    }
 
-  // ── Logout ──────────────────────────────────────────────────────
-  const logoutBtn = document.getElementById('logout-btn');
-  if (logoutBtn) {
-    logoutBtn.addEventListener('click', async () => {
-      await fetch('/api/auth/logout', { method: 'POST' });
-      window.location.replace('/');
-    });
-  }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
 
-  // ── Load real stats ─────────────────────────────────────────────
-  try {
-    const apptRes = await fetch('/api/appointments');
-    if (apptRes.ok) {
-      const { appointments } = await apptRes.json();
-      const statValues = document.querySelectorAll('.stat-value');
-      const myAppts    = appointments.filter(a => a.adviser_id === user.id);
-      const upcoming   = myAppts.filter(a => a.status === 'confirmed').length;
-      const pending    = myAppts.filter(a => a.status === 'pending').length;
-      if (statValues[0]) statValues[0].textContent = upcoming;
-      if (statValues[1]) statValues[1].textContent = myAppts.length;
-      if (statValues[2]) statValues[2].textContent = pending;
+    .btn-primary:hover {
+      background: var(--accent2);
+    }
 
-      // ── Render appointments table if present ──────────────────
-      const tbody = document.querySelector('.appt-table tbody, table tbody');
-      if (tbody && appointments.length > 0) {
-        tbody.innerHTML = '';
-        appointments.forEach(a => {
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td>${a.group_name || '—'}</td>
-            <td>${a.date || '—'}</td>
-            <td>${a.time_slot || '—'}</td>
-            <td>${a.venue_name || '—'}</td>
-            <td><span class="tag tag-${a.status}">${a.status}</span></td>
-          `;
-          tbody.appendChild(tr);
-        });
+    .btn-outline {
+      background: var(--surface);
+      color: var(--text2);
+      border: 1px solid var(--border2);
+    }
+
+    .btn-outline:hover {
+      background: var(--surface2);
+    }
+
+    .btn-danger-soft {
+      background: var(--danger-bg);
+      color: var(--danger);
+      border: 1px solid #fecaca;
+      font-size: 12px;
+      padding: 5px 12px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 16px 18px;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--text3);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 6px;
+    }
+
+    .stat-value {
+      font-size: 26px;
+      font-weight: 600;
+      color: var(--text);
+      font-family: var(--mono);
+      letter-spacing: -1px;
+    }
+
+    .stat-sub {
+      font-size: 11px;
+      color: var(--text3);
+      margin-top: 4px;
+    }
+
+    .stat-sub span {
+      font-weight: 500;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 18px 20px;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .card-title {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .card-action {
+      font-size: 12px;
+      color: var(--accent);
+      cursor: pointer;
+    }
+
+    .advisee-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+      margin-bottom: 10px;
+      transition: border-color 0.15s;
+    }
+
+    .advisee-card:hover {
+      border-color: var(--border2);
+    }
+
+    .advisee-card:last-child {
+      margin-bottom: 0;
+    }
+
+    .advisee-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .advisee-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .advisee-meta {
+      font-size: 11px;
+      color: var(--text3);
+      margin-top: 1px;
+    }
+
+    .advisee-progress {
+      margin-top: 10px;
+    }
+
+    .advisee-bar {
+      height: 4px;
+      background: var(--surface2);
+      border-radius: 99px;
+      margin-top: 4px;
+      overflow: hidden;
+    }
+
+    .advisee-fill {
+      height: 100%;
+      border-radius: 99px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 3px 8px;
+      border-radius: 99px;
+    }
+
+    .tag-confirmed {
+      background: var(--success-bg);
+      color: var(--success);
+    }
+
+    .tag-pending {
+      background: var(--warning-bg);
+      color: var(--warning);
+    }
+
+    .tag-final {
+      background: var(--accent-light);
+      color: var(--accent);
+    }
+
+    .tag-title {
+      background: var(--purple-bg);
+      color: var(--purple);
+    }
+
+    .tag-advisory {
+      background: var(--teal-bg);
+      color: var(--teal);
+    }
+
+    .panel-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .panel-item:last-child {
+      border-bottom: none;
+    }
+
+    .panel-date {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text3);
+      min-width: 52px;
+    }
+
+    .panel-info {
+      flex: 1;
+    }
+
+    .panel-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .panel-meta {
+      font-size: 11px;
+      color: var(--text3);
+      margin-top: 1px;
+    }
+
+    .avail-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+    }
+
+    .avail-day {
+      text-align: center;
+    }
+
+    .avail-label {
+      font-size: 10px;
+      color: var(--text3);
+      font-weight: 500;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
+
+    .avail-slot {
+      font-size: 10px;
+      padding: 4px 2px;
+      border-radius: 6px;
+      margin-bottom: 3px;
+      text-align: center;
+      font-family: var(--mono);
+    }
+
+    .avail-open {
+      background: var(--success-bg);
+      color: var(--success);
+    }
+
+    .avail-busy {
+      background: var(--danger-bg);
+      color: var(--danger);
+    }
+
+    .avail-advisory {
+      background: var(--teal-bg);
+      color: var(--teal);
+    }
+
+    .manuscript-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .manuscript-item:last-child {
+      border-bottom: none;
+    }
+
+    .file-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--accent-light);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .file-icon svg {
+      width: 16px;
+      height: 16px;
+      color: var(--accent);
+      stroke: var(--accent);
+    }
+
+    .file-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .file-meta {
+      font-size: 11px;
+      color: var(--text3);
+      margin-top: 1px;
+    }
+
+    .file-new {
+      font-size: 10px;
+      background: var(--danger);
+      color: #fff;
+      border-radius: 99px;
+      padding: 1px 6px;
+      font-weight: 600;
+      margin-left: 6px;
+    }
+
+    .notif-item {
+      display: flex;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .notif-item:last-child {
+      border-bottom: none;
+    }
+
+    .notif-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      margin-top: 5px;
+      flex-shrink: 0;
+    }
+
+    .notif-text {
+      font-size: 12px;
+      color: var(--text2);
+      line-height: 1.5;
+    }
+
+    .notif-text strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .notif-time {
+      font-size: 11px;
+      color: var(--text3);
+      margin-top: 2px;
+      font-family: var(--mono);
+    }
+
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    .form-select,
+    .form-input {
+      width: 100%;
+      padding: 7px 11px;
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-size: 13px;
+      outline: none;
+      font-family: var(--font);
+    }
+
+    .form-select:focus,
+    .form-input:focus {
+      border-color: var(--accent);
+    }
+
+    .form-select option {
+      background: var(--surface2);
+    }
+
+    .btn-sm {
+      padding: 5px 11px;
+      font-size: 12px;
+    }
+
+    .skeleton {
+      background: linear-gradient(90deg, var(--surface2) 25%, var(--border) 50%, var(--surface2) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 6px;
+      height: 14px;
+      margin-bottom: 8px;
+    }
+
+    @keyframes shimmer {
+      0% {
+        background-position: 200% 0;
+      }
+
+      100% {
+        background-position: -200% 0;
       }
     }
-  } catch (e) { console.error('Stats load error', e); }
-})();
-</script>
+
+    .db-empty {
+      padding: 36px;
+      text-align: center;
+      color: var(--text3);
+      font-size: 13px;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .table th {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text3);
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      padding: 0 8px 10px 0;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .table td {
+      padding: 11px 8px 11px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--text2);
+      vertical-align: middle;
+    }
+
+    .table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .table td:first-child {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .table tr:hover td {
+      background: var(--surface2);
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+  </style>
+</head>
+
+<body>
+
+  <aside class="sidebar">
+    <div class="logo">
+      <div><span class="logo-name">DefenSched</span><span class="logo-badge">Faculty</span></div>
+      <div class="logo-sub">CICS · MSU Main Campus</div>
+    </div>
+    <nav class="nav">
+      <div class="nav-section">Main</div>
+      <div class="nav-item active" data-section="overview">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <rect x="3" y="3" width="7" height="7" rx="1" stroke-width="1.8" />
+          <rect x="14" y="3" width="7" height="7" rx="1" stroke-width="1.8" />
+          <rect x="3" y="14" width="7" height="7" rx="1" stroke-width="1.8" />
+          <rect x="14" y="14" width="7" height="7" rx="1" stroke-width="1.8" />
+        </svg>
+        Overview
+      </div>
+      <div class="nav-item" data-section="board">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" stroke-width="1.8" stroke-linecap="round" />
+        </svg>
+        Defense schedule board
+      </div>
+      <div class="nav-section">My roles</div>
+      <div class="nav-item" data-section="advisees">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8z" stroke-width="1.8"
+            stroke-linecap="round" />
+        </svg>
+        My advisees
+      </div>
+      <div class="nav-item" data-section="panel">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <rect x="3" y="4" width="18" height="18" rx="2" stroke-width="1.8" />
+          <path d="M16 2v4M8 2v4M3 10h18" stroke-width="1.8" />
+        </svg>
+        My panel schedule
+        <span class="nav-badge-warn" id="panel-badge" style="display:none">0</span>
+      </div>
+      <div class="nav-item" data-section="availability">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" stroke-width="1.8" />
+          <polyline points="12 6 12 12 16 14" stroke-width="1.8" />
+        </svg>
+        Availability settings
+      </div>
+      <div class="nav-section">Documents</div>
+      <div class="nav-item" data-section="manuscripts">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke-width="1.8" />
+          <polyline points="14 2 14 8 20 8" stroke-width="1.8" />
+        </svg>
+        Manuscript inbox
+        <span class="nav-badge" id="ms-badge" style="display:none">0</span>
+      </div>
+      <div class="nav-item" data-section="notifications">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8zM6 1v3M10 1v3M14 1v3"
+            stroke-width="1.8" stroke-linecap="round" />
+        </svg>
+        Notifications
+        <span class="nav-badge" id="notif-badge" style="display:none">0</span>
+      </div>
+    </nav>
+    <div class="sidebar-user" style="display:flex;align-items:center;gap:10px;">
+      <div class="avatar" id="user-avatar">RS</div>
+      <div style="flex:1;min-width:0;">
+        <div class="user-name" id="user-display-name">Dr. R. Santos</div>
+        <div class="user-role">Faculty · Adviser &amp; Panelist</div>
+      </div>
+      <button id="logout-btn" title="Logout"
+        style="background:none;border:none;cursor:pointer;color:var(--text3);padding:4px;border-radius:6px;flex-shrink:0;">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+      </button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <section id="section-overview" class="section active">
+      <div class="page-header">
+        <div>
+          <div class="page-title" id="greeting">Welcome back</div>
+          <div class="page-sub" id="overview-sub">Loading…</div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-outline" onclick="switchSection('availability')">
+            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10" stroke-width="1.8" />
+              <polyline points="12 6 12 12 16 14" stroke-width="1.8" />
+            </svg>
+            Update availability
+          </button>
+        </div>
+      </div>
+
+      <div class="stats-grid" id="overview-stats">
+        <div class="stat-card">
+          <div class="stat-label">Groups advising</div>
+          <div class="stat-value">—</div>
+          <div class="stat-sub">This semester</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Panel assignments</div>
+          <div class="stat-value">—</div>
+          <div class="stat-sub"><span id="panel-sub">This semester</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Manuscripts to review</div>
+          <div class="stat-value">—</div>
+          <div class="stat-sub">New submissions</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Honoraria (est.)</div>
+          <div class="stat-value" style="font-size:20px;" id="overview-honoraria">—</div>
+          <div class="stat-sub">This semester</div>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-bottom:14px;">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">My advisees</span>
+            <span class="card-action" onclick="switchSection('advisees')">View all →</span>
+          </div>
+          <div id="overview-advisees">
+            <div class="skeleton"></div>
+            <div class="skeleton"></div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">My panel schedule</span>
+              <span class="card-action" onclick="switchSection('panel')">View all →</span>
+            </div>
+            <div id="overview-panel">
+              <div class="skeleton"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header"><span class="card-title">Manuscript inbox</span><span class="card-action"
+                onclick="switchSection('manuscripts')">View all →</span></div>
+            <div id="overview-manuscripts">
+              <div class="skeleton"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><span class="card-title">My availability this week</span><span class="card-action"
+              onclick="switchSection('availability')">Edit →</span></div>
+          <div id="overview-availability-preview">
+            <div class="skeleton"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><span class="card-title">Notifications</span><span class="card-action"
+              onclick="document.getElementById('notif-mark-all')?.click()">Mark all read</span></div>
+          <div id="overview-notifications">
+            <div class="skeleton"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION: Defense Schedule Board -->
+    <section id="section-board" class="section">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Defense Schedule Board</div>
+          <div class="page-sub">All appointments you are involved in</div>
+        </div>
+        <select id="board-filter" class="form-select" style="width:150px">
+          <option value="">All statuses</option>
+          <option value="pending">Pending</option>
+          <option value="confirmed">Confirmed</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Group</th>
+                <th>Adviser</th>
+                <th>Panelists</th>
+                <th>Date &amp; Time</th>
+                <th>Venue</th>
+                <th>Status</th>
+                <th>Manuscript</th>
+              </tr>
+            </thead>
+            <tbody id="board-tbody">
+              <tr>
+                <td colspan="7">
+                  <div class="skeleton"></div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION: My Advisees -->
+    <section id="section-advisees" class="section">
+      <div class="page-header">
+        <div>
+          <div class="page-title">My Advisees</div>
+          <div class="page-sub">All groups you are advising</div>
+        </div>
+      </div>
+      <div id="advisees-list"></div>
+    </section>
+
+    <!-- SECTION: My Panel Schedule -->
+    <section id="section-panel" class="section">
+      <div class="page-header">
+        <div>
+          <div class="page-title">My Panel Schedule</div>
+          <div class="page-sub">Appointments where you serve as panelist</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Group</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Venue</th>
+                <th>Adviser</th>
+                <th>Status</th>
+                <th>Manuscript</th>
+              </tr>
+            </thead>
+            <tbody id="panel-tbody">
+              <tr>
+                <td colspan="7">
+                  <div class="skeleton"></div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION: Availability Settings -->
+    <section id="section-availability" class="section">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Availability Settings</div>
+          <div class="page-sub">Set your available time slots as adviser or panelist</div>
+        </div>
+      </div>
+      <div class="card" style="max-width:800px">
+        <div class="card-header">
+          <span class="card-title">Your Availability</span>
+          <div style="display:flex;gap:8px;align-items:center">
+            <span style="font-size:12px;color:var(--text3)">Mode:</span>
+            <select id="avail-mode" class="form-select" style="width:120px">
+              <option value="adviser">Adviser</option>
+              <option value="panelist">Panelist</option>
+            </select>
+            <span id="avail-saving" style="font-size:11px;color:var(--text3);display:none">Saving…</span>
+          </div>
+        </div>
+        <div id="avail-grid-container">
+          <div class="skeleton"></div>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:12px">
+          <span
+            style="font-size:11px;padding:3px 8px;border-radius:99px;background:var(--success-bg);color:var(--success);">●
+            Available</span>
+          <span style="font-size:11px;padding:3px 8px;border-radius:99px;background:var(--teal-bg);color:var(--teal);">●
+            Your slot</span>
+          <span
+            style="font-size:11px;padding:3px 8px;border-radius:99px;background:var(--danger-bg);color:var(--danger);">●
+            Booked by appointment</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION: Manuscript Inbox -->
+    <section id="section-manuscripts" class="section">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Manuscript Inbox</div>
+          <div class="page-sub">Manuscripts from your advisees and panel groups</div>
+        </div>
+      </div>
+      <div class="card" id="manuscripts-list"></div>
+    </section>
+
+    <!-- SECTION: Notifications -->
+    <section id="section-notifications" class="section">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Notifications</div>
+          <div class="page-sub">System alerts and updates</div>
+        </div>
+        <button class="btn btn-outline" id="notif-mark-all" onclick="markAllRead()">Mark all read</button>
+      </div>
+      <div class="card" id="notif-list" style="padding:0">
+        <div style="padding:20px">
+          <div class="skeleton"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    'use strict';
+
+    let _user = null, _appointments = [], _notifications = [], _manuscripts = [], _faculty = [], _settings = {}, _avail = [];
+
+    // ── Helpers ──────────────────────────────────────────────────────────────
+    function fmtStatus(s) { const m = { pending: 'tag-pending', confirmed: 'tag-confirmed', cancelled: 'tag-cancelled', completed: 'tag-completed', rescheduled: 'tag-rescheduled' }; return `<span class="tag ${m[s] || ''}">${s}</span>`; }
+    function fmtDate(d) { if (!d) return '—'; return new Date(d + 'T00:00:00').toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' }); }
+    function fmtPeso(n) { return '₱' + Number(n || 0).toLocaleString('en-PH', { minimumFractionDigits: 2 }); }
+    function todayStr() { return new Date().toISOString().split('T')[0]; }
+    function getHr() { const h = new Date().getHours(); return h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening'; }
+    function getDayName(dateStr) { return ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][new Date(dateStr + 'T00:00:00').getDay()]; }
+    function showToast(msg, type) {
+      const c = document.getElementById('toast-container') || (() => { const t = document.createElement('div'); t.id = 'toast-container'; t.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px'; document.body.appendChild(t); return t; })();
+      const colors = { success: '#059669', error: '#dc2626', warning: '#d97706', info: '#2563eb' };
+      const t = document.createElement('div');
+      t.style.cssText = `background:${colors[type] || colors.info};color:#fff;padding:10px 16px;border-radius:10px;font-size:13px;font-weight:500;box-shadow:0 4px 16px rgba(0,0,0,0.2);animation:fadeIn .2s ease`;
+      t.textContent = msg;
+      c.appendChild(t);
+      setTimeout(() => t.remove(), 3500);
+    }
+
+    // ── Fetch All Data ───────────────────────────────────────────────────────
+    async function fetchAll() {
+      try {
+        const [aR, nR, mR, fR, sR, avR] = await Promise.all([
+          fetch('/api/appointments'),
+          fetch('/api/notifications'),
+          fetch('/api/manuscripts/list-by-faculty'),
+          fetch('/api/faculty'),
+          fetch('/api/honoraria/settings'),
+          fetch(`/api/faculty/${_user.id}/availability`)
+        ]);
+        if (aR.ok) { const d = await aR.json(); _appointments = d.appointments || []; }
+        if (nR.ok) { const d = await nR.json(); _notifications = d.notifications || []; }
+        if (mR.ok) { const d = await mR.json(); _manuscripts = d.manuscripts || []; }
+        if (fR.ok) { const d = await fR.json(); _faculty = d.faculty || []; }
+        if (sR.ok) { const d = await sR.json(); _settings = d.settings || {}; }
+        if (avR.ok) { const d = await avR.json(); _avail = d.availability || []; }
+
+        const nb = document.getElementById('notif-badge');
+        if (nb) { const u = _notifications.filter(n => !n.is_read).length; nb.textContent = u; nb.style.display = u > 0 ? '' : 'none'; }
+        const mb = document.getElementById('ms-badge');
+        if (mb) { mb.textContent = _manuscripts.length; mb.style.display = _manuscripts.length > 0 ? '' : 'none'; }
+        const pb = document.getElementById('panel-badge');
+        if (pb) { const p = _appointments.filter(a => a.panelists?.some(p => p.id === _user.id) && a.status !== 'completed' && a.status !== 'cancelled').length; pb.textContent = p; pb.style.display = p > 0 ? '' : 'none'; }
+      } catch (e) { console.error('fetchAll error', e); }
+    }
+
+    // ── Navigation ───────────────────────────────────────────────────────────
+    const SECTION_LOADERS = {
+      overview: () => loadOverview(),
+      board: () => loadBoard(),
+      advisees: () => loadAdvisees(),
+      panel: () => loadPanel(),
+      availability: () => loadAvailability(),
+      manuscripts: () => loadManuscripts(),
+      notifications: () => loadNotifications()
+    };
+
+    function switchSection(id) {
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.toggle('active', el.dataset.section === id));
+      document.querySelectorAll('.section').forEach(el => el.classList.toggle('active', el.id === 'section-' + id));
+      if (SECTION_LOADERS[id]) SECTION_LOADERS[id]();
+    }
+
+    document.querySelectorAll('.nav-item[data-section]').forEach(el => {
+      el.addEventListener('click', () => switchSection(el.dataset.section));
+    });
+
+    // ── Load Overview ────────────────────────────────────────────────────────
+    function loadOverview() {
+      const myAdviseeIds = new Set(_appointments.filter(a => a.adviser_id === _user.id).map(a => a.student_id));
+      const myPanel = _appointments.filter(a => a.panelists?.some(p => p.id === _user.id));
+      const unreadMs = _manuscripts.filter(m => {
+        const age = (new Date() - new Date(m.uploaded_at)) / (1000 * 60 * 60);
+        return age < 24;
+      });
+      const honoraria = _appointments.filter(a => (a.adviser_id === _user.id || a.panelists?.some(p => p.id === _user.id)) && (a.status === 'confirmed' || a.status === 'completed')).length;
+
+      document.getElementById('greeting').textContent = `${getHr()}, ${_user.name} 👋`;
+      document.getElementById('overview-sub').textContent = `You have ${_appointments.length} appointment(s) in the system`;
+
+      const stats = document.getElementById('overview-stats');
+      if (stats) {
+        const cards = stats.querySelectorAll('.stat-value');
+        if (cards[0]) cards[0].textContent = myAdviseeIds.size;
+        if (cards[1]) cards[1].textContent = myPanel.length;
+        if (cards[2]) cards[2].textContent = unreadMs.length;
+        if (cards[3]) cards[3].textContent = fmtPeso(honoraria * 1500);
+      }
+
+      // Advisees preview (top 3)
+      const advisees = _appointments.filter(a => a.adviser_id === _user.id).slice(0, 3);
+      document.getElementById('overview-advisees').innerHTML = advisees.length
+        ? advisees.map(a => {
+          const pct = a.status === 'completed' ? 100 : a.status === 'confirmed' ? 70 : a.status === 'rescheduled' ? 40 : 20;
+          const color = pct >= 80 ? 'var(--success)' : pct >= 50 ? 'var(--accent)' : 'var(--warning)';
+          return `<div class="advisee-card"><div class="advisee-head"><div><div class="advisee-name">${a.group_name}</div><div class="advisee-meta">${fmtDate(a.date)} · ${a.time_slot || '—'}</div></div>${fmtStatus(a.status)}</div><div class="advisee-progress"><div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text3)">Progress</span><span style="color:var(--text2);font-weight:500">${pct}%</span></div><div class="advisee-bar"><div class="advisee-fill" style="width:${pct}%;background:${color}"></div></div></div></div>`;
+        }).join('')
+        : '<div style="padding:12px 0;color:var(--text3);font-size:13px">No advisee appointments yet</div>';
+
+      // Panel preview (top 3)
+      const panelItems = myPanel.slice(0, 3);
+      document.getElementById('overview-panel').innerHTML = panelItems.length
+        ? panelItems.map(a => {
+          const dt = a.date ? `${fmtDate(a.date)}<br>${a.time_slot || '—'}` : '—';
+          return `<div class="panel-item"><div class="panel-date">${dt}</div><div class="panel-info"><div class="panel-name">${a.group_name}</div><div class="panel-meta">${a.venue_name || '—'}</div></div>${fmtStatus(a.status)}</div>`;
+        }).join('')
+        : '<div style="padding:12px 0;color:var(--text3);font-size:13px">No panel assignments</div>';
+
+      // Manuscripts preview (top 2)
+      const msItems = _manuscripts.slice(0, 2);
+      document.getElementById('overview-manuscripts').innerHTML = msItems.length
+        ? msItems.map(m => {
+          const isNew = (new Date() - new Date(m.uploaded_at)) / (1000 * 60 * 60) < 24;
+          return `<div class="manuscript-item"><div class="file-icon"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="panel-info"><div class="file-name">${m.original_name}${isNew ? ' <span class="file-new">NEW</span>' : ''}</div><div class="file-meta">${m.group_name} · ${fmtDate(m.date)} · ${m.role}</div></div></div>`;
+        }).join('')
+        : '<div style="padding:12px 0;color:var(--text3);font-size:13px">No manuscripts yet</div>';
+
+      // Availability preview
+      loadAvailabilityPreview();
+
+      // Notifications preview (top 4)
+      const notifItems = _notifications.slice(0, 4);
+      const colors = { info: 'var(--accent)', success: 'var(--success)', warning: 'var(--warning)', error: 'var(--danger)' };
+      document.getElementById('overview-notifications').innerHTML = notifItems.length
+        ? notifItems.map(n => `<div class="notif-item"><div class="notif-dot" style="background:${colors[n.type] || colors.info}"></div><div><div class="notif-text">${n.message}</div><div class="notif-time">${new Date(n.created_at).toLocaleString()}</div></div></div>`).join('')
+        : '<div style="padding:12px 0;color:var(--text3);font-size:13px">No notifications</div>';
+    }
+
+    function loadAvailabilityPreview() {
+      const el = document.getElementById('overview-availability-preview');
+      const start = parseInt((_settings.defense_start_time || '08:00').split(':')[0]);
+      const end = parseInt((_settings.defense_end_time || '17:00').split(':')[0]);
+      const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+
+      const today = new Date();
+      const monday = new Date(today);
+      monday.setDate(today.getDate() - today.getDay() + 1);
+      const weekDates = dayNames.map((_, i) => {
+        const d = new Date(monday);
+        d.setDate(monday.getDate() + i);
+        return d.toISOString().split('T')[0];
+      });
+
+      const availSlots = _avail.filter(a => weekDates.includes(a.date) && a.faculty_id === _user.id);
+      const bookedSlots = _appointments.filter(a => weekDates.includes(a.date) && (a.adviser_id === _user.id || a.panelists?.some(p => p.id === _user.id)) && a.status !== 'cancelled');
+
+      let html = '<div class="avail-grid">';
+      dayNames.forEach((day, di) => {
+        html += `<div class="avail-day"><div class="avail-label">${day}</div>`;
+        for (let h = start; h < end; h++) {
+          const ts = `${String(h).padStart(2, '0')}:00-${String(h + 1).padStart(2, '0')}:00`;
+          const date = weekDates[di];
+          const isAvail = availSlots.some(a => a.date === date && a.time_slot === ts);
+          const isBooked = bookedSlots.some(a => a.date === date && a.time_slot === ts);
+          const cls = isBooked ? 'avail-busy' : isAvail ? 'avail-advisory' : 'avail-open';
+          html += `<div class="avail-slot ${cls}">${String(h).padStart(2, '0')}:00</div>`;
+        }
+        html += '</div>';
+      });
+      html += '</div>';
+      el.innerHTML = html;
+    }
+
+    // ── Load Schedule Board ──────────────────────────────────────────────────
+    function loadBoard() {
+      document.getElementById('board-filter').onchange = loadBoard;
+      const f = document.getElementById('board-filter').value;
+      const rows = _appointments.filter(a => !f || a.status === f).sort((a, b) => a.date < b.date ? -1 : 1);
+      document.getElementById('board-tbody').innerHTML = rows.length
+        ? rows.map(a => {
+          const hasMs = _manuscripts.some(m => m.appointment_id === a.id);
+          return `<tr><td><div style="font-weight:600">${a.group_name}</div></td><td>${a.adviser_name || '—'}</td><td style="font-size:12px">${(a.panelists || []).map(p => p.name).join(', ') || '—'}</td><td style="font-family:var(--mono);font-size:12px">${fmtDate(a.date)}<br>${a.time_slot || '—'}</td><td>${a.venue_name || '—'}</td><td>${fmtStatus(a.status)}</td><td>${hasMs ? `<a href="/api/manuscripts/download/${_manuscripts.find(m => m.appointment_id === a.id).id}" target="_blank" style="color:var(--accent);font-size:12px">Download</a>` : '<span style="color:var(--text3);font-size:12px">—</span>'}</td></tr>`;
+        }).join('')
+        : '<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:30px">No appointments found</td></tr>';
+    }
+
+    // ── Load Advisees ────────────────────────────────────────────────────────
+    function loadAdvisees() {
+      const advisees = _appointments.filter(a => a.adviser_id === _user.id).sort((a, b) => a.date < b.date ? -1 : 1);
+      document.getElementById('advisees-list').innerHTML = advisees.length
+        ? advisees.map(a => {
+          const pct = a.status === 'completed' ? 100 : a.status === 'confirmed' ? 70 : a.status === 'rescheduled' ? 40 : 20;
+          const color = pct >= 80 ? 'var(--success)' : pct >= 50 ? 'var(--accent)' : 'var(--warning)';
+          const panelistNames = (a.panelists || []).map(p => p.name).join(', ') || 'None assigned';
+          const hasMs = _manuscripts.some(m => m.appointment_id === a.id);
+          return `<div class="card" style="margin-bottom:12px"><div class="advisee-head"><div><div class="advisee-name">${a.group_name}</div><div class="advisee-meta">Panelists: ${panelistNames}</div></div>${fmtStatus(a.status)}</div><div class="defense-detail" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0"><div class="detail-item" style="background:var(--surface2);border-radius:var(--radius);padding:10px 12px"><div class="detail-label" style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase">Date</div><div class="detail-value" style="font-size:13px;font-weight:600">${fmtDate(a.date)}</div></div><div class="detail-item" style="background:var(--surface2);border-radius:var(--radius);padding:10px 12px"><div class="detail-label" style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase">Time</div><div class="detail-value" style="font-size:13px;font-weight:600">${a.time_slot || '—'}</div></div><div class="detail-item" style="background:var(--surface2);border-radius:var(--radius);padding:10px 12px"><div class="detail-label" style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase">Venue</div><div class="detail-value" style="font-size:13px;font-weight:600">${a.venue_name || '—'}</div></div><div class="detail-item" style="background:var(--surface2);border-radius:var(--radius);padding:10px 12px"><div class="detail-label" style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase">Manuscript</div><div class="detail-value" style="font-size:13px;font-weight:600">${hasMs ? `<a href="/api/manuscripts/download/${_manuscripts.find(m => m.appointment_id === a.id).id}" target="_blank" style="color:var(--accent)">Download</a>` : '<span style="color:var(--text3)">Not uploaded</span>'}</div></div></div><div class="advisee-progress"><div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text3)">Progress</span><span style="color:var(--text2);font-weight:500">${pct}%</span></div><div class="advisee-bar"><div class="advisee-fill" style="width:${pct}%;background:${color}"></div></div></div></div>`;
+        }).join('')
+        : '<div class="card"><div class="db-empty">No advisee appointments yet</div></div>';
+    }
+
+    // ── Load Panel Schedule ──────────────────────────────────────────────────
+    function loadPanel() {
+      const panel = _appointments.filter(a => a.panelists?.some(p => p.id === _user.id)).sort((a, b) => a.date < b.date ? -1 : 1);
+      document.getElementById('panel-tbody').innerHTML = panel.length
+        ? panel.map(a => {
+          const hasMs = _manuscripts.some(m => m.appointment_id === a.id);
+          return `<tr><td>${a.group_name}</td><td style="font-family:var(--mono);font-size:12px">${fmtDate(a.date)}</td><td style="font-family:var(--mono);font-size:12px">${a.time_slot || '—'}</td><td>${a.venue_name || '—'}</td><td>${a.adviser_name || '—'}</td><td>${fmtStatus(a.status)}</td><td>${hasMs ? `<a href="/api/manuscripts/download/${_manuscripts.find(m => m.appointment_id === a.id).id}" target="_blank" class="btn btn-outline btn-sm">Download</a>` : '<span style="color:var(--text3);font-size:12px">—</span>'}</td></tr>`;
+        }).join('')
+        : '<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:30px">No panel assignments</td></tr>';
+    }
+
+    // ── Load Availability ────────────────────────────────────────────────────
+    async function loadAvailability() {
+      const el = document.getElementById('avail-grid-container');
+      const mode = document.getElementById('avail-mode').value;
+      el.innerHTML = '<div class="skeleton"></div>';
+
+      try {
+        const res = await fetch(`/api/faculty/${_user.id}/availability`);
+        if (!res.ok) { el.innerHTML = '<div class="db-empty">Failed to load availability</div>'; return; }
+        const { availability } = await res.json();
+        _avail = availability || [];
+
+        const start = parseInt((_settings.defense_start_time || '08:00').split(':')[0]);
+        const end = parseInt((_settings.defense_end_time || '17:00').split(':')[0]);
+        const days = (_settings.defense_days || 'Monday,Tuesday,Wednesday,Thursday,Friday').split(',');
+        const dayMap = { Monday: 0, Tuesday: 1, Wednesday: 2, Thursday: 3, Friday: 4, Saturday: 5, Sunday: 6 };
+
+        const today = new Date();
+        const monday = new Date(today);
+        monday.setDate(today.getDate() - ((today.getDay() + 6) % 7));
+        const weekDates = days.map((d, i) => {
+          const dt = new Date(monday);
+          dt.setDate(monday.getDate() + i);
+          return dt.toISOString().split('T')[0];
+        });
+
+        const dayAbbr = { Monday: 'Mon', Tuesday: 'Tue', Wednesday: 'Wed', Thursday: 'Thu', Friday: 'Fri', Saturday: 'Sat', Sunday: 'Sun' };
+
+        const bookedSlots = _appointments.filter(a =>
+          weekDates.includes(a.date) && a.status !== 'cancelled' &&
+          (a.adviser_id === _user.id || a.panelists?.some(p => p.id === _user.id))
+        );
+
+        let html = '<div class="avail-grid">';
+        days.forEach((day, di) => {
+          html += `<div class="avail-day"><div class="avail-label">${dayAbbr[day] || day.slice(0, 3)}</div>`;
+          for (let h = start; h < end; h++) {
+            const ts = `${String(h).padStart(2, '0')}:00-${String(h + 1).padStart(2, '0')}:00`;
+            const date = weekDates[di] || '';
+            const isAvail = _avail.some(a => a.date === date && a.time_slot === ts && a.availability_type === mode);
+            const isBooked = bookedSlots.some(a => a.date === date && a.time_slot === ts);
+            const isPast = date && date < todayStr();
+            let cls = 'avail-slot ';
+            let clickable = false;
+            if (isBooked || isPast) {
+              cls += 'avail-busy';
+            } else if (isAvail) {
+              cls += 'avail-advisory';
+              clickable = true;
+            } else {
+              cls += 'avail-open';
+              clickable = !isPast;
+            }
+            const onclick = clickable ? `onclick="toggleAvailSlot('${date}','${ts}','${mode}',this)"` : '';
+            html += `<div class="${cls}" ${onclick} style="${clickable ? 'cursor:pointer' : ''}">${String(h).padStart(2, '0')}:00</div>`;
+          }
+          html += '</div>';
+        });
+        html += '</div>';
+        el.innerHTML = html;
+      } catch (e) {
+        el.innerHTML = '<div class="db-empty">Error loading availability</div>';
+      }
+    }
+
+    document.getElementById('avail-mode')?.addEventListener('change', () => loadAvailability());
+
+    async function toggleAvailSlot(date, time_slot, type, el) {
+      if (!date) { showToast('Cannot modify past dates', 'warning'); return; }
+      const isSet = el.classList.contains('avail-advisory');
+      const saveEl = document.getElementById('avail-saving');
+      saveEl.style.display = 'inline';
+
+      try {
+        if (isSet) {
+          const slot = _avail.find(a => a.date === date && a.time_slot === time_slot && a.availability_type === type);
+          if (slot) {
+            const res = await fetch(`/api/faculty/${_user.id}/availability/${slot.id}`, { method: 'DELETE' });
+            if (res.ok) {
+              el.classList.remove('avail-advisory');
+              el.classList.add('avail-open');
+              showToast('Slot removed', 'info');
+            }
+          }
+        } else {
+          const res = await fetch(`/api/faculty/${_user.id}/availability`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ availability_type: type, date, time_slot })
+          });
+          if (res.ok) {
+            el.classList.remove('avail-open');
+            el.classList.add('avail-advisory');
+            showToast('Slot added', 'success');
+          } else {
+            const d = await res.json();
+            showToast(d.error || 'Failed', 'error');
+          }
+        }
+        // Refresh availability data
+        const r = await fetch(`/api/faculty/${_user.id}/availability`);
+        if (r.ok) { const d = await r.json(); _avail = d.availability || []; }
+      } catch (e) {
+        showToast('Server error', 'error');
+      } finally {
+        saveEl.style.display = 'none';
+      }
+    }
+
+    // ── Load Manuscripts ─────────────────────────────────────────────────────
+    function loadManuscripts() {
+      const el = document.getElementById('manuscripts-list');
+      if (!_manuscripts.length) {
+        el.innerHTML = '<div class="db-empty">No manuscripts found</div>';
+        return;
+      }
+
+      const now = new Date();
+      el.innerHTML = _manuscripts.map(m => {
+        const age = (now - new Date(m.uploaded_at)) / (1000 * 60 * 60);
+        return `<div class="manuscript-item" style="padding:14px 0">
+      <div class="file-icon"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+      <div style="flex:1"><div class="file-name">${m.original_name}${age < 24 ? ' <span class="file-new">NEW</span>' : ''}</div><div class="file-meta">${m.group_name} · ${fmtDate(m.date)} · ${m.time_slot || '—'} · Role: ${m.role}</div></div>
+      <a href="/api/manuscripts/download/${m.id}" target="_blank" class="btn btn-outline btn-sm">Download</a>
+    </div>`;
+      }).join('');
+    }
+
+    // ── Load Notifications ───────────────────────────────────────────────────
+    function loadNotifications() {
+      const colors = { info: 'var(--accent)', success: 'var(--success)', warning: 'var(--warning)', error: 'var(--danger)' };
+      document.getElementById('notif-list').innerHTML = _notifications.length
+        ? _notifications.map(n => `<div style="display:flex;gap:12px;padding:16px 20px;border-bottom:1px solid var(--border);${n.is_read ? 'opacity:.55' : ''}"><div style="width:8px;height:8px;border-radius:50%;background:${colors[n.type] || colors.info};margin-top:5px;flex-shrink:0"></div><div style="flex:1"><div style="font-size:13px;line-height:1.5">${n.message}</div><div style="font-size:11px;color:var(--text3);font-family:var(--mono);margin-top:3px">${new Date(n.created_at).toLocaleString('en-PH')}</div></div>${!n.is_read ? `<button class="btn btn-outline btn-sm" onclick="markRead(${n.id},this)">Read</button>` : ''}</div>`).join('')
+        : '<div class="db-empty">No notifications</div>';
+    }
+
+    async function markRead(id, btn) {
+      await fetch(`/api/notifications/${id}/read`, { method: 'PUT' });
+      btn.closest('div[style*="display:flex"]').style.opacity = '.55';
+      btn.remove();
+    }
+    async function markAllRead() {
+      await fetch('/api/notifications/read-all', { method: 'PUT' });
+      await fetchAll();
+      loadNotifications();
+      showToast('All marked as read', 'success');
+    }
+
+    // ── Init ─────────────────────────────────────────────────────────────────
+    (async () => {
+      history.pushState(null, '', window.location.href);
+      window.addEventListener('popstate', () => history.pushState(null, '', window.location.href));
+
+      try {
+        const res = await fetch('/api/auth/me');
+        if (!res.ok) { window.location.replace('/'); return; }
+        const d = await res.json();
+        _user = d.user;
+        if (_user.role !== 'faculty') { window.location.replace('/'); return; }
+      } catch { window.location.replace('/'); return; }
+
+      const initials = _user.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+      const avatarEl = document.getElementById('user-avatar') || document.querySelector('.avatar');
+      const nameEl = document.getElementById('user-display-name') || document.querySelector('.user-name');
+      if (avatarEl) avatarEl.textContent = initials;
+      if (nameEl) nameEl.textContent = _user.name;
+
+      document.getElementById('logout-btn').addEventListener('click', async () => {
+        await fetch('/api/auth/logout', { method: 'POST' });
+        window.location.replace('/');
+      });
+
+      await fetchAll();
+      loadOverview();
+      setInterval(async () => { await fetchAll(); const s = document.querySelector('.section.active'); if (s) { const id = s.id.replace('section-', ''); if (SECTION_LOADERS[id]) SECTION_LOADERS[id](); } }, 30000);
+    })();
+  </script>
 </body>
+
 </html>
