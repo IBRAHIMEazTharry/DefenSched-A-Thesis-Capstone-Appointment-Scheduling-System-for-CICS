@@ -7,16 +7,26 @@ const db      = require('../database');
 
 // POST /api/auth/register
 router.post('/register', (req, res) => {
-  const { name, email, password, role } = req.body;
+  const { name, email, password, role, is_group, group_name, leader_name, member_names } = req.body;
   if (!name || !email || !password || !role)
     return res.status(400).json({ error: 'All fields are required.' });
+
+  // Build members JSON for group student accounts
+  let membersJson = null;
+  let isGroup = 0;
+  if (role === 'student' && is_group) {
+    isGroup = 1;
+    if (!leader_name) return res.status(400).json({ error: 'Team leader name is required for group accounts.' });
+    const names = Array.isArray(member_names) ? member_names.filter(n => n && n.trim()) : [];
+    membersJson = JSON.stringify({ leader: leader_name.trim(), members: names.map(n => n.trim()) });
+  }
 
   const hashed = bcrypt.hashSync(password, 10);
   try {
     const { lastInsertRowid: id } = db.prepare(`
-      INSERT INTO users (name, email, password_hash, role)
-      VALUES (?, ?, ?, ?)
-    `).run(name, email.toLowerCase().trim(), hashed, role);
+      INSERT INTO users (name, email, password_hash, role, group_name, is_group, members)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    `).run(name, email.toLowerCase().trim(), hashed, role, group_name || null, isGroup, membersJson);
 
     res.status(201).json({ success: true, user_id: id });
   } catch (e) {
@@ -43,7 +53,7 @@ router.post('/login', (req, res) => {
 
   res.json({
     success: true,
-    user: { id: user.id, name: user.name, email: user.email, role: user.role, group_name: user.group_name }
+    user: { id: user.id, name: user.name, email: user.email, role: user.role, group_name: user.group_name, is_group: user.is_group, members: user.members }
   });
 });
 
@@ -55,7 +65,7 @@ router.post('/logout', (req, res) => {
 // GET /api/auth/me
 router.get('/me', (req, res) => {
   if (!req.session?.userId) return res.status(401).json({ error: 'Not authenticated.' });
-  const user = db.prepare('SELECT id, name, email, role, group_name FROM users WHERE id = ?')
+  const user = db.prepare('SELECT id, name, email, role, group_name, is_group, members FROM users WHERE id = ?')
                  .get(req.session.userId);
   if (!user) return res.status(401).json({ error: 'User not found.' });
   res.json({ user });

@@ -129,6 +129,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         e.preventDefault();
         loginForm.classList.add('hidden');
         registerForm.classList.remove('hidden');
+        // Show Solo/Group section immediately — 'Thesis Student' is the default role
+        const section = document.getElementById('reg-group-section');
+        const roleEl  = document.getElementById('reg-role');
+        if (section && roleEl) {
+            section.style.display = roleEl.value === 'student' ? '' : 'none';
+        }
     });
 
     goToLogin?.addEventListener('click', (e) => {
@@ -136,6 +142,60 @@ document.addEventListener('DOMContentLoaded', async () => {
         registerForm.classList.add('hidden');
         loginForm.classList.remove('hidden');
     });
+
+    // ============================================================
+    // SOLO / GROUP REGISTRATION HELPERS
+    // ============================================================
+    let _isGroupMode = false;
+
+    // Show/hide the group section when the role changes
+    document.getElementById('reg-role')?.addEventListener('change', function () {
+        const section = document.getElementById('reg-group-section');
+        if (section) section.style.display = this.value === 'student' ? '' : 'none';
+    });
+
+    // Exposed globally so onclick= attributes in index.html can reach them
+    window.setGroupMode = function (isGroup) {
+        _isGroupMode = isGroup;
+        const fields = document.getElementById('reg-group-fields');
+        const btnSolo  = document.getElementById('btn-solo');
+        const btnGroup = document.getElementById('btn-group');
+        if (!fields || !btnSolo || !btnGroup) return;
+
+        if (isGroup) {
+            fields.style.display = '';
+            btnGroup.style.background = 'var(--primary)';
+            btnGroup.style.color = '#fff';
+            btnSolo.style.background = 'transparent';
+            btnSolo.style.color = 'var(--text-muted)';
+            buildMemberFields();
+        } else {
+            fields.style.display = 'none';
+            btnSolo.style.background = 'var(--primary)';
+            btnSolo.style.color = '#fff';
+            btnGroup.style.background = 'transparent';
+            btnGroup.style.color = 'var(--text-muted)';
+        }
+    };
+
+    window.buildMemberFields = function () {
+        const container = document.getElementById('reg-members-container');
+        const sizeEl    = document.getElementById('reg-group-size');
+        if (!container || !sizeEl) return;
+        const total = parseInt(sizeEl.value) || 2;
+        // Members = total - 1 (leader already has its own field)
+        container.innerHTML = '';
+        for (let i = 2; i <= total; i++) {
+            container.innerHTML += `
+                <div class="input-group">
+                    <label>Member ${i} Name</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-user-tag"></i>
+                        <input type="text" class="reg-member-name" placeholder="Full name of member ${i}">
+                    </div>
+                </div>`;
+        }
+    };
 
     // Login logic
     loginForm.addEventListener('submit', async (e) => {
@@ -176,22 +236,49 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Registration logic
     registerForm?.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const name = document.getElementById('reg-name').value;
-        const email = document.getElementById('reg-email').value;
+        const name     = document.getElementById('reg-name').value;
+        const email    = document.getElementById('reg-email').value;
         const password = document.getElementById('reg-password').value;
-        const role = document.getElementById('reg-role').value;
+        const role     = document.getElementById('reg-role').value;
+
+        // Build group payload
+        let is_group    = false;
+        let group_name  = null;
+        let leader_name = null;
+        let member_names = [];
+
+        if (role === 'student') {
+            group_name = name; // account name doubles as group name
+            if (_isGroupMode) {
+                is_group    = true;
+                leader_name = document.getElementById('reg-leader')?.value?.trim() || '';
+                member_names = Array.from(document.querySelectorAll('.reg-member-name'))
+                    .map(el => el.value.trim())
+                    .filter(v => v);
+                if (!leader_name) {
+                    showToast('Please enter the team leader\'s name.', 'error');
+                    return;
+                }
+            }
+        }
 
         try {
             const res = await fetch('/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, email, password, role })
+                body: JSON.stringify({ name, email, password, role, is_group, group_name, leader_name, member_names })
             });
             const data = await res.json();
 
             if (res.ok) {
                 showToast('Account created successfully! You can now log in.', 'success');
                 registerForm.reset();
+                _isGroupMode = false;
+                // Reset group UI
+                const gFields = document.getElementById('reg-group-fields');
+                const gSection = document.getElementById('reg-group-section');
+                if (gFields)  gFields.style.display  = 'none';
+                if (gSection) gSection.style.display  = 'none';
                 registerForm.classList.add('hidden');
                 loginForm.classList.remove('hidden');
             } else {

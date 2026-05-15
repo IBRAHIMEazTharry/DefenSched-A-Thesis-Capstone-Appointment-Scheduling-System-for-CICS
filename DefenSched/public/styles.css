@@ -44,16 +44,28 @@
 }
 
 [data-theme="light"] {
-    --bg-dark: #F8FAFC;
-    --bg-card: rgba(255, 255, 255, 0.7);
+    --bg-dark: #F1F5F9;
+    --bg-card: rgba(255, 255, 255, 0.8);
+    --bg-sidebar: #0F172A; /* Keep sidebar dark even in light mode for premium look */
     --bg-input: #FFFFFF;
-    --border-glass: rgba(0, 0, 0, 0.05);
+    --border-glass: rgba(15, 23, 42, 0.08);
     
     --text-main: #0F172A;
-    --text-muted: #64748B; /* Default gray for dark mode */
-    --shadow-premium: 0 15px 30px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.03);
+    --text-muted: #64748B;
+    --shadow-premium: 0 10px 30px rgba(15, 23, 42, 0.05), 0 1px 3px rgba(15, 23, 42, 0.02);
     
-    --primary-l: 50%; /* Slightly darker blue for light mode readability */
+    --primary-l: 50%;
+}
+
+[data-theme="dark"] {
+    --bg-dark: #050b1a;
+    --bg-card: rgba(13, 27, 62, 0.4);
+    --bg-sidebar: rgba(5, 11, 26, 0.8);
+    --bg-input: rgba(255, 255, 255, 0.03);
+    --border-glass: rgba(255, 255, 255, 0.08);
+    
+    --text-main: #F8FAFC;
+    --text-muted: #94A3B8;
 }
 
 [data-theme="light"] .stat-info p, 

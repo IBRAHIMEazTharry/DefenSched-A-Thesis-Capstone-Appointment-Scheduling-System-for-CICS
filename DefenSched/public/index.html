@@ -64,10 +64,10 @@
 
             <form id="register-form" class="hidden">
                 <div class="input-group">
-                    <label for="reg-name">Full Name</label>
+                    <label for="reg-name">Account / Group Name</label>
                     <div class="input-wrapper">
                         <i class="fas fa-user"></i>
-                        <input type="text" id="reg-name" placeholder="John Doe" required>
+                        <input type="text" id="reg-name" placeholder="e.g. Group Alpha" required>
                     </div>
                 </div>
                 <div class="input-group">
@@ -97,6 +97,53 @@
                         </select>
                     </div>
                 </div>
+
+                <!-- Solo / Group Toggle — shown only for students -->
+                <div id="reg-group-section" style="display:none;">
+                    <div class="input-group" style="margin-bottom: 0.75rem;">
+                        <label>Participation Type</label>
+                        <div style="display:flex; gap:0; background: var(--bg-input); border: 1px solid var(--border-glass); border-radius: var(--radius-md); overflow:hidden; margin-top:0.4rem;">
+                            <button type="button" id="btn-solo" onclick="setGroupMode(false)"
+                                style="flex:1; padding:0.75rem; border:none; cursor:pointer; font-size:0.9rem; font-weight:600; font-family:inherit; transition:all 0.2s; background: var(--primary); color:#fff;">
+                                <i class="fas fa-user" style="margin-right:6px"></i>Solo
+                            </button>
+                            <button type="button" id="btn-group" onclick="setGroupMode(true)"
+                                style="flex:1; padding:0.75rem; border:none; cursor:pointer; font-size:0.9rem; font-weight:600; font-family:inherit; transition:all 0.2s; background: transparent; color: var(--text-muted);">
+                                <i class="fas fa-users" style="margin-right:6px"></i>Group
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Group-only fields -->
+                    <div id="reg-group-fields" style="display:none; margin-top:0.75rem;">
+                        <div class="input-group">
+                            <label for="reg-group-size">Number of Members</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-hashtag"></i>
+                                <select id="reg-group-size" onchange="buildMemberFields()" style="width:100%; padding:1.2rem 1.2rem 1.2rem 3.5rem; background:var(--bg-input); border:1px solid var(--border-glass); border-radius:var(--radius-md); font-size:1rem; color:var(--text-main); outline:none;">
+                                    <option value="2">2 members</option>
+                                    <option value="3">3 members</option>
+                                    <option value="4">4 members</option>
+                                    <option value="5">5 members</option>
+                                    <option value="6">6 members</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="reg-leader">Team Leader Name</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-star"></i>
+                                <input type="text" id="reg-leader" placeholder="Full name of team leader">
+                            </div>
+                        </div>
+
+                        <div id="reg-members-container">
+                            <!-- Member fields injected by JS -->
+                        </div>
+                    </div>
+                </div>
+
                 <button type="submit" class="btn-primary">CREATE ACCOUNT</button>
                 <p class="auth-footer" style="margin-top: 1.5rem; text-align: center; color: var(--text-muted);">
                     Already have an account? <a href="#" id="go-to-login" style="color: var(--primary); font-weight: 600;">Sign In</a>
