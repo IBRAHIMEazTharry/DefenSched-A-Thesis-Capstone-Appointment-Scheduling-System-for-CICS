@@ -7,95 +7,76 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #fafafa;
-    --surface: #ffffff;
-    --surface2: #f4f4f5;
-    --border: #e4e4e7;
-    --border2: #d4d4d8;
-    --accent: #6d28d9;
-    --accent-light: #f5f3ff;
-    --accent2: #5b21b6;
-    --text: #18181b;
-    --text2: #52525b;
-    --text3: #a1a1aa;
-    --success: #16a34a;
-    --success-bg: #f0fdf4;
-    --warning: #ca8a04;
-    --warning-bg: #fefce8;
-    --danger: #dc2626;
-    --danger-bg: #fef2f2;
-    --info: #0369a1;
-    --info-bg: #f0f9ff;
-    --orange: #ea580c;
-    --orange-bg: #fff7ed;
+    --bg: #fafafa; --surface: #ffffff; --surface2: #f4f4f5;
+    --border: #e4e4e7; --border2: #d4d4d8;
+    --accent: #6d28d9; --accent-light: #f5f3ff; --accent2: #5b21b6;
+    --text: #18181b; --text2: #52525b; --text3: #a1a1aa;
+    --success: #16a34a; --success-bg: #f0fdf4;
+    --warning: #ca8a04; --warning-bg: #fefce8;
+    --danger: #dc2626; --danger-bg: #fef2f2;
+    --info: #0369a1; --info-bg: #f0f9ff;
+    --orange: #ea580c; --orange-bg: #fff7ed;
     --font: 'Plus Jakarta Sans', sans-serif;
     --mono: 'Space Mono', monospace;
-    --radius: 10px;
-    --radius-lg: 16px;
+    --radius: 10px; --radius-lg: 16px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; display: flex; font-size: 14px; }
 
-  .sidebar {
-    width: 225px; min-height: 100vh; background: var(--surface);
-    border-right: 1px solid var(--border); display: flex; flex-direction: column;
-    position: fixed; top: 0; left: 0; bottom: 0;
-  }
+  /* ── Sidebar ── */
+  .sidebar { width: 225px; min-height: 100vh; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; }
   .logo { padding: 22px 20px 18px; border-bottom: 1px solid var(--border); }
   .logo-name { font-size: 15px; font-weight: 700; color: var(--text); }
   .logo-badge { font-size: 10px; font-weight: 600; background: var(--accent-light); color: var(--accent); border-radius: 99px; padding: 2px 8px; margin-left: 6px; }
   .logo-sub { font-size: 11px; color: var(--text3); margin-top: 3px; }
-
   .nav { flex: 1; padding: 10px; }
   .nav-section { font-size: 10px; font-weight: 700; color: var(--text3); letter-spacing: 0.1em; text-transform: uppercase; padding: 10px 10px 4px; }
-  .nav-item {
-    display: flex; align-items: center; gap: 10px; padding: 9px 10px;
-    border-radius: var(--radius); cursor: pointer; color: var(--text2);
-    font-size: 13px; font-weight: 500; transition: all 0.15s; margin-bottom: 2px;
-  }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: var(--radius); cursor: pointer; color: var(--text2); font-size: 13px; font-weight: 500; transition: all 0.15s; margin-bottom: 2px; user-select: none; }
   .nav-item:hover { background: var(--surface2); color: var(--text); }
   .nav-item.active { background: var(--accent-light); color: var(--accent); }
   .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
   .nav-badge { margin-left: auto; font-size: 10px; font-family: var(--mono); background: var(--danger); color: #fff; border-radius: 99px; padding: 1px 6px; }
-
   .sidebar-user { padding: 14px 16px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
   .avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, #6d28d9, #ea580c); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0; }
-  .user-name { font-size: 13px; font-weight: 600; }
-  .user-role { font-size: 11px; color: var(--text3); }
 
+  /* ── Main ── */
   .main { margin-left: 225px; flex: 1; padding: 28px 32px; }
   .page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 24px; }
   .page-title { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
   .page-sub { font-size: 13px; color: var(--text2); margin-top: 3px; font-weight: 400; }
 
+  /* ── Panels ── */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* ── Buttons ── */
   .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: var(--radius); font-size: 13px; font-weight: 600; cursor: pointer; border: none; font-family: var(--font); transition: all 0.15s; }
   .btn-primary { background: var(--accent); color: #fff; }
   .btn-primary:hover { background: var(--accent2); }
   .btn-outline { background: var(--surface); color: var(--text2); border: 1px solid var(--border2); font-weight: 500; }
   .btn-outline:hover { background: var(--surface2); }
   .btn-danger { background: var(--danger-bg); color: var(--danger); border: 1px solid #fecaca; font-weight: 600; font-size: 12px; padding: 7px 14px; }
+  .btn-sm { padding: 6px 12px; font-size: 12px; }
 
-  /* STATUS BANNER */
-  .status-banner {
-    border-radius: var(--radius-lg); padding: 18px 22px;
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 20px; border: 1px solid;
-  }
+  /* ── Status Banner ── */
+  .status-banner { border-radius: var(--radius-lg); padding: 18px 22px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; border: 1px solid; }
   .status-confirmed { background: var(--success-bg); border-color: #bbf7d0; }
   .status-pending { background: var(--warning-bg); border-color: #fde68a; }
+  .status-none { background: var(--surface2); border-color: var(--border2); }
   .status-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .status-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 3px; }
   .status-text { font-size: 15px; font-weight: 700; }
   .status-sub { font-size: 12px; margin-top: 2px; }
 
+  /* ── Cards ── */
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
   .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
-
   .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px 20px; }
   .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
   .card-title { font-size: 13px; font-weight: 700; }
   .card-action { font-size: 12px; color: var(--accent); cursor: pointer; font-weight: 600; }
 
+  /* ── Tags ── */
   .tag { display: inline-flex; align-items: center; font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 99px; }
   .tag-confirmed { background: var(--success-bg); color: var(--success); }
   .tag-pending { background: var(--warning-bg); color: var(--warning); }
@@ -103,23 +84,23 @@
   .tag-final { background: var(--accent-light); color: var(--accent); }
   .tag-title { background: var(--orange-bg); color: var(--orange); }
 
-  /* DEFENSE DETAIL CARD */
+  /* ── Defense detail ── */
   .defense-detail { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .detail-item { background: var(--surface2); border-radius: var(--radius); padding: 12px 14px; }
   .detail-label { font-size: 10px; color: var(--text3); font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 4px; }
   .detail-value { font-size: 13px; font-weight: 600; color: var(--text); }
   .detail-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
 
-  /* PANELIST CHIP */
+  /* ── Panelist chips ── */
   .panelist-list { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
   .panelist-chip { display: flex; align-items: center; gap: 8px; }
   .panelist-dot { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #fff; flex-shrink: 0; }
   .panelist-name { font-size: 12px; font-weight: 500; color: var(--text); }
   .panelist-role { font-size: 11px; color: var(--text3); }
 
-  /* STEPS */
+  /* ── Steps ── */
   .step-list { display: flex; flex-direction: column; gap: 0; }
-  .step-item { display: flex; gap: 12px; padding-bottom: 16px; position: relative; }
+  .step-item { display: flex; gap: 12px; padding-bottom: 16px; }
   .step-item:last-child { padding-bottom: 0; }
   .step-left { display: flex; flex-direction: column; align-items: center; }
   .step-circle { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; flex-shrink: 0; }
@@ -135,41 +116,76 @@
   .step-name.todo-text { color: var(--text3); }
   .step-desc { font-size: 11px; color: var(--text3); margin-top: 2px; }
 
-  /* SCHEDULE BOARD */
+  /* ── Board ── */
   .board-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); }
   .board-row:last-child { border-bottom: none; }
   .board-time { font-family: var(--mono); font-size: 11px; color: var(--text3); min-width: 52px; }
   .board-info { flex: 1; }
   .board-name { font-size: 13px; font-weight: 600; color: var(--text); }
   .board-meta { font-size: 11px; color: var(--text3); margin-top: 1px; }
-  .board-row.mine { background: var(--accent-light); border-radius: var(--radius); padding: 10px 10px; border: none; margin-bottom: 4px; }
+  .board-row.mine { background: var(--accent-light); border-radius: var(--radius); padding: 10px; border: none; margin-bottom: 4px; }
   .board-row.mine .board-name { color: var(--accent); }
 
-  /* UPLOAD */
+  /* ── Upload ── */
   .upload-zone { border: 1.5px dashed var(--border2); border-radius: var(--radius); padding: 20px; text-align: center; cursor: pointer; transition: all 0.15s; }
   .upload-zone:hover { border-color: var(--accent); background: var(--accent-light); }
+  .upload-zone.dragover { border-color: var(--accent); background: var(--accent-light); }
   .upload-icon { width: 36px; height: 36px; background: var(--surface2); border-radius: 10px; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; }
-  .upload-icon svg { width: 18px; height: 18px; color: var(--text3); stroke: var(--text3); }
+  .upload-icon svg { width: 18px; height: 18px; stroke: var(--text3); }
   .upload-label { font-size: 13px; font-weight: 600; color: var(--text2); }
   .upload-sub { font-size: 11px; color: var(--text3); margin-top: 3px; }
 
-  .version-item { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--border); }
-  .version-item:last-child { border-bottom: none; }
-  .ver-badge { font-family: var(--mono); font-size: 10px; background: var(--surface2); border: 1px solid var(--border2); border-radius: 6px; padding: 2px 7px; font-weight: 700; color: var(--text3); min-width: 28px; text-align: center; }
-  .ver-badge.current { background: var(--accent-light); border-color: #c4b5fd; color: var(--accent); }
-  .ver-name { font-size: 12px; font-weight: 500; color: var(--text); }
-  .ver-date { font-size: 11px; color: var(--text3); font-family: var(--mono); }
-
-  .notif-item { display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  /* ── Notifications ── */
+  .notif-item { display: flex; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--border); }
   .notif-item:last-child { border-bottom: none; }
   .notif-dot { width: 7px; height: 7px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
   .notif-text { font-size: 12px; color: var(--text2); line-height: 1.5; }
   .notif-text strong { color: var(--text); font-weight: 600; }
   .notif-time { font-size: 11px; color: var(--text3); margin-top: 2px; font-family: var(--mono); }
+
+  /* ── Schedule board table ── */
+  .sched-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .sched-table th { padding: 10px 14px; text-align: left; font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 1px solid var(--border); }
+  .sched-table td { padding: 11px 14px; border-bottom: 1px solid var(--border); color: var(--text2); }
+  .sched-table tr:last-child td { border-bottom: none; }
+  .sched-table tr.mine-row td { background: var(--accent-light); color: var(--accent); font-weight: 600; }
+
+  /* ── Empty state ── */
+  .empty-state { padding: 40px; text-align: center; color: var(--text3); }
+  .empty-state svg { width: 40px; height: 40px; stroke: var(--text3); margin: 0 auto 12px; display: block; }
+  .empty-title { font-size: 14px; font-weight: 600; color: var(--text2); margin-bottom: 4px; }
+  .empty-sub { font-size: 12px; }
+
+  /* ── Modal ── */
+  .modal-bg { display: none; position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,.5); align-items: center; justify-content: center; }
+  .modal-bg.open { display: flex; }
+  .modal { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 30px; width: 100%; max-width: 480px; box-shadow: 0 20px 60px rgba(0,0,0,.15); }
+  .modal-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px; }
+  .modal-title { font-size: 16px; font-weight: 700; }
+  .modal-sub { font-size: 12px; color: var(--text3); margin-top: 3px; }
+  .modal-footer { display: flex; gap: 10px; margin-top: 22px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-field { display: flex; flex-direction: column; gap: 5px; }
+  .form-field label { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .07em; }
+  .input { width: 100%; padding: 9px 12px; background: var(--surface2); border: 1px solid var(--border2); border-radius: 8px; color: var(--text); font-size: 13px; font-family: var(--font); outline: none; transition: border .15s; }
+  .input:focus { border-color: var(--accent); }
+  select.input option { background: var(--surface); }
+  .form-note { font-size: 11px; color: var(--text3); padding: 10px 12px; background: var(--info-bg); border: 1px solid #bae6fd; border-radius: 8px; line-height: 1.5; }
+
+  /* ── Toast ── */
+  #toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+  .toast { padding: 12px 18px; border-radius: 10px; font-size: 13px; font-weight: 500; color: #fff; box-shadow: 0 4px 16px rgba(0,0,0,.2); animation: fadeIn .2s ease; }
+
+  .ver-badge { font-family: var(--mono); font-size: 10px; background: var(--surface2); border: 1px solid var(--border2); border-radius: 6px; padding: 2px 7px; font-weight: 700; color: var(--text3); }
+  .ver-badge.current { background: var(--accent-light); border-color: #c4b5fd; color: var(--accent); }
+  .version-item { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--border); }
+  .version-item:last-child { border-bottom: none; }
 </style>
 </head>
 <body>
 
+<!-- ── Sidebar ─────────────────────────────────────────────── -->
 <aside class="sidebar">
   <div class="logo">
     <div><span class="logo-name">DefenSched</span><span class="logo-badge">Student</span></div>
@@ -177,39 +193,39 @@
   </div>
   <nav class="nav">
     <div class="nav-section">Main</div>
-    <div class="nav-item active">
+    <div class="nav-item active" data-panel="overview" onclick="switchPanel('overview', this)">
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" stroke-width="1.8"/><rect x="14" y="3" width="7" height="7" rx="1" stroke-width="1.8"/><rect x="3" y="14" width="7" height="7" rx="1" stroke-width="1.8"/><rect x="14" y="14" width="7" height="7" rx="1" stroke-width="1.8"/></svg>
       Overview
     </div>
-    <div class="nav-item">
+    <div class="nav-item" data-panel="schedule-board" onclick="switchPanel('schedule-board', this)">
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" stroke-width="1.8" stroke-linecap="round"/></svg>
       Defense schedule board
     </div>
     <div class="nav-section">My defense</div>
-    <div class="nav-item">
+    <div class="nav-item" data-panel="book" onclick="switchPanel('book', this)">
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" stroke-width="1.8"/><path d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01" stroke-width="1.8" stroke-linecap="round"/></svg>
       Book a defense
     </div>
-    <div class="nav-item">
+    <div class="nav-item" data-panel="my-schedule" onclick="switchPanel('my-schedule', this)">
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" stroke-width="1.8"/><path d="M16 2v4M8 2v4M3 10h18" stroke-width="1.8"/><path d="M9 16l2 2 4-4" stroke-width="1.8" stroke-linecap="round"/></svg>
       My schedule
     </div>
-    <div class="nav-item">
+    <div class="nav-item" data-panel="manuscript" onclick="switchPanel('manuscript', this)">
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke-width="1.8" stroke-linecap="round"/></svg>
       Manuscript submission
-      <span class="nav-badge">!</span>
+      <span class="nav-badge" id="ms-badge" style="display:none;">!</span>
     </div>
-    <div class="nav-item">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8zM6 1v3M10 1v3M14 1v3" stroke-width="1.8" stroke-linecap="round"/></svg>
+    <div class="nav-item" data-panel="notifications" onclick="switchPanel('notifications', this)">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0" stroke-width="1.8" stroke-linecap="round"/></svg>
       Notifications
-      <span class="nav-badge">3</span>
+      <span class="nav-badge" id="notif-badge" style="display:none;"></span>
     </div>
   </nav>
-  <div class="sidebar-user" style="display:flex;align-items:center;gap:10px;">
+  <div class="sidebar-user">
     <div class="avatar" id="user-avatar">G4</div>
     <div style="flex:1;min-width:0;">
-      <div class="user-name" id="user-display-name">Group 04 — TechVision</div>
-      <div class="user-role">IT Research Track</div>
+      <div style="font-size:13px;font-weight:600;" id="user-display-name">Loading...</div>
+      <div style="font-size:11px;color:var(--text3);">Student</div>
     </div>
     <button id="logout-btn" title="Logout" style="background:none;border:none;cursor:pointer;color:var(--text3);padding:4px;border-radius:6px;flex-shrink:0;">
       <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -217,429 +233,789 @@
   </div>
 </aside>
 
+<!-- ── Main ────────────────────────────────────────────────── -->
 <main class="main">
+
+  <!-- Page header (dynamic) -->
   <div class="page-header">
     <div>
-      <div class="page-title">Hello, TechVision 👋</div>
-      <div class="page-sub">AY 2025–2026 · Second Semester · Your final defense is in 1 day</div>
+      <div class="page-title" id="page-title">Overview</div>
+      <div class="page-sub" id="page-sub">AY 2025–2026 · Second Semester</div>
     </div>
-    <button class="btn btn-primary">
+    <button class="btn btn-primary" id="header-book-btn" onclick="switchPanel('book', document.querySelector('[data-panel=book]'))">
       <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" stroke-width="2"/><path d="M16 2v4M8 2v4M3 10h18" stroke-width="2"/></svg>
       Book a defense
     </button>
   </div>
 
-  <div class="status-banner status-confirmed">
-    <div style="display:flex;align-items:center;gap:14px;">
-      <div class="status-icon" style="background:#dcfce7;">
-        <svg width="20" height="20" fill="none" stroke="#16a34a" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-width="2.5" stroke-linecap="round"/></svg>
-      </div>
-      <div>
-        <div class="status-label" style="color:var(--success);">Defense status</div>
-        <div class="status-text" style="color:var(--success);">Confirmed — Final Defense</div>
-        <div class="status-sub" style="color:#4ade80cc;">May 13, 2026 · 8:00 AM · CICS Room 301</div>
+  <!-- ══ PANEL: Overview ══════════════════════════════════════ -->
+  <div class="panel active" id="panel-overview">
+
+    <!-- Status banner (dynamic) -->
+    <div class="status-banner status-none" id="status-banner">
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div class="status-icon" style="background:var(--surface2);">
+          <svg width="20" height="20" fill="none" stroke="var(--text3)" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path d="M12 8v4M12 16h.01" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div>
+          <div class="status-label" style="color:var(--text3);">Defense Status</div>
+          <div class="status-text" style="color:var(--text2);">Loading...</div>
+          <div class="status-sub" style="color:var(--text3);">Please wait</div>
+        </div>
       </div>
     </div>
-    <button class="btn btn-danger">
-      <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><line x1="15" y1="9" x2="9" y2="15" stroke-width="2"/><line x1="9" y1="9" x2="15" y2="15" stroke-width="2"/></svg>
-      Cancel appointment
-    </button>
+
+    <!-- Defense details + checklist -->
+    <div class="grid-2" style="margin-bottom:14px;">
+      <div class="card" id="defense-detail-card">
+        <div class="card-header"><span class="card-title">My defense details</span><span class="tag tag-pending" id="defense-tag">—</span></div>
+        <div class="defense-detail" style="margin-bottom:14px;">
+          <div class="detail-item">
+            <div class="detail-label">Date</div>
+            <div class="detail-value" id="d-date">—</div>
+            <div class="detail-sub" id="d-day">—</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Time</div>
+            <div class="detail-value" id="d-time" style="font-family:var(--mono);">—</div>
+            <div class="detail-sub">Defense session</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Venue</div>
+            <div class="detail-value" id="d-venue">—</div>
+            <div class="detail-sub">CICS Building</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Stage</div>
+            <div class="detail-value"><span class="tag tag-final" style="font-size:12px;">Final defense</span></div>
+          </div>
+        </div>
+        <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:10px;">Assigned adviser</div>
+        <div class="panelist-chip" style="margin-bottom:14px;">
+          <div class="panelist-dot" id="adviser-dot" style="background:linear-gradient(135deg,#0d9488,#2563eb);">—</div>
+          <div><div class="panelist-name" id="adviser-name">—</div><div class="panelist-role">Primary Adviser</div></div>
+        </div>
+        <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:10px;">Assigned panelists</div>
+        <div class="panelist-list" id="panelist-list">
+          <div style="font-size:12px;color:var(--text3);">Panelists will be assigned by the Research Coordinator.</div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div class="card">
+          <div class="card-header"><span class="card-title">Defense checklist</span></div>
+          <div class="step-list" id="checklist">
+            <div class="step-item">
+              <div class="step-left"><div class="step-circle todo" id="step1-circle">1</div><div class="step-line"></div></div>
+              <div class="step-body"><div class="step-name todo-text" id="step1-name">Book a defense slot</div><div class="step-desc" id="step1-desc">Submit your appointment request</div></div>
+            </div>
+            <div class="step-item">
+              <div class="step-left"><div class="step-circle todo" id="step2-circle">2</div><div class="step-line"></div></div>
+              <div class="step-body"><div class="step-name todo-text" id="step2-name">Upload manuscript</div><div class="step-desc" id="step2-desc">PDF or DOCX — required to confirm slot</div></div>
+            </div>
+            <div class="step-item">
+              <div class="step-left"><div class="step-circle todo" id="step3-circle">3</div><div class="step-line"></div></div>
+              <div class="step-body"><div class="step-name todo-text" id="step3-name">Slot confirmed</div><div class="step-desc" id="step3-desc">Research Coordinator approves schedule</div></div>
+            </div>
+            <div class="step-item">
+              <div class="step-left"><div class="step-circle todo" id="step4-circle">4</div><div class="step-line"></div></div>
+              <div class="step-body"><div class="step-name todo-text" id="step4-name">Final defense</div><div class="step-desc" id="step4-desc">Defense day</div></div>
+            </div>
+            <div class="step-item">
+              <div class="step-left"><div class="step-circle todo" id="step5-circle">5</div></div>
+              <div class="step-body"><div class="step-name todo-text">Completion &amp; hard binding</div><div class="step-desc">After successful defense</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><span class="card-title">Quick actions</span></div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <button class="btn btn-outline" style="justify-content:flex-start;" onclick="switchPanel('book', document.querySelector('[data-panel=book]'))">
+              <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" stroke-width="2"/><path d="M16 2v4M8 2v4M3 10h18" stroke-width="2"/></svg>
+              Book a defense slot
+            </button>
+            <button class="btn btn-outline" style="justify-content:flex-start;" onclick="switchPanel('manuscript', document.querySelector('[data-panel=manuscript]'))">
+              <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke-width="2" stroke-linecap="round"/></svg>
+              Upload manuscript
+            </button>
+            <button class="btn btn-outline" style="justify-content:flex-start;" onclick="switchPanel('schedule-board', document.querySelector('[data-panel=schedule-board]'))">
+              <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" stroke-width="2" stroke-linecap="round"/></svg>
+              View schedule board
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="grid-2" style="margin-bottom:14px;">
+  <!-- ══ PANEL: Schedule Board ════════════════════════════════ -->
+  <div class="panel" id="panel-schedule-board">
     <div class="card">
-      <div class="card-header"><span class="card-title">My defense details</span><span class="tag tag-confirmed">Confirmed</span></div>
-      <div class="defense-detail" style="margin-bottom:14px;">
-        <div class="detail-item">
-          <div class="detail-label">Date</div>
-          <div class="detail-value">May 13, 2026</div>
-          <div class="detail-sub">Tuesday</div>
-        </div>
-        <div class="detail-item">
-          <div class="detail-label">Time</div>
-          <div class="detail-value" style="font-family:var(--mono);">8:00 AM</div>
-          <div class="detail-sub">~2 hour session</div>
-        </div>
-        <div class="detail-item">
-          <div class="detail-label">Venue</div>
-          <div class="detail-value">Room 301</div>
-          <div class="detail-sub">CICS Building</div>
-        </div>
-        <div class="detail-item">
-          <div class="detail-label">Stage</div>
-          <div class="detail-value"><span class="tag tag-final" style="font-size:12px;">Final defense</span></div>
+      <div class="card-header">
+        <div>
+          <div class="card-title">Defense Schedule Board</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:2px;" id="board-date-label">All upcoming defenses</div>
         </div>
       </div>
-      <div class="card-header" style="margin-bottom:10px;"><span style="font-size:12px;font-weight:700;color:var(--text2);">Assigned adviser</span></div>
-      <div class="panelist-chip" style="margin-bottom:14px;">
-        <div class="panelist-dot" style="background:linear-gradient(135deg,#0d9488,#2563eb);">RS</div>
-        <div><div class="panelist-name">Dr. R. Santos</div><div class="panelist-role">Primary Adviser</div></div>
-      </div>
-      <div class="card-header" style="margin-bottom:10px;"><span style="font-size:12px;font-weight:700;color:var(--text2);">Assigned panelists</span></div>
-      <div class="panelist-list">
-        <div class="panelist-chip">
-          <div class="panelist-dot" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);">MD</div>
-          <div><div class="panelist-name">Prof. M. Dela Cruz</div><div class="panelist-role">Panelist 1</div></div>
-        </div>
-        <div class="panelist-chip">
-          <div class="panelist-dot" style="background:linear-gradient(135deg,#ea580c,#d97706);">AR</div>
-          <div><div class="panelist-name">Dr. A. Reyes</div><div class="panelist-role">Panelist 2</div></div>
-        </div>
-        <div class="panelist-chip">
-          <div class="panelist-dot" style="background:linear-gradient(135deg,#0369a1,#0d9488);">LT</div>
-          <div><div class="panelist-name">Prof. L. Torres</div><div class="panelist-role">Panelist 3</div></div>
+      <div id="board-content">
+        <div class="empty-state">
+          <svg fill="none" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" stroke-width="1.5"/><path d="M16 2v4M8 2v4M3 10h18" stroke-width="1.5"/></svg>
+          <div class="empty-title">Loading schedule...</div>
         </div>
       </div>
     </div>
+  </div>
 
-    <div style="display:flex;flex-direction:column;gap:14px;">
+  <!-- ══ PANEL: Book a Defense ════════════════════════════════ -->
+  <div class="panel" id="panel-book">
+    <div class="card" style="max-width:560px;">
+      <div class="card-header" style="margin-bottom:20px;">
+        <div>
+          <div class="card-title" style="font-size:15px;">Book a Defense Slot</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:2px;">Submit your defense appointment request</div>
+        </div>
+      </div>
+
+      <div id="book-existing-notice" style="display:none;margin-bottom:16px;padding:12px 14px;background:var(--warning-bg);border:1px solid #fde68a;border-radius:10px;font-size:13px;color:var(--warning);">
+        ⚠️ You already have an active appointment. Cancel it first before booking a new one.
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:14px;" id="book-form">
+        <div class="form-field">
+          <label>Group Name</label>
+          <input class="input" id="bk-group" type="text" placeholder="e.g. Group Alpha">
+        </div>
+        <div class="form-field">
+          <label>Preferred Adviser</label>
+          <select class="input" id="bk-adviser">
+            <option value="">Loading faculty...</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <label>Preferred Date</label>
+            <input class="input" id="bk-date" type="date">
+          </div>
+          <div class="form-field">
+            <label>Start Time</label>
+            <input class="input" id="bk-time" type="time" min="08:00" max="16:00">
+          </div>
+        </div>
+        <div class="form-field">
+          <label>Venue</label>
+          <select class="input" id="bk-venue">
+            <option value="">Loading venues...</option>
+          </select>
+        </div>
+        <div class="form-note">
+          ℹ️ <strong>Note on panelists:</strong> Panelists will be assigned by the Research Coordinator (Ma'am Ilham) after your appointment is reviewed. You don't need to choose them.
+        </div>
+        <div id="conflict-check-result" style="display:none;"></div>
+        <div style="display:flex;gap:10px;margin-top:6px;">
+          <button class="btn btn-outline" style="flex:1;" id="bk-check-btn" onclick="checkConflict()">
+            <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="10" stroke-width="2"/></svg>
+            Check availability
+          </button>
+          <button class="btn btn-primary" style="flex:2;" id="bk-submit" onclick="submitBooking()">
+            <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" stroke-width="2"/><path d="M16 2v4M8 2v4M3 10h18" stroke-width="2"/></svg>
+            Confirm Booking
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PANEL: My Schedule ════════════════════════════════════ -->
+  <div class="panel" id="panel-my-schedule">
+    <div id="my-schedule-content">
+      <div class="empty-state">
+        <svg fill="none" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" stroke-width="1.5"/><path d="M16 2v4M8 2v4M3 10h18" stroke-width="1.5"/><path d="M9 16l2 2 4-4" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <div class="empty-title">Loading your schedule...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PANEL: Manuscript Submission ═════════════════════════ -->
+  <div class="panel" id="panel-manuscript">
+    <div class="grid-2">
       <div class="card">
-        <div class="card-header"><span class="card-title">Defense checklist</span></div>
-        <div class="step-list">
-          <div class="step-item">
-            <div class="step-left"><div class="step-circle done">✓</div><div class="step-line"></div></div>
-            <div class="step-body"><div class="step-name done-text">Title defense passed</div><div class="step-desc">Completed Feb 14, 2026</div></div>
+        <div class="card-header"><span class="card-title">Upload Manuscript</span></div>
+        <div id="upload-gate">
+          <div class="empty-state" style="padding:20px;">
+            <svg fill="none" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" stroke-width="1.5"/><path d="M16 2v4M8 2v4M3 10h18" stroke-width="1.5"/></svg>
+            <div class="empty-title">No appointment yet</div>
+            <div class="empty-sub">Book a defense slot first before uploading your manuscript.</div>
           </div>
-          <div class="step-item">
-            <div class="step-left"><div class="step-circle done">✓</div><div class="step-line"></div></div>
-            <div class="step-body"><div class="step-name done-text">Manuscript uploaded</div><div class="step-desc">v4 submitted May 8, 2026</div></div>
+        </div>
+        <div id="upload-area" style="display:none;">
+          <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()">
+            <div class="upload-icon">
+              <svg fill="none" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </div>
+            <div class="upload-label">Drop PDF/DOCX here or click to upload</div>
+            <div class="upload-sub">PDF or DOCX only · max 10MB</div>
           </div>
-          <div class="step-item">
-            <div class="step-left"><div class="step-circle done">✓</div><div class="step-line"></div></div>
-            <div class="step-body"><div class="step-name done-text">Slot confirmed</div><div class="step-desc">May 13, 8:00 AM · Room 301</div></div>
-          </div>
-          <div class="step-item">
-            <div class="step-left"><div class="step-circle active">→</div><div class="step-line"></div></div>
-            <div class="step-body"><div class="step-name active-text">Final defense</div><div class="step-desc">Tomorrow · May 13</div></div>
-          </div>
-          <div class="step-item">
-            <div class="step-left"><div class="step-circle todo">5</div></div>
-            <div class="step-body"><div class="step-name todo-text">Completion & hard binding</div><div class="step-desc">After successful defense</div></div>
-          </div>
+          <input type="file" id="file-input" accept=".pdf,.docx,.doc" style="display:none;" onchange="uploadManuscript(this)">
+          <div id="upload-progress" style="display:none;margin-top:10px;font-size:13px;color:var(--text2);text-align:center;">Uploading...</div>
         </div>
       </div>
 
       <div class="card">
-        <div class="card-header"><span class="card-title">Manuscript submission</span><span class="card-action">Upload new →</span></div>
-        <div class="upload-zone" style="margin-bottom:12px;">
-          <div class="upload-icon"><svg fill="none" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke-width="1.8" stroke-linecap="round"/></svg></div>
-          <div class="upload-label">Drop PDF here or click to upload</div>
-          <div class="upload-sub">PDF only · max 50MB</div>
-        </div>
-        <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:8px;">Version history</div>
-        <div class="version-item">
-          <span class="ver-badge current">v4</span>
-          <div style="flex:1;"><div class="ver-name">TechVision_FinalManuscript.pdf</div><div class="ver-date">May 8 · Active version</div></div>
-        </div>
-        <div class="version-item">
-          <span class="ver-badge">v3</span>
-          <div style="flex:1;"><div class="ver-name">TechVision_Chapter5_rev.pdf</div><div class="ver-date">May 3</div></div>
-        </div>
-        <div class="version-item">
-          <span class="ver-badge">v2</span>
-          <div style="flex:1;"><div class="ver-name">TechVision_Draft2.pdf</div><div class="ver-date">Apr 22</div></div>
+        <div class="card-header"><span class="card-title">Submission History</span></div>
+        <div id="manuscript-history">
+          <div style="font-size:13px;color:var(--text3);">No submissions yet.</div>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="grid-2">
+  <!-- ══ PANEL: Notifications ══════════════════════════════════ -->
+  <div class="panel" id="panel-notifications">
     <div class="card">
-      <div class="card-header"><span class="card-title">Defense schedule board</span><span class="card-action">Full board →</span></div>
-      <div style="font-size:11px;color:var(--text3);margin-bottom:10px;font-family:var(--mono);">Today · May 12, 2026</div>
-      <div class="board-row mine">
-        <div class="board-time">8:00 AM</div>
-        <div class="board-info">
-          <div class="board-name">Group 04 — TechVision (You)</div>
-          <div class="board-meta">Room 301 · Final defense · Dr. Santos</div>
+      <div class="card-header">
+        <span class="card-title">Notifications</span>
+        <span class="card-action" onclick="markAllRead()">Mark all read</span>
+      </div>
+      <div id="notif-list">
+        <div class="empty-state">
+          <svg fill="none" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <div class="empty-title">Loading notifications...</div>
         </div>
-        <span class="tag tag-final">Final</span>
-      </div>
-      <div class="board-row">
-        <div class="board-time">10:00 AM</div>
-        <div class="board-info">
-          <div class="board-name">Group 11 — AquaNet</div>
-          <div class="board-meta">Room 302 · Final defense</div>
-        </div>
-        <span class="tag tag-final">Final</span>
-      </div>
-      <div class="board-row">
-        <div class="board-time">1:00 PM</div>
-        <div class="board-info">
-          <div class="board-name">Group 03 — ReserveIT</div>
-          <div class="board-meta">AVR · Final defense</div>
-        </div>
-        <span class="tag tag-pending">Pending</span>
-      </div>
-      <div class="board-row">
-        <div class="board-time">3:00 PM</div>
-        <div class="board-info">
-          <div class="board-name">Group 17 — AgriSense</div>
-          <div class="board-meta">Room 301 · Title defense</div>
-        </div>
-        <span class="tag tag-title">Title</span>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-header"><span class="card-title">Notifications</span><span class="card-action">Mark all read</span></div>
-      <div class="notif-item">
-        <div class="notif-dot" style="background:var(--success);"></div>
-        <div><div class="notif-text">Your defense slot for <strong>May 13, 8:00 AM at Room 301</strong> is confirmed. All panelists have been notified.</div><div class="notif-time">Today · 7:00 AM</div></div>
-      </div>
-      <div class="notif-item">
-        <div class="notif-dot" style="background:var(--accent);"></div>
-        <div><div class="notif-text"><strong>Dr. R. Santos</strong> reviewed your manuscript (v4) and left a comment on Chapter 5.</div><div class="notif-time">Yesterday · 5:40 PM</div></div>
-      </div>
-      <div class="notif-item">
-        <div class="notif-dot" style="background:var(--warning);"></div>
-        <div><div class="notif-text">Reminder: Your final defense is <strong>tomorrow at 8:00 AM</strong>. Make sure to arrive 15 minutes early.</div><div class="notif-time">Yesterday · 8:00 AM</div></div>
-      </div>
-      <div class="notif-item">
-        <div class="notif-dot" style="background:var(--text3);"></div>
-        <div><div class="notif-text">Manuscript v4 successfully submitted and routed to Dr. Santos, Prof. Dela Cruz, Dr. Reyes, and Prof. Torres.</div><div class="notif-time">May 8 · 3:15 PM</div></div>
       </div>
     </div>
   </div>
+
 </main>
 
-</body>
-</html>
+<div id="toast-container"></div>
 
 <script>
-// ── Global state ────────────────────────────────────────────────────
-let _currentUser = null;
+// ── State ─────────────────────────────────────────────────────────
+let _user = null;
+let _appointment = null;
+let _currentPanel = 'overview';
 
-// ── Prevent back button to login ─────────────────────────────────────
+// ── Back button prevention ────────────────────────────────────────
 history.pushState(null, '', window.location.href);
 window.addEventListener('popstate', () => history.pushState(null, '', window.location.href));
 
-// ── Modal helpers (global so onclick works) ──────────────────────────
-function openBookingModal() {
-  document.getElementById('booking-modal').style.display = 'flex';
-  loadBookingDropdowns();
-}
-function closeBookingModal() {
-  document.getElementById('booking-modal').style.display = 'none';
+// ── Panel switching ───────────────────────────────────────────────
+function switchPanel(name, el) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  if (el) el.classList.add('active');
+  _currentPanel = name;
+
+  const titles = {
+    'overview': ['Overview', 'Your defense status at a glance'],
+    'schedule-board': ['Defense Schedule Board', 'All upcoming defenses'],
+    'book': ['Book a Defense', 'Submit your appointment request'],
+    'my-schedule': ['My Schedule', 'Your confirmed defense details'],
+    'manuscript': ['Manuscript Submission', 'Upload your defense manuscript'],
+    'notifications': ['Notifications', 'System alerts and updates'],
+  };
+  const [t, s] = titles[name] || ['Dashboard', ''];
+  document.getElementById('page-title').textContent = t;
+  document.getElementById('page-sub').textContent   = s;
+  document.getElementById('header-book-btn').style.display = name === 'book' ? 'none' : '';
+
+  if (name === 'schedule-board') loadScheduleBoard();
+  if (name === 'my-schedule')    renderMySchedule();
+  if (name === 'manuscript')     loadManuscript();
+  if (name === 'notifications')  loadNotifications();
 }
 
+// ── Auth + Init ───────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const r = await fetch('/api/auth/me');
+    if (!r.ok) { window.location.replace('/'); return; }
+    const { user } = await r.json();
+    if (user.role !== 'student') { window.location.replace('/'); return; }
+    _user = user;
+  } catch { window.location.replace('/'); return; }
+
+  // Populate user info
+  const name     = _user.group_name || _user.name;
+  const initials = name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('user-avatar').textContent      = initials;
+  document.getElementById('user-display-name').textContent = name;
+  document.getElementById('page-sub').textContent = `AY 2025–2026 · Hello, ${name}!`;
+
+  document.getElementById('logout-btn').onclick = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' });
+    window.location.replace('/');
+  };
+
+  // Load appointment & populate dropdowns
+  await loadAppointment();
+  loadBookingDropdowns();
+  loadNotifBadge();
+});
+
+// ── Load appointment ──────────────────────────────────────────────
+async function loadAppointment() {
+  try {
+    const r = await fetch('/api/appointments');
+    if (!r.ok) return;
+    const { appointments } = await r.json();
+    _appointment = appointments[0] || null;
+    renderStatusBanner();
+    renderOverviewDetails();
+    renderChecklist();
+    // Check if manuscript needed
+    if (_appointment && !_appointment.manuscript_uploaded) {
+      document.getElementById('ms-badge').style.display = '';
+    } else {
+      document.getElementById('ms-badge').style.display = 'none';
+    }
+  } catch (e) { console.error('loadAppointment error', e); }
+}
+
+// ── Status banner ─────────────────────────────────────────────────
+function renderStatusBanner() {
+  const banner = document.getElementById('status-banner');
+  const a = _appointment;
+  if (!a) {
+    banner.className = 'status-banner status-none';
+    banner.innerHTML = `
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div class="status-icon" style="background:var(--surface2);">
+          <svg width="20" height="20" fill="none" stroke="var(--text3)" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path d="M12 8v4M12 16h.01" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div>
+          <div class="status-label" style="color:var(--text3);">No Defense Scheduled</div>
+          <div class="status-text" style="color:var(--text2);">Book your defense slot to get started</div>
+          <div class="status-sub" style="color:var(--text3);">Go to Book a defense in the sidebar</div>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="switchPanel('book', document.querySelector('[data-panel=book]'))">
+        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" stroke-width="2"/><path d="M16 2v4M8 2v4M3 10h18" stroke-width="2"/></svg>
+        Book a defense
+      </button>`;
+    return;
+  }
+  const isConfirmed = a.status === 'confirmed';
+  const isPending   = a.status === 'pending';
+  const bgClass = isConfirmed ? 'status-confirmed' : isPending ? 'status-pending' : 'status-none';
+  const color   = isConfirmed ? 'var(--success)'  : isPending ? 'var(--warning)' : 'var(--text3)';
+  const iconBg  = isConfirmed ? '#dcfce7' : isPending ? '#fef9c3' : 'var(--surface2)';
+  const icon    = isConfirmed
+    ? `<svg width="20" height="20" fill="none" stroke="#16a34a" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-width="2.5" stroke-linecap="round"/></svg>`
+    : `<svg width="20" height="20" fill="none" stroke="${isPending?'#ca8a04':'#a1a1aa'}" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path d="M12 8v4M12 16h.01" stroke-width="2" stroke-linecap="round"/></svg>`;
+  const statusText = isConfirmed ? 'Confirmed — Final Defense' : isPending ? 'Pending — Awaiting Approval' : a.status.charAt(0).toUpperCase()+a.status.slice(1);
+  const cancelBtn = (a.status === 'pending' || a.status === 'confirmed')
+    ? `<button class="btn btn-danger" onclick="cancelAppointment(${a.id})">
+        <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><line x1="15" y1="9" x2="9" y2="15" stroke-width="2"/><line x1="9" y1="9" x2="15" y2="15" stroke-width="2"/></svg>
+        Cancel appointment
+       </button>` : '';
+  banner.className = `status-banner ${bgClass}`;
+  banner.innerHTML = `
+    <div style="display:flex;align-items:center;gap:14px;">
+      <div class="status-icon" style="background:${iconBg};">${icon}</div>
+      <div>
+        <div class="status-label" style="color:${color};">Defense status</div>
+        <div class="status-text" style="color:${color};">${statusText}</div>
+        <div class="status-sub" style="color:${color}aa;">${a.date || '—'} · ${a.time_slot || '—'} · ${a.venue_name || '—'}</div>
+      </div>
+    </div>
+    ${cancelBtn}`;
+}
+
+// ── Overview details ──────────────────────────────────────────────
+function renderOverviewDetails() {
+  const a = _appointment;
+  if (!a) {
+    document.getElementById('d-date').textContent  = 'Not booked';
+    document.getElementById('d-day').textContent   = '—';
+    document.getElementById('d-time').textContent  = '—';
+    document.getElementById('d-venue').textContent = '—';
+    document.getElementById('adviser-dot').textContent  = '—';
+    document.getElementById('adviser-name').textContent = '—';
+    document.getElementById('defense-tag').textContent  = 'No appointment';
+    document.getElementById('defense-tag').className    = 'tag';
+    return;
+  }
+  document.getElementById('d-date').textContent  = a.date || '—';
+  document.getElementById('d-day').textContent   = a.date ? new Date(a.date+'T00:00:00').toLocaleDateString('en-PH',{weekday:'long'}) : '—';
+  document.getElementById('d-time').textContent  = a.time_slot || '—';
+  document.getElementById('d-venue').textContent = a.venue_name || '—';
+  const advInitials = (a.adviser_name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('adviser-dot').textContent  = advInitials;
+  document.getElementById('adviser-name').textContent = a.adviser_name || '—';
+  document.getElementById('defense-tag').textContent  = a.status.charAt(0).toUpperCase()+a.status.slice(1);
+  document.getElementById('defense-tag').className    = `tag tag-${a.status}`;
+
+  // Panelists
+  const pl = document.getElementById('panelist-list');
+  const colors = ['linear-gradient(135deg,#7c3aed,#6d28d9)','linear-gradient(135deg,#ea580c,#d97706)','linear-gradient(135deg,#0369a1,#0d9488)','linear-gradient(135deg,#16a34a,#0d9488)'];
+  if (a.panelists && a.panelists.length > 0) {
+    pl.innerHTML = a.panelists.map((p,i) => `
+      <div class="panelist-chip">
+        <div class="panelist-dot" style="background:${colors[i%colors.length]};">${p.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()}</div>
+        <div><div class="panelist-name">${p.name}</div><div class="panelist-role">Panelist ${i+1}</div></div>
+      </div>`).join('');
+  } else {
+    pl.innerHTML = '<div style="font-size:12px;color:var(--text3);">Panelists will be assigned by the Research Coordinator.</div>';
+  }
+}
+
+// ── Checklist ─────────────────────────────────────────────────────
+function renderChecklist() {
+  const a = _appointment;
+  const hasAppt = !!a;
+  const hasManuscript = a?.manuscript_uploaded;
+  const isConfirmed = a?.status === 'confirmed';
+  const isCompleted = a?.status === 'completed';
+
+  function setStep(n, state, desc) {
+    const circle = document.getElementById(`step${n}-circle`);
+    const name   = document.getElementById(`step${n}-name`);
+    if (!circle) return;
+    circle.className = `step-circle ${state}`;
+    circle.textContent = state === 'done' ? '✓' : state === 'active' ? '→' : String(n);
+    name.className = `step-name ${state}-text`;
+    if (desc && document.getElementById(`step${n}-desc`)) document.getElementById(`step${n}-desc`).textContent = desc;
+  }
+
+  if (!hasAppt) {
+    setStep(1,'active'); setStep(2,'todo'); setStep(3,'todo'); setStep(4,'todo');
+  } else if (!hasManuscript) {
+    setStep(1,'done','Appointment submitted'); setStep(2,'active','Upload your manuscript to confirm slot'); setStep(3,'todo'); setStep(4,'todo');
+  } else if (!isConfirmed && !isCompleted) {
+    setStep(1,'done','Done'); setStep(2,'done','Manuscript uploaded'); setStep(3,'active','Awaiting coordinator approval'); setStep(4,'todo');
+  } else if (isConfirmed) {
+    setStep(1,'done','Done'); setStep(2,'done','Done'); setStep(3,'done',`Confirmed: ${a.date}`); setStep(4,'active',`Defense day: ${a.date}`);
+  } else {
+    setStep(1,'done','Done'); setStep(2,'done','Done'); setStep(3,'done','Done'); setStep(4,'done','Defense completed!');
+  }
+}
+
+// ── Schedule board ────────────────────────────────────────────────
+async function loadScheduleBoard() {
+  const el = document.getElementById('board-content');
+  el.innerHTML = '<div class="empty-state"><div class="empty-title">Loading...</div></div>';
+  try {
+    const r = await fetch('/api/appointments');
+    if (!r.ok) throw new Error();
+    const { appointments } = await r.json();
+    const active = appointments.filter(a => a.status !== 'cancelled');
+    if (!active.length) {
+      el.innerHTML = '<div class="empty-state"><div class="empty-title">No defenses scheduled yet.</div></div>';
+      return;
+    }
+    const tagMap = { confirmed:'tag-final', pending:'tag-pending', completed:'tag-confirmed', cancelled:'tag-cancelled' };
+    el.innerHTML = `<table class="sched-table">
+      <thead><tr><th>Time</th><th>Group</th><th>Venue</th><th>Adviser</th><th>Status</th></tr></thead>
+      <tbody>${active.map(a => `
+        <tr class="${_user && a.student_id === _user.id ? 'mine-row' : ''}">
+          <td style="font-family:var(--mono);font-size:11px;">${a.time_slot||'—'}</td>
+          <td style="font-weight:600;">${a.group_name}${_user && a.student_id===_user.id?' <span style="font-size:10px;color:var(--accent);">(You)</span>':''}</td>
+          <td>${a.venue_name||'—'}</td>
+          <td>${a.adviser_name||'—'}</td>
+          <td><span class="tag ${tagMap[a.status]||''}">${a.status}</span></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+  } catch { el.innerHTML = '<div class="empty-state"><div class="empty-title">Failed to load schedule.</div></div>'; }
+}
+
+// ── My schedule ───────────────────────────────────────────────────
+function renderMySchedule() {
+  const el = document.getElementById('my-schedule-content');
+  const a  = _appointment;
+  if (!a) {
+    el.innerHTML = `<div class="card"><div class="empty-state">
+      <svg fill="none" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" stroke-width="1.5"/><path d="M16 2v4M8 2v4M3 10h18" stroke-width="1.5"/></svg>
+      <div class="empty-title">No defense scheduled yet</div>
+      <div class="empty-sub">Use <strong>Book a defense</strong> in the sidebar to request a slot.</div>
+    </div></div>`;
+    return;
+  }
+  const panelists = (a.panelists && a.panelists.length > 0)
+    ? a.panelists.map(p=>`<div style="font-size:13px;color:var(--text2);">• ${p.name}</div>`).join('')
+    : '<div style="font-size:13px;color:var(--text3);">To be assigned by Research Coordinator</div>';
+  const cancelBtn = (a.status==='pending'||a.status==='confirmed')
+    ? `<button class="btn btn-danger" onclick="cancelAppointment(${a.id})">Cancel Appointment</button>` : '';
+  el.innerHTML = `
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header"><span class="card-title">Appointment Details</span><span class="tag tag-${a.status}">${a.status}</span></div>
+        <div class="defense-detail" style="margin-bottom:16px;">
+          <div class="detail-item"><div class="detail-label">Date</div><div class="detail-value">${a.date||'—'}</div></div>
+          <div class="detail-item"><div class="detail-label">Time</div><div class="detail-value" style="font-family:var(--mono);">${a.time_slot||'—'}</div></div>
+          <div class="detail-item"><div class="detail-label">Venue</div><div class="detail-value">${a.venue_name||'—'}</div></div>
+          <div class="detail-item"><div class="detail-label">Group</div><div class="detail-value">${a.group_name||'—'}</div></div>
+        </div>
+        <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:8px;">Adviser</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:16px;">${a.adviser_name||'—'}</div>
+        <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:8px;">Panelists</div>
+        <div style="margin-bottom:16px;">${panelists}</div>
+        ${cancelBtn}
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Manuscript status</span></div>
+        <div style="margin-bottom:12px;">
+          <div style="font-size:13px;color:${a.manuscript_uploaded?'var(--success)':'var(--warning)'};font-weight:600;">
+            ${a.manuscript_uploaded ? '✓ Manuscript uploaded' : '⚠ Manuscript not yet uploaded'}
+          </div>
+          ${!a.manuscript_uploaded ? '<div style="font-size:12px;color:var(--text3);margin-top:4px;">Upload your manuscript to confirm your defense slot.</div>' : ''}
+        </div>
+        ${!a.manuscript_uploaded ? `<button class="btn btn-primary btn-sm" onclick="switchPanel('manuscript', document.querySelector('[data-panel=manuscript]'))">Upload Manuscript</button>` : ''}
+        ${a.notes ? `<div style="margin-top:14px;font-size:12px;color:var(--text2);"><strong>Notes:</strong> ${a.notes}</div>` : ''}
+      </div>
+    </div>`;
+}
+
+// ── Booking dropdowns ─────────────────────────────────────────────
 async function loadBookingDropdowns() {
   try {
-    const [facRes, venRes] = await Promise.all([fetch('/api/faculty'), fetch('/api/venues')]);
-    const { faculty } = await facRes.json();
-    const { venues }  = await venRes.json();
-    const adviserSel  = document.getElementById('bk-adviser');
-    const venueSel    = document.getElementById('bk-venue');
-    const panelistSel = document.getElementById('bk-panelists');
-    if (adviserSel)  adviserSel.innerHTML  = '<option value="">Choose adviser</option>' + faculty.map(f => `<option value="${f.id}">${f.name}</option>`).join('');
-    if (venueSel)    venueSel.innerHTML    = '<option value="">Choose venue</option>'   + venues.map(v  => `<option value="${v.id}">${v.name}</option>`).join('');
-    if (panelistSel) panelistSel.innerHTML = faculty.map(f => `<option value="${f.id}">${f.name}</option>`).join('');
+    const [fRes, vRes] = await Promise.all([fetch('/api/faculty'), fetch('/api/venues')]);
+    const { faculty } = await fRes.json();
+    const { venues }  = await vRes.json();
+    document.getElementById('bk-adviser').innerHTML = '<option value="">Choose adviser</option>' + faculty.map(f=>`<option value="${f.id}">${f.name}</option>`).join('');
+    document.getElementById('bk-venue').innerHTML   = '<option value="">Choose venue</option>'   + venues.map(v=>`<option value="${v.id}">${v.name}</option>`).join('');
   } catch (e) { console.error('Dropdown load error', e); }
 }
 
-async function submitBooking() {
-  const group_name   = document.getElementById('bk-group').value.trim();
-  const adviser_id   = parseInt(document.getElementById('bk-adviser').value);
-  const date         = document.getElementById('bk-date').value;
-  const timeRaw      = document.getElementById('bk-time').value;
-  const venue_id     = parseInt(document.getElementById('bk-venue').value);
-  const panelistOpts = document.getElementById('bk-panelists');
-  const panelist_ids = Array.from(panelistOpts?.selectedOptions || []).map(o => parseInt(o.value));
-
-  if (!group_name || !adviser_id || !date || !timeRaw || !venue_id || panelist_ids.length === 0) {
-    showToast('Please fill in all fields and select at least one panelist.', 'error');
+// ── Check availability ────────────────────────────────────────────
+async function checkConflict() {
+  const date      = document.getElementById('bk-date').value;
+  const timeRaw   = document.getElementById('bk-time').value;
+  const adviser   = document.getElementById('bk-adviser').value;
+  const venue     = document.getElementById('bk-venue').value;
+  const resultEl  = document.getElementById('conflict-check-result');
+  if (!date || !timeRaw || !adviser || !venue) {
+    showToast('Fill in date, time, adviser, and venue first.', 'warning');
     return;
   }
-
   const hour      = parseInt(timeRaw.split(':')[0]);
-  const time_slot = String(hour).padStart(2,'0') + ':00-' + String(hour+1).padStart(2,'0') + ':00';
-
-  const submitBtn = document.getElementById('bk-submit');
-  submitBtn.disabled    = true;
-  submitBtn.textContent = 'Booking...';
-
+  const time_slot = `${String(hour).padStart(2,'0')}:00-${String(hour+1).padStart(2,'0')}:00`;
+  resultEl.style.display = 'block';
+  resultEl.innerHTML = '<div style="font-size:13px;color:var(--text3);">Checking...</div>';
   try {
-    const res  = await fetch('/api/appointments', {
-      method:  'POST',
+    const r = await fetch(`/api/appointments/check-conflict?date=${date}&time_slot=${encodeURIComponent(time_slot)}&adviser_id=${adviser}&venue_id=${venue}&panelist_ids=`);
+    const d = await r.json();
+    const items = [
+      { label: 'Schedule rules', ok: d.rules?.ok,    msg: d.rules?.message    },
+      { label: 'Adviser',        ok: d.adviser?.ok,  msg: d.adviser?.message  },
+      { label: 'Venue',          ok: d.venue?.ok,    msg: d.venue?.message    },
+    ];
+    resultEl.innerHTML = `<div style="display:flex;flex-direction:column;gap:6px;padding:12px;background:${d.all_clear?'var(--success-bg)':'var(--danger-bg)'};border:1px solid ${d.all_clear?'#bbf7d0':'#fecaca'};border-radius:8px;">
+      ${items.map(i=>`<div style="font-size:12px;color:${i.ok?'var(--success)':'var(--danger)'};">
+        ${i.ok?'✓':'✗'} <strong>${i.label}:</strong> ${i.msg||''}
+      </div>`).join('')}
+      <div style="font-size:12px;font-weight:700;color:${d.all_clear?'var(--success)':'var(--danger)'};margin-top:4px;">
+        ${d.all_clear ? '✅ All clear — you can proceed with booking.' : '❌ Conflicts detected — please choose a different slot.'}
+      </div>
+    </div>`;
+  } catch { resultEl.innerHTML = '<div style="font-size:13px;color:var(--danger);">Check failed. Try again.</div>'; }
+}
+
+// ── Submit booking ────────────────────────────────────────────────
+async function submitBooking() {
+  if (_appointment && ['pending','confirmed'].includes(_appointment.status)) {
+    showToast('You already have an active appointment.', 'error');
+    document.getElementById('book-existing-notice').style.display = '';
+    return;
+  }
+  const group_name = document.getElementById('bk-group').value.trim();
+  const adviser_id = parseInt(document.getElementById('bk-adviser').value);
+  const date       = document.getElementById('bk-date').value;
+  const timeRaw    = document.getElementById('bk-time').value;
+  const venue_id   = parseInt(document.getElementById('bk-venue').value);
+  if (!group_name || !adviser_id || !date || !timeRaw || !venue_id) {
+    showToast('Please fill in all fields.', 'error');
+    return;
+  }
+  const hour      = parseInt(timeRaw.split(':')[0]);
+  const time_slot = `${String(hour).padStart(2,'0')}:00-${String(hour+1).padStart(2,'0')}:00`;
+
+  const btn = document.getElementById('bk-submit');
+  btn.disabled = true; btn.textContent = 'Booking...';
+  try {
+    const r = await fetch('/api/appointments', {
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ group_name, adviser_id, panelist_ids, date, time_slot, venue_id })
+      body: JSON.stringify({ group_name, adviser_id, panelist_ids: [], date, time_slot, venue_id })
     });
-    const data = await res.json();
-    if (res.ok) {
-      closeBookingModal();
-      showToast('Appointment booked! Status: Pending.', 'success');
-      loadAppointment();
+    const d = await r.json();
+    if (r.ok) {
+      showToast('Appointment booked! Upload your manuscript next.', 'success');
+      await loadAppointment();
+      switchPanel('my-schedule', document.querySelector('[data-panel=my-schedule]'));
     } else {
-      showToast(data.error || 'Booking failed.', 'error');
+      showToast(d.error || 'Booking failed.', 'error');
     }
-  } catch (e) {
-    showToast('Server error. Try again.', 'error');
-  } finally {
-    submitBtn.disabled    = false;
-    submitBtn.textContent = 'Confirm Booking';
-  }
+  } catch { showToast('Server error. Try again.', 'error'); }
+  finally { btn.disabled = false; btn.textContent = 'Confirm Booking'; }
 }
 
-function showToast(msg, type = 'info') {
-  let container = document.getElementById('toast-container');
-  if (!container) {
-    container = document.createElement('div');
-    container.id = 'toast-container';
-    container.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;';
-    document.body.appendChild(container);
-  }
-  const colors = { success: '#10B981', error: '#EF4444', warning: '#F59E0B', info: '#3B82F6' };
-  const toast   = document.createElement('div');
-  toast.style.cssText = `background:${colors[type]||colors.info};color:#fff;padding:12px 18px;border-radius:10px;font-size:13px;font-weight:500;box-shadow:0 4px 16px rgba(0,0,0,0.25);animation:fadeIn .2s ease;`;
-  toast.textContent   = msg;
-  container.appendChild(toast);
-  setTimeout(() => toast.remove(), 4000);
-}
-
-async function loadAppointment() {
+// ── Cancel appointment ────────────────────────────────────────────
+async function cancelAppointment(id) {
+  if (!confirm('Are you sure you want to cancel your appointment?')) return;
   try {
-    const apptRes = await fetch('/api/appointments');
-    if (!apptRes.ok) return;
-    const { appointments } = await apptRes.json();
-    const mine  = appointments[0] || null;
-    const banner = document.querySelector('.status-banner');
-
-    if (banner && mine) {
-      const isConfirmed = mine.status === 'confirmed';
-      const isPending   = mine.status === 'pending';
-      const color       = isConfirmed ? 'var(--success)' : isPending ? 'var(--warning)' : 'var(--danger)';
-      banner.className  = 'status-banner ' + (isConfirmed ? 'status-confirmed' : isPending ? 'status-pending' : '');
-
-      const statusLabel = banner.querySelector('.status-label');
-      const statusText  = banner.querySelector('.status-text');
-      const statusSub   = banner.querySelector('.status-sub');
-      if (statusLabel) { statusLabel.style.color = color; statusLabel.textContent = 'Defense status'; }
-      if (statusText)  { statusText.style.color  = color; statusText.textContent  = (isConfirmed ? 'Confirmed — Final Defense' : isPending ? 'Pending — Awaiting Approval' : 'Cancelled'); }
-      if (statusSub)   { statusSub.textContent   = `${mine.date || '—'} · ${mine.time_slot || '—'} · ${mine.venue_name || '—'}`; }
-
-      const detailValues = document.querySelectorAll('.detail-value');
-      if (detailValues[0]) detailValues[0].textContent = mine.date      || '—';
-      if (detailValues[1]) detailValues[1].textContent = mine.time_slot || '—';
-      if (detailValues[2]) detailValues[2].textContent = mine.venue_name|| '—';
-
-      const firstPanelistName = document.querySelector('.panelist-chip .panelist-name');
-      if (firstPanelistName)  firstPanelistName.textContent = mine.adviser_name || '—';
-
-      const cancelBtn = banner.querySelector('.btn-danger');
-      if (cancelBtn && mine.status !== 'cancelled') {
-        cancelBtn.onclick = async () => {
-          if (!confirm('Cancel your appointment?')) return;
-          const r = await fetch('/api/appointments/' + mine.id, { method: 'DELETE' });
-          if (r.ok) { showToast('Appointment cancelled.', 'info'); loadAppointment(); }
-        };
-      }
-    } else if (banner) {
-      banner.className = 'status-banner';
-      banner.innerHTML = `
-        <div style="display:flex;align-items:center;gap:14px;">
-          <div class="status-icon" style="background:#fef3c7;">
-            <svg width="20" height="20" fill="none" stroke="#d97706" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path d="M12 8v4M12 16h.01" stroke-width="2" stroke-linecap="round"/></svg>
-          </div>
-          <div>
-            <div class="status-label" style="color:var(--warning);">No Defense Scheduled</div>
-            <div class="status-text" style="color:var(--warning);">Book your defense slot to get started</div>
-            <div class="status-sub" style="color:#d97706aa;">Click the button to book a slot</div>
-          </div>
-        </div>
-        <button class="btn btn-primary" onclick="openBookingModal()">
-          <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" stroke-width="2"/><path d="M16 2v4M8 2v4M3 10h18" stroke-width="2"/></svg>
-          Book a defense
-        </button>`;
-    }
-  } catch (e) { console.error('Appointment load error', e); }
-}
-
-// ── Init ─────────────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', async () => {
-  // Auth guard
-  try {
-    const res  = await fetch('/api/auth/me');
-    if (!res.ok) { window.location.replace('/'); return; }
-    const data = await res.json();
-    _currentUser = data.user;
-    if (_currentUser.role !== 'student') { window.location.replace('/'); return; }
-  } catch (e) { window.location.replace('/'); return; }
-
-  // Populate name/avatar
-  const displayName = _currentUser.group_name || _currentUser.name;
-  const initials    = displayName.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
-  const avatarEl    = document.getElementById('user-avatar') || document.querySelector('.avatar');
-  const nameEl      = document.getElementById('user-display-name') || document.querySelector('.user-name');
-  if (avatarEl) avatarEl.textContent = initials;
-  if (nameEl)   nameEl.textContent   = displayName;
-
-  // Logout
-  const logoutBtn = document.getElementById('logout-btn');
-  if (logoutBtn) {
-    logoutBtn.addEventListener('click', async () => {
-      await fetch('/api/auth/logout', { method: 'POST' });
-      window.location.replace('/');
+    const r = await fetch(`/api/appointments/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: 'cancelled' })
     });
-  }
-
-  // Wire header "Book a defense" button
-  document.querySelectorAll('.btn-primary').forEach(btn => {
-    if (btn.textContent.trim().includes('Book a defense')) {
-      btn.onclick = openBookingModal;
+    if (r.ok) {
+      showToast('Appointment cancelled.', 'info');
+      _appointment = null;
+      await loadAppointment();
+      renderMySchedule();
+    } else {
+      const d = await r.json();
+      showToast(d.error || 'Cancel failed.', 'error');
     }
-  });
+  } catch { showToast('Server error.', 'error'); }
+}
 
-  loadAppointment();
+// ── Manuscript ────────────────────────────────────────────────────
+async function loadManuscript() {
+  const a = _appointment;
+  if (!a) {
+    document.getElementById('upload-gate').style.display = '';
+    document.getElementById('upload-area').style.display = 'none';
+    document.getElementById('manuscript-history').innerHTML = '<div style="font-size:13px;color:var(--text3);">No submissions yet.</div>';
+    return;
+  }
+  document.getElementById('upload-gate').style.display = 'none';
+  document.getElementById('upload-area').style.display = '';
+
+  // Load existing manuscript
+  try {
+    const r = await fetch(`/api/manuscripts/${a.id}`);
+    if (r.ok) {
+      const { manuscript: m } = await r.json();
+      const kb = Math.round(m.file_size / 1024);
+      document.getElementById('manuscript-history').innerHTML = `
+        <div class="version-item">
+          <span class="ver-badge current">Latest</span>
+          <div style="flex:1;">
+            <div style="font-size:12px;font-weight:500;">${m.original_name}</div>
+            <div style="font-size:11px;color:var(--text3);font-family:var(--mono);">${new Date(m.uploaded_at).toLocaleDateString()} · ${kb}KB</div>
+          </div>
+          <a href="/api/manuscripts/download/${m.id}" class="btn btn-outline" style="padding:5px 10px;font-size:11px;">Download</a>
+        </div>`;
+    } else {
+      document.getElementById('manuscript-history').innerHTML = '<div style="font-size:13px;color:var(--text3);">No manuscript uploaded yet.</div>';
+    }
+  } catch {}
+
+  // Drag-and-drop
+  const zone = document.getElementById('upload-zone');
+  zone.ondragover  = e => { e.preventDefault(); zone.classList.add('dragover'); };
+  zone.ondragleave = () => zone.classList.remove('dragover');
+  zone.ondrop      = e => { e.preventDefault(); zone.classList.remove('dragover'); const f = e.dataTransfer.files[0]; if (f) processUpload(f); };
+}
+
+function uploadManuscript(input) {
+  if (input.files[0]) processUpload(input.files[0]);
+}
+
+async function processUpload(file) {
+  const allowed = ['.pdf','.docx','.doc'];
+  const ext = '.' + file.name.split('.').pop().toLowerCase();
+  if (!allowed.includes(ext)) { showToast('Only PDF or DOCX files allowed.', 'error'); return; }
+  if (file.size > 10*1024*1024) { showToast('File too large. Max 10MB.', 'error'); return; }
+  const prog = document.getElementById('upload-progress');
+  prog.style.display = ''; prog.textContent = `Uploading ${file.name}...`;
+  const fd = new FormData();
+  fd.append('manuscript', file);
+  try {
+    const r = await fetch(`/api/manuscripts/upload/${_appointment.id}`, { method: 'POST', body: fd });
+    const d = await r.json();
+    if (r.ok) {
+      showToast('Manuscript uploaded! Your slot is now confirmed.', 'success');
+      prog.style.display = 'none';
+      await loadAppointment();
+      loadManuscript();
+    } else {
+      prog.style.display = 'none';
+      showToast(d.error || 'Upload failed.', 'error');
+    }
+  } catch { prog.style.display = 'none'; showToast('Upload error. Try again.', 'error'); }
+}
+
+// ── Notifications ─────────────────────────────────────────────────
+async function loadNotifications() {
+  const el = document.getElementById('notif-list');
+  try {
+    const r = await fetch('/api/notifications');
+    if (!r.ok) throw new Error();
+    const { notifications } = await r.json();
+    if (!notifications.length) {
+      el.innerHTML = '<div class="empty-state"><div class="empty-title">No notifications</div><div class="empty-sub">You\'re all caught up!</div></div>';
+      return;
+    }
+    const dotColors = { info:'var(--info)', success:'var(--success)', warning:'var(--warning)', error:'var(--danger)' };
+    el.innerHTML = notifications.map(n => `
+      <div class="notif-item" style="${!n.is_read?'background:var(--accent-light);border-radius:8px;padding:8px 10px;':''}" onclick="markRead(${n.id}, this)">
+        <div class="notif-dot" style="background:${dotColors[n.type]||'var(--text3)'}; ${!n.is_read?'width:9px;height:9px;':'opacity:.4;'}"></div>
+        <div>
+          <div class="notif-text">${n.message}</div>
+          <div class="notif-time">${new Date(n.created_at).toLocaleString('en-PH',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</div>
+        </div>
+      </div>`).join('');
+    const unread = notifications.filter(n=>!n.is_read).length;
+    document.getElementById('notif-badge').textContent = unread;
+    document.getElementById('notif-badge').style.display = unread ? '' : 'none';
+  } catch { el.innerHTML = '<div class="empty-state"><div class="empty-title">Failed to load notifications.</div></div>'; }
+}
+
+async function markRead(id, el) {
+  await fetch(`/api/notifications/${id}/read`, { method: 'PUT' });
+  el.style.background = '';
+  loadNotifBadge();
+}
+
+async function markAllRead() {
+  await fetch('/api/notifications/read-all', { method: 'PUT' });
+  showToast('All notifications marked as read.', 'success');
+  loadNotifications();
+}
+
+async function loadNotifBadge() {
+  try {
+    const r = await fetch('/api/notifications');
+    if (!r.ok) return;
+    const { notifications } = await r.json();
+    const unread = notifications.filter(n=>!n.is_read).length;
+    const badge = document.getElementById('notif-badge');
+    badge.textContent     = unread;
+    badge.style.display   = unread ? '' : 'none';
+  } catch {}
+}
+
+// ── Toast ─────────────────────────────────────────────────────────
+function showToast(msg, type = 'info') {
+  const c = document.getElementById('toast-container');
+  const colors = { success:'#16a34a', error:'#dc2626', warning:'#ca8a04', info:'#0369a1' };
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.style.background = colors[type] || colors.info;
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(() => t.remove(), 4000);
+}
+
+// ── Book panel: show existing notice if needed ────────────────────
+document.querySelector('[data-panel=book]').addEventListener('click', () => {
+  const notice = document.getElementById('book-existing-notice');
+  if (_appointment && ['pending','confirmed'].includes(_appointment.status)) {
+    notice.style.display = '';
+    document.getElementById('book-form').style.opacity = '.5';
+    document.getElementById('book-form').style.pointerEvents = 'none';
+  } else {
+    notice.style.display = 'none';
+    document.getElementById('book-form').style.opacity = '';
+    document.getElementById('book-form').style.pointerEvents = '';
+  }
 });
 </script>
-
-<!-- ── Booking Modal ──────────────────────────────────────────────── -->
-<div id="booking-modal" style="display:none;position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.65);align-items:center;justify-content:center;">
-  <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px 32px;width:100%;max-width:500px;position:relative;box-shadow:0 20px 60px rgba(0,0,0,0.4);">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;">
-      <div>
-        <div style="font-size:16px;font-weight:700;color:var(--text);">Book a Defense</div>
-        <div style="font-size:12px;color:var(--text3);margin-top:2px;">Fill in all fields to submit your appointment</div>
-      </div>
-      <button onclick="closeBookingModal()" style="background:none;border:none;cursor:pointer;color:var(--text3);padding:4px;border-radius:6px;font-size:18px;line-height:1;">✕</button>
-    </div>
-
-    <div style="display:flex;flex-direction:column;gap:14px;">
-      <div>
-        <label style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;display:block;margin-bottom:5px;">Group Name</label>
-        <input id="bk-group" type="text" placeholder="e.g. Group Alpha" style="width:100%;padding:9px 12px;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:13px;outline:none;font-family:inherit;">
-      </div>
-      <div>
-        <label style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;display:block;margin-bottom:5px;">Adviser</label>
-        <select id="bk-adviser" style="width:100%;padding:9px 12px;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:13px;outline:none;font-family:inherit;"></select>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-        <div>
-          <label style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;display:block;margin-bottom:5px;">Date</label>
-          <input id="bk-date" type="date" style="width:100%;padding:9px 12px;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:13px;outline:none;font-family:inherit;">
-        </div>
-        <div>
-          <label style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;display:block;margin-bottom:5px;">Start Time</label>
-          <input id="bk-time" type="time" min="08:00" max="16:00" style="width:100%;padding:9px 12px;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:13px;outline:none;font-family:inherit;">
-        </div>
-      </div>
-      <div>
-        <label style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;display:block;margin-bottom:5px;">Venue</label>
-        <select id="bk-venue" style="width:100%;padding:9px 12px;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:13px;outline:none;font-family:inherit;"></select>
-      </div>
-      <div>
-        <label style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;display:block;margin-bottom:5px;">
-          Panelists
-          <span style="font-weight:400;color:var(--text3);text-transform:none;letter-spacing:0;"> — hold Ctrl / Cmd to pick multiple</span>
-        </label>
-        <select id="bk-panelists" multiple style="width:100%;padding:9px 12px;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:13px;outline:none;height:88px;font-family:inherit;"></select>
-      </div>
-    </div>
-
-    <div style="display:flex;gap:10px;margin-top:22px;">
-      <button onclick="closeBookingModal()" style="flex:1;padding:10px 0;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text2);font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;">Cancel</button>
-      <button id="bk-submit" onclick="submitBooking()" style="flex:2;padding:10px 0;background:var(--accent);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:.01em;">Confirm Booking</button>
-    </div>
-  </div>
-</div>
-<style>@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}</style>
+</body>
+</html>
