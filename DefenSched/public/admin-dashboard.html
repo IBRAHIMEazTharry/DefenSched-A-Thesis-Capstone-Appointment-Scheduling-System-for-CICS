@@ -875,6 +875,7 @@
           <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" stroke-width="1.8" stroke-linecap="round" />
         </svg>
         All appointments
+        <span class="nav-badge" id="pending-badge" style="display:none">0</span>
       </div>
       <div class="nav-item" data-section="students">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -882,8 +883,7 @@
             d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"
             stroke-width="1.8" stroke-linecap="round" />
         </svg>
-        Group & students
-        <span class="nav-badge" id="pending-badge" style="display:none">0</span>
+        Group &amp; students
       </div>
       <div class="nav-item" data-section="faculty">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1111,11 +1111,12 @@
                 <th>Venue</th>
                 <th>Status</th>
                 <th>Change status</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody id="appt-tbody">
               <tr>
-                <td colspan="7">
+                <td colspan="8">
                   <div class="skeleton"></div>
                 </td>
               </tr>
@@ -1560,7 +1561,7 @@
       document.getElementById('board-tbody').innerHTML = rows.length ? rows.map(a => `<tr><td><div style="font-weight:600">${a.group_name}</div></td><td>${a.adviser_name || '—'}</td><td style="font-size:12px">${(a.panelists || []).map(p => p.name).join(', ') || '—'}</td><td style="font-family:var(--mono);font-size:12px">${fmtDate(a.date)}<br>${a.time_slot || '—'}</td><td>${a.venue_name || '—'}</td><td>${fmtStatus(a.status)}</td><td><button class="btn btn-ghost btn-sm" onclick="openStatusModal(${a.id},'${a.group_name.replace(/'/g, "\\'")}','${a.status}')">Update</button></td></tr>`).join('') : '<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:30px">No appointments found</td></tr>';
     }
 
-    // ── ALL APPOINTMENTS (with inline DB status edit) ─────────────────
+    // ── ALL APPOINTMENTS (with inline DB status edit + delete) ──────────
     function loadAppts() {
       document.getElementById('appt-search').oninput = loadAppts;
       const q = (document.getElementById('appt-search').value || '').toLowerCase();
@@ -1577,17 +1578,12 @@
         ${['pending', 'confirmed', 'rescheduled', 'completed', 'cancelled'].map(s => `<option value="${s}"${a.status === s ? ' selected' : ''}>${s}</option>`).join('')}
       </select>
     </td>
-<<<<<<< Updated upstream
   </tr>`).join('') : '<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:30px">No appointments</td></tr>';
-=======
-    <td>
-      <button class="btn btn-danger btn-sm" onclick="deleteAppointment(${a.id},'${a.group_name.replace(/'/g, "\\'")}')">  
         <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6" stroke-width="2"/><path d="M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2" stroke-width="2" stroke-linecap="round"/></svg>
         Delete
       </button>
     </td>
   </tr>`).join('') : '<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:30px">No appointments</td></tr>';
->>>>>>> Stashed changes
     }
 
     async function inlineUpdateApptStatus(id, status) {
@@ -1596,10 +1592,20 @@
       else showToast('Update failed', 'error');
     }
 
+    async function deleteAppointment(id, name) {
+      if (!confirm(`Permanently delete appointment for "${name}"? This cannot be undone.`)) return;
+      try {
+        const res = await fetch(`/api/appointments/${id}`, { method: 'DELETE' });
+        const d = await res.json();
+        if (res.ok) { showToast(`Appointment deleted`, 'success'); await refresh(); loadAppts(); }
+        else showToast(d.error || 'Delete failed', 'error');
+      } catch { showToast('Server error during delete', 'error'); }
+    }
+
     // ── STUDENTS (with full DB edit) ──────────────────────────────────
     function loadStudents() {
       const q = (document.getElementById('student-search')?.value || '').toLowerCase();
-      const students = _allUsers.filter(u => u.role === 'student' && (!q || u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q)));
+      const students = _allUsers.filter(u => u.role === 'student' && u.is_active !== 0 && (!q || u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q)));
       document.getElementById('students-tbody').innerHTML = students.length ? students.map(s => {
         const appt = _appointments.find(a => a.student_id === s.id) || null;
         return `<tr>
@@ -1620,7 +1626,7 @@
 
     // ── FACULTY (with full DB edit) ───────────────────────────────────
     function loadFaculty() {
-      const faculty = _allUsers.filter(u => u.role === 'faculty');
+      const faculty = _allUsers.filter(u => u.role === 'faculty' && u.is_active !== 0);
       document.getElementById('faculty-tbody').innerHTML = faculty.length ? faculty.map(f => {
         const hr = _honoraria.report.find(r => r.id === f.id) || { adviser_groups: 0, panel_sessions: 0, total: 0 };
         return `<tr>
@@ -1761,7 +1767,15 @@
       const res = await fetch('/api/users', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, email, password, role, group_name }) });
       if (res.ok) { closeModal('create-user-modal'); showToast('Account created', 'success'); await refresh() } else { const d = await res.json(); showToast(d.error || 'Failed', 'error') }
     }
-    async function deactivateUser(id, name) { if (!confirm(`Deactivate ${name}?`)) return; await fetch(`/api/users/${id}`, { method: 'DELETE' }); showToast(`${name} deactivated`, 'info'); await refresh() }
+    async function deactivateUser(id, name) {
+      if (!confirm(`Delete user "${name}" permanently? This cannot be undone.`)) return;
+      try {
+        const res = await fetch(`/api/users/${id}`, { method: 'DELETE' });
+        const d = await res.json();
+        if (res.ok) { showToast(`${name} deleted successfully`, 'success'); await refresh(); }
+        else showToast(d.error || 'Delete failed', 'error');
+      } catch { showToast('Server error during delete', 'error'); }
+    }
 
     // ── VENUES ────────────────────────────────────────────────────────
     function openVenueModal(id, name, type, capacity) {
@@ -1774,7 +1788,15 @@
       const res = await fetch(id ? `/api/venues/${id}` : '/api/venues', { method: id ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, type, capacity }) });
       if (res.ok) { closeModal('venue-modal'); showToast(id ? 'Venue updated' : 'Venue added', 'success'); await refresh() } else showToast('Failed', 'error');
     }
-    async function deleteVenue(id) { if (!confirm('Remove venue?')) return; await fetch(`/api/venues/${id}`, { method: 'DELETE' }); showToast('Venue removed', 'info'); await refresh() }
+    async function deleteVenue(id) {
+      if (!confirm('Remove this venue permanently?')) return;
+      try {
+        const res = await fetch(`/api/venues/${id}`, { method: 'DELETE' });
+        const d = await res.json();
+        if (res.ok) { showToast('Venue removed successfully', 'success'); await refresh(); loadVenues(); }
+        else showToast(d.error || 'Remove failed', 'error');
+      } catch { showToast('Server error during venue removal', 'error'); }
+    }
 
     // ── RATES ─────────────────────────────────────────────────────────
     function openRatesModal() { const r = _honoraria.rates || {}; document.getElementById('r-panelist').value = r.panelist || 1500; document.getElementById('r-adviser').value = r.adviser || 2000; openModal('rates-modal') }

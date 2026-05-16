@@ -1,8 +1,8 @@
 'use strict';
 
 const express = require('express');
-const router  = express.Router();
-const db      = require('../database');
+const router = express.Router();
+const db = require('../database');
 const { requireAuth, requireRole } = require('../middleware/auth');
 
 // GET /api/honoraria/rates
@@ -52,20 +52,20 @@ router.get('/report', requireAuth, (req, res) => {
       WHERE adviser_id = ? AND status IN ('confirmed','completed')
     `).get(f.id).c;
 
-    const panelHonoraria  = panelSessions * (rates['panelist'] || 0);
-    const adviserHonoraria = adviserGroups * (rates['adviser']  || 0);
+    const panelHonoraria = panelSessions * (rates['panelist'] || 0);
+    const adviserHonoraria = adviserGroups * (rates['adviser'] || 0);
 
     return {
-      id:              f.id,
-      name:            f.name,
-      email:           f.email,
-      panel_sessions:  panelSessions,
-      adviser_groups:  adviserGroups,
-      panel_rate:      rates['panelist'] || 0,
-      adviser_rate:    rates['adviser']  || 0,
+      id: f.id,
+      name: f.name,
+      email: f.email,
+      panel_sessions: panelSessions,
+      adviser_groups: adviserGroups,
+      panel_rate: rates['panelist'] || 0,
+      adviser_rate: rates['adviser'] || 0,
       panel_honoraria: panelHonoraria,
       adviser_honoraria: adviserHonoraria,
-      total:           panelHonoraria + adviserHonoraria
+      total: panelHonoraria + adviserHonoraria
     };
   });
 
@@ -74,7 +74,7 @@ router.get('/report', requireAuth, (req, res) => {
 });
 
 // GET /api/honoraria/settings — defense window settings
-router.get('/settings', requireRole('admin'), (req, res) => {
+router.get('/settings', requireAuth, (req, res) => {
   const settings = {};
   db.prepare('SELECT setting_key, setting_value FROM defense_settings').all()
     .forEach(s => { settings[s.setting_key] = s.setting_value; });
@@ -86,8 +86,8 @@ router.put('/settings', requireRole('admin'), (req, res) => {
   const { defense_start_time, defense_end_time, defense_days } = req.body;
   const upd = db.prepare(`UPDATE defense_settings SET setting_value = ?, updated_at = ? WHERE setting_key = ?`);
   if (defense_start_time) upd.run(defense_start_time, new Date().toISOString(), 'defense_start_time');
-  if (defense_end_time)   upd.run(defense_end_time,   new Date().toISOString(), 'defense_end_time');
-  if (defense_days)       upd.run(defense_days,        new Date().toISOString(), 'defense_days');
+  if (defense_end_time) upd.run(defense_end_time, new Date().toISOString(), 'defense_end_time');
+  if (defense_days) upd.run(defense_days, new Date().toISOString(), 'defense_days');
   res.json({ success: true });
 });
 

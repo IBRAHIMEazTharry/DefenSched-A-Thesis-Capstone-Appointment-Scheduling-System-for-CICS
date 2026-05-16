@@ -1,11 +1,11 @@
 'use strict';
 
 const express = require('express');
-const router  = express.Router();
-const multer  = require('multer');
-const path    = require('path');
-const fs      = require('fs');
-const db      = require('../database');
+const router = express.Router();
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+const db = require('../database');
 const { requireAuth } = require('../middleware/auth');
 
 const UPLOADS_DIR = path.join(__dirname, '..', 'uploads');
@@ -13,8 +13,8 @@ if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, UPLOADS_DIR),
-  filename:    (req, file, cb) => {
-    const ext  = path.extname(file.originalname);
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
     const safe = `appt_${req.params.appointmentId}_${Date.now()}${ext}`;
     cb(null, safe);
   }
@@ -72,6 +72,25 @@ router.post('/upload/:appointmentId', requireAuth, upload.single('manuscript'), 
     filename: req.file.originalname,
     size: req.file.size
   });
+});
+
+// GET /api/manuscripts/list-by-faculty — all manuscripts for logged-in faculty
+router.get('/list-by-faculty', requireAuth, (req, res) => {
+  const { userId, role } = req.session;
+  if (role !== 'faculty') return res.status(403).json({ error: 'Faculty only.' });
+
+  const manuscripts = db.prepare(`
+    SELECT DISTINCT m.id, m.appointment_id, m.original_name, m.file_size, m.uploaded_at,
+           a.group_name, a.date, a.time_slot,
+           CASE WHEN a.adviser_id = ? THEN 'adviser' ELSE 'panelist' END as role
+    FROM manuscripts m
+    JOIN appointments a ON m.appointment_id = a.id
+    LEFT JOIN appointment_panelists ap ON a.id = ap.appointment_id
+    WHERE a.adviser_id = ? OR ap.panelist_id = ?
+    ORDER BY m.uploaded_at DESC
+  `).all(userId, userId, userId);
+
+  res.json({ manuscripts });
 });
 
 // GET /api/manuscripts/:appointmentId — get manuscript info
