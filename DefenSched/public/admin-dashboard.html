@@ -32,6 +32,18 @@
       --radius-lg: 16px
     }
 
+    [data-theme="light"] {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface2: #f1f5f9;
+      --border: #e2e8f0;
+      --border2: #cbd5e1;
+      --text: #0f172a;
+      --text2: #475569;
+      --text3: #94a3b8;
+      --accent-glow: rgba(79, 142, 247, .08);
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -914,17 +926,21 @@
         System Settings
       </div>
     </nav>
-    <div class="sidebar-user">
-      <div class="avatar" id="user-avatar">RC</div>
+    <div class="sidebar-user" style="display:flex;align-items:center;gap:10px">
+      <div class="avatar" id="user-avatar">AD</div>
       <div style="flex:1;min-width:0">
-        <div class="user-name" id="user-display-name">Loading…</div>
-        <div class="user-role">Research Coordinator</div>
+        <div class="user-name" id="user-display-name">Admin Name</div>
+        <div class="user-role">Administrator</div>
       </div>
-      <button id="logout-btn" title="Logout"
-        style="background:none;border:none;cursor:pointer;color:var(--text3);padding:4px;border-radius:6px;flex-shrink:0">
+      <button id="theme-toggle" title="Toggle Theme" style="background:none;border:none;cursor:pointer;color:var(--text3);padding:4px;border-radius:6px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;">
+        <svg id="theme-icon" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </button>
+      <button id="logout-btn" title="Logout" style="background:none;border:none;cursor:pointer;color:var(--text3);padding:4px;border-radius:6px;flex-shrink:0">
         <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" stroke-width="2"
-            stroke-linecap="round" />
+          <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" />
         </svg>
       </button>
     </div>
@@ -1139,6 +1155,7 @@
               <tr>
                 <th>#</th>
                 <th>Group name</th>
+                <th>Members</th>
                 <th>Email</th>
                 <th>Group tag</th>
                 <th>Defense date</th>
@@ -1148,7 +1165,7 @@
             </thead>
             <tbody id="students-tbody">
               <tr>
-                <td colspan="7">
+                <td colspan="8">
                   <div class="skeleton"></div>
                 </td>
               </tr>
@@ -1485,6 +1502,14 @@
     function fmtPeso(n) { return '₱' + Number(n || 0).toLocaleString('en-PH', { minimumFractionDigits: 2 }) }
     function todayStr() { return new Date().toISOString().split('T')[0] }
     function getHr() { const h = new Date().getHours(); return h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening' }
+    function fmtMembers(membersJson) {
+      if (!membersJson) return '<span style="color:var(--text3);font-size:11px">Solo</span>';
+      try {
+        const { leader, members } = JSON.parse(membersJson);
+        const all = [leader, ...(members || [])].filter(Boolean);
+        return all.map((n, i) => `<span style="display:inline-flex;align-items:center;gap:3px;background:${i===0 ? 'rgba(79,142,247,.12)' : 'var(--surface2)'};color:${i===0 ? 'var(--accent)' : 'var(--text2)'};border:1px solid ${i===0 ? 'rgba(79,142,247,.25)' : 'var(--border2)'};border-radius:99px;padding:2px 7px;font-size:11px;white-space:nowrap;margin:1px">${i===0 ? '★ ' : ''}${n}</span>`).join(' ');
+      } catch { return '<span style="color:var(--text3);font-size:11px">—</span>'; }
+    }
 
     // ── FETCH ALL ─────────────────────────────────────────────────────
     async function fetchAll() {
@@ -1553,8 +1578,7 @@
         ${['pending', 'confirmed', 'rescheduled', 'completed', 'cancelled'].map(s => `<option value="${s}"${a.status === s ? ' selected' : ''}>${s}</option>`).join('')}
       </select>
     </td>
-    <td>
-      <button class="btn btn-danger btn-sm" onclick="deleteAppointment(${a.id},'${a.group_name.replace(/'/g, "\\'")}')">
+  </tr>`).join('') : '<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:30px">No appointments</td></tr>';
         <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6" stroke-width="2"/><path d="M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2" stroke-width="2" stroke-linecap="round"/></svg>
         Delete
       </button>
@@ -1587,6 +1611,7 @@
         return `<tr>
       <td style="color:var(--text3);font-family:var(--mono);font-size:11px">#${s.id}</td>
       <td>${s.name}</td>
+      <td style="max-width:200px">${fmtMembers(s.members)}</td>
       <td style="font-size:12px;color:var(--text3)">${s.email}</td>
       <td style="font-size:12px;color:var(--text3)">${s.group_name || '—'}</td>
       <td>${appt ? `${fmtDate(appt.date)} · ${appt.time_slot || '—'}` : '<span style="color:var(--text3)">Not scheduled</span>'}</td>
@@ -1596,7 +1621,7 @@
         <button class="btn btn-danger btn-sm" onclick="deactivateUser(${s.id},'${s.name.replace(/'/g, "\\'")}')">Deactivate</button>
       </div></td>
     </tr>`;
-      }).join('') : '<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:30px">No student groups found</td></tr>';
+      }).join('') : '<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:30px">No student groups found</td></tr>';
     }
 
     // ── FACULTY (with full DB edit) ───────────────────────────────────
@@ -1790,6 +1815,29 @@
 
     // ── INIT ─────────────────────────────────────────────────────────
     (async () => {
+      // ── THEME INITIALIZATION ──
+      const initTheme = () => {
+        const savedTheme = localStorage.getItem('defensched-theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        updateThemeIcon(savedTheme);
+      };
+      const updateThemeIcon = (theme) => {
+        const icon = document.getElementById('theme-icon');
+        if (theme === 'light') {
+          icon.innerHTML = '<path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />';
+        } else {
+          icon.innerHTML = '<path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />';
+        }
+      };
+      document.getElementById('theme-toggle').addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('defensched-theme', newTheme);
+        updateThemeIcon(newTheme);
+      });
+      initTheme();
+
       history.pushState(null, '', window.location.href);
       window.addEventListener('popstate', () => history.pushState(null, '', window.location.href));
       try {

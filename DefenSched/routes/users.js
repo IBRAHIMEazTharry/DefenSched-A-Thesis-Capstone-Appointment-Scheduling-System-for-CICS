@@ -11,12 +11,12 @@ router.get('/', requireAuth, (req, res) => {
   const { userId, role } = req.session;
   if (role === 'admin') {
     const users = db.prepare(
-      'SELECT id, name, email, role, group_name, is_active, created_at FROM users ORDER BY role, name'
+      'SELECT id, name, email, role, group_name, is_group, members, is_active, created_at FROM users ORDER BY role, name'
     ).all();
     return res.json({ users });
   }
   const user = db.prepare(
-    'SELECT id, name, email, role, group_name FROM users WHERE id = ?'
+    'SELECT id, name, email, role, group_name, is_group, members FROM users WHERE id = ?'
   ).get(userId);
   res.json({ users: [user] });
 });
@@ -24,7 +24,7 @@ router.get('/', requireAuth, (req, res) => {
 // GET /api/users/:id
 router.get('/:id', requireAuth, (req, res) => {
   const user = db.prepare(
-    'SELECT id, name, email, role, group_name, is_active, created_at FROM users WHERE id = ?'
+    'SELECT id, name, email, role, group_name, is_group, members, is_active, created_at FROM users WHERE id = ?'
   ).get(req.params.id);
   if (!user) return res.status(404).json({ error: 'User not found.' });
   res.json({ user });
